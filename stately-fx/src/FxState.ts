@@ -1,5 +1,12 @@
 // TODO use native Observable?
-import { Observable, ObservableInput, Subscriber, from as $from, empty as $empty } from 'rxjs'
+import {
+  Observable,
+  ObservableInput,
+  Subscriber,
+  from as $from,
+  empty as $empty,
+  of as $of,
+} from 'rxjs'
 import { filter as $filter, mergeMap as $mergeMap } from 'rxjs/operators'
 import { AnyAction, Reducer, Middleware } from 'redux'
 // TODO remove (or minimize) `lodash` dependency
@@ -324,22 +331,26 @@ export const fxEpic = (action$: Observable<AnyAction>): Observable<AnyAction> =>
           unsubscribe: { match: matchUnsubscribe },
           destroy: { match: matchDestroy },
         } = forId(action.fx.id)
-        const $ = source(action.payload)
-        return new Observable(subscriber => {
-          const subscription = $.subscribe(
-            data => subscriber.next(next(data)),
-            err => subscriber.next(error(err)),
-            () => subscriber.next(complete()),
-          )
-          action$
-            .pipe(
-              $filter(
-                (action: AnyAction): action is FxAction<any> =>
-                  matchUnsubscribe(action) || matchDestroy(action),
-              ),
+        try {
+          const $ = source(action.payload)
+          return new Observable(subscriber => {
+            const subscription = $.subscribe(
+              data => subscriber.next(next(data)),
+              err => subscriber.next(error(err)),
+              () => subscriber.next(complete()),
             )
-            .subscribe(() => subscription.unsubscribe())
-        })
+            action$
+              .pipe(
+                $filter(
+                  (action: AnyAction): action is FxAction<any> =>
+                    matchUnsubscribe(action) || matchDestroy(action),
+                ),
+              )
+              .subscribe(() => subscription.unsubscribe())
+          })
+        } catch (err) {
+          return $of(error(err))
+        }
       } else {
         prefixNotFoundError('FxState#fxEpic', action)
         return $empty()
