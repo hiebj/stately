@@ -4,12 +4,12 @@ Types, actions, reducer, and middleware for managing the state of side-effects i
 In JavaScript, most side-effects are acheived by conducting one or more asynchronous operations. The possible states of those operations are finite:
 
 - `initial`: not started
-- `subscribing`: started, awaiting
+- `subscribing`: started, awaiting initial response
 - `subscribed`: initial response received
 - `complete`: no more responses awaited
 - `error`: something went wrong
 
-Some asynchronous operations only have a subset of those states. For `Promise`-like (one-time) operations in particular, the `subscribed` state is not relevant.
+Some asynchronous operations only have a subset of those states. For example, only subscription operations (`Observable`, `AsyncIterator`) use the `subscribed` state. For `Promise`-like (one-time) operations, the `subscribed` state is not relevant.
 
 Tracking the state of these side effects is crucial to every application. Copy-paste or factory-implemented boilerplate around tracking these side effects is common. `typescript-fsa` attempts to solve this in part by providing `asyncActionCreators` to avoid recreating the same actions. However, `asyncActionCreators` only helps with `Promise`-like operations, and does not handle reflection in state or action sequencing.
 
@@ -97,7 +97,10 @@ interface FxAction<Payload> extends AnyAction {
 
 ### `FxActionCreator<Payload>`
 ```ts
-type FxActionCreator<Payload> = (payload: Payload) => FxAction<Payload>
+interface FxActionCreator<Payload> {
+  (payload: Payload): FxAction<Payload>
+  match: (action: AnyAction) => action is FxAction<Payload>
+}
 ```
 
 ### `FxActionCreators<Item, Params>`
@@ -170,3 +173,26 @@ export default class MyComponent extends React.Component {
   }
 }
 ```
+
+## Special Cases
+Work-in-progress.
+
+### I want to accumulate the responses to a subscription in state.
+`FxState` simply stores in `data` what is `next()`-ed or `yield`-ed by the `FxSource`.
+
+Try using [`Observable.scan()`](http://reactivex.io/documentation/operators/scan.html) to accumulate the responses in an array or map. Alternately, repeatedly `yield` an array of responses created by `concat`-ing the previous array to each subsequent response.
+
+### My subscription has no "initial response" (event-driven).
+Try calling `Observable.next(null)` or `yield null` as soon as the subscription is opened. The `status` will shift to `subscribed`, but `data` will remain `null`.
+
+### I want to do something else with the data that's coming over the wire.
+Example: I want to normalize the data into an id-based collection in my Redux schema.
+
+The `fxEpic`/`fxMiddleware` dispatches actions in response to the state of the asynchronous operation performed by the `FxSource`. Those actions are [`FxActions`](#fxactionpayload), which are regular Redux actions adhering to a Flux-style structure. Feel free to write your own custom reducers, epics, sagas, or other middleware that handle `FxActions`.
+
+Every [`FxActionCreatorsFactory`](https://github.com/hiebj/fx-state/blob/master/src/FxState.ts#L163) returned by [`fxActionCreatorsFactory()`](#myeffectactions-ts) has a [`matchers` property](https://github.com/hiebj/fx-state/blob/master/src/FxState.ts#L154) containing methods that will return `true` if a given action appears to have been created by an `FxActionCreator` spawned from that factory (determined by matching the type string and checking `fx` metadata). You can use `FxActionCreatorsFactory.matchers['subscribe' | 'next' | 'unsubscribe' ...]` to identify and handle actions created by specific `FxActionCreators` in your own epics or reducers.
+
+Alternately, you can do your own matching/filtering by looking at the [`FxMeta`](https://github.com/hiebj/fx-state/blob/master/src/FxState.ts#L109) on a given action yourself and determining which actions you would like to reduce or respond to, and in what way.
+
+## How it works
+![Diagram](https://github.com/hiebj/fx-state/blob/master/img/FxState.jpeg)
