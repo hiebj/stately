@@ -69,10 +69,18 @@ export interface FxSlice {
   fx: { [key: string]: FxState<any, any> }
 }
 
-type ObservableFn<Item, Params = undefined> = (params?: Params) => Observable<Item>
-type ObservableInputSource<Item, Params = undefined> = (params?: Params) => ObservableInput<Item>
-type AsyncGeneratorSource<Item, Params = undefined> = (params?: Params) => AsyncIterable<Item>
-export type FxSource<Item, Params = undefined> =
+type ObservableFn<Item, Params> = (params: Params) => Observable<Item>
+
+type NoParamsObservableInputSource<Item> = () => ObservableInput<Item>
+type NoParamsAsyncGeneratorSource<Item> = () => AsyncIterable<Item>
+export type NoParamsFxSource<Item> =
+  | NoParamsObservableInputSource<Item>
+  | NoParamsAsyncGeneratorSource<Item>
+
+type ObservableInputSource<Item, Params> = (params: Params) => ObservableInput<Item>
+type AsyncGeneratorSource<Item, Params> = (params: Params) => AsyncIterable<Item>
+
+export type FxSource<Item, Params> =
   | ObservableInputSource<Item, Params>
   | AsyncGeneratorSource<Item, Params>
 
@@ -99,7 +107,7 @@ const wrapAsyncIterable = <Item>(asyncIterable: AsyncIterable<Item>): Observable
 
 const wrapSource = <Item, Params = undefined>(
   source: FxSource<Item, Params>,
-): ObservableFn<Item, Params> => (params?: Params) => {
+): ObservableFn<Item, Params> => (params: Params) => {
   const fxAbstraction = source(params)
   return isAsyncIterable(fxAbstraction) ? wrapAsyncIterable(fxAbstraction) : $from(fxAbstraction)
 }
@@ -122,22 +130,19 @@ export const isFxAction = <Payload = any>(action: AnyAction): action is FxAction
   'fx' in action
 
 export interface FxActionCreator<Payload> {
-  (payload?: Payload): FxAction<Payload>
+  (payload: Payload): FxAction<Payload>
   type: string
   fxType: FxActionType
   prefix: string
   match: (action: AnyAction) => action is FxAction<Payload>
 }
 
-export type EmptyFxActionCreator = FxActionCreator<undefined> & (() => FxAction<undefined>)
-
-export interface FxActionMatchers<Item, Params> {
-  subscribe: (action: AnyAction) => action is FxAction<Params>
-  next: (action: AnyAction) => action is FxAction<Item>
-  error: (action: AnyAction) => action is FxAction<any>
-  complete: (action: AnyAction) => action is FxAction<undefined>
-  unsubscribe: (action: AnyAction) => action is FxAction<undefined>
-  destroy: (action: AnyAction) => action is FxAction<undefined>
+export interface EmptyFxActionCreator {
+  (params?: undefined): FxAction<undefined>
+  type: string
+  fxType: FxActionType
+  prefix: string
+  match: (action: AnyAction) => action is FxAction<undefined>
 }
 
 export interface FxActionCreators<Item, Params = undefined> {
@@ -159,9 +164,23 @@ export const isEmptyFxActionCreator = (
   actionCreator: FxActionCreator<any>,
 ): actionCreator is EmptyFxActionCreator => !!actionCreator.length
 
-// TODO add FxActionMatchers to the factory (so that people can match on the broader, non-id-specific types?)
-export type FxActionCreatorsFactory<Item, Params> = (id?: string) => FxActionCreators<Item, Params>
-export type NoParamsFxActionCreatorsFactory<Item> = (id?: string) => NoParamsFxActionCreators<Item>
+export interface FxActionMatchers<Item, Params = void> {
+  subscribe: (action: AnyAction) => action is FxAction<Params>
+  next: (action: AnyAction) => action is FxAction<Item>
+  error: (action: AnyAction) => action is FxAction<any>
+  complete: (action: AnyAction) => action is FxAction<void>
+  unsubscribe: (action: AnyAction) => action is FxAction<void>
+  destroy: (action: AnyAction) => action is FxAction<void>
+}
+
+export interface FxActionCreatorsFactory<Item, Params> {
+  (id?: string): FxActionCreators<Item, Params>
+  matchers: FxActionMatchers<Item, Params>
+}
+export interface NoParamsFxActionCreatorsFactory<Item> {
+  (id?: string): NoParamsFxActionCreators<Item>
+  matchers: FxActionMatchers<Item>
+}
 
 interface ForId extends MemoizedFunction {
   (id: string): FxActionCreators<any, any>
@@ -183,7 +202,7 @@ const prefixNotFoundError = (header: string, action: FxAction<any>) =>
     action,
   )
 
-const fxActionCreatorFactory = (prefix: string) => <Payload = undefined>(fxType: FxActionType) => {
+const fxActionCreatorFactory = (prefix: string) => <Payload>(fxType: FxActionType) => {
   const type = `FX/${prefix}/${fxType}`
   const actionCreator = (id: string, payload: Payload) => ({
     type,
@@ -192,36 +211,47 @@ const fxActionCreatorFactory = (prefix: string) => <Payload = undefined>(fxType:
   })
   const match = (action: AnyAction): action is FxAction<Payload> =>
     isFxAction(action) && action.fx.prefix === prefix && action.fx.fxType === fxType
-  return (id: string): FxActionCreator<Payload> =>
-    Object.assign((payload: Payload) => actionCreator(id, payload), {
-      type,
-      prefix,
-      fxType,
-      match: (action: AnyAction): action is FxAction<Payload> =>
-        match(action) && action.fx.id === id,
-    })
+  return Object.assign(
+    (id: string): FxActionCreator<Payload> =>
+      Object.assign((payload: Payload) => actionCreator(id, payload), {
+        type,
+        prefix,
+        fxType,
+        match: (action: AnyAction): action is FxAction<Payload> =>
+          match(action) && action.fx.id === id,
+      }),
+    { match },
+  )
 }
 
 // TODO a better name for this?
+function fxActionCreatorsFactory<Item>(
+  prefix: string,
+  source: NoParamsFxSource<Item>,
+): NoParamsFxActionCreatorsFactory<Item>
 function fxActionCreatorsFactory<Item, Params>(
   prefix: string,
   source: FxSource<Item, Params>,
 ): FxActionCreatorsFactory<Item, Params>
-function fxActionCreatorsFactory<Item>(
+function fxActionCreatorsFactory<Item, Params>(
   prefix: string,
-  source: FxSource<Item>,
-): NoParamsFxActionCreatorsFactory<Item>
-function fxActionCreatorsFactory<Item, Params = undefined>(
-  prefix: string,
-  source: FxSource<Item, Params> | FxSource<Item>,
-) {
+  source: FxSource<Item, Params> | NoParamsFxSource<Item>,
+): FxActionCreatorsFactory<Item, Params> | NoParamsFxActionCreatorsFactory<Item> {
   const fxacf = fxActionCreatorFactory(prefix)
   const subscribe = fxacf<Params>('SUBSCRIBE')
   const next = fxacf<Item>('NEXT')
   const error = fxacf<any>('ERROR')
-  const complete = fxacf('COMPLETE')
-  const unsubscribe = fxacf('UNSUBSCRIBE')
-  const destroy = fxacf('DESTROY')
+  const complete = fxacf<undefined>('COMPLETE')
+  const unsubscribe = fxacf<undefined>('UNSUBSCRIBE')
+  const destroy = fxacf<undefined>('DESTROY')
+  const matchers = {
+    subscribe: subscribe.match,
+    next: next.match,
+    error: error.match,
+    complete: complete.match,
+    unsubscribe: unsubscribe.match,
+    destroy: destroy.match,
+  }
   const forId: ForId = memoize((id: string) => ({
     prefix,
     id,
@@ -238,7 +268,7 @@ function fxActionCreatorsFactory<Item, Params = undefined>(
     forId,
     source: wrapSource(source),
   }
-  return (id: string = uuid()) => forId(id)
+  return Object.assign((id: string = uuid()) => forId(id), { matchers })
 }
 
 export { fxActionCreatorsFactory }

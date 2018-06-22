@@ -32,6 +32,7 @@ describe('FxState', () => {
   const error = 'error'
 
   const noParamsSource$ = () => $of(data)
+
   async function* withParamsSource$(params: Params) {
     if (params) {
       const toYield = await noParamsSource$().toPromise()
@@ -41,6 +42,7 @@ describe('FxState', () => {
     }
   }
 
+  // TODO why null in actionsFactory but not noParamsActions
   const type = 'TEST'
   const noParamsActions = fxActionCreatorsFactory('NOPARAMS', noParamsSource$)(id)
   const actionsFactory = fxActionCreatorsFactory(type, withParamsSource$)
