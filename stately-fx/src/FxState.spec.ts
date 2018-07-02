@@ -10,7 +10,7 @@ import {
   FxSlice,
   FxActionCreators,
   initialFxState,
-  FxSource,
+  Effect,
   fxActionCreatorsFactory,
   fxReducer,
   fxEpic,
@@ -31,11 +31,11 @@ describe('FxState', () => {
   const data: Item = { prop1: true, prop2: 10 }
   const error = 'error'
 
-  const noParamsSource$ = () => $of(data)
+  const noParamsEffect$ = () => $of(data)
 
-  async function* withParamsSource$(params: Params) {
+  async function* withParamsEffect$(params: Params) {
     if (params) {
-      const toYield = await noParamsSource$().toPromise()
+      const toYield = await noParamsEffect$().toPromise()
       yield toYield
     } else {
       yield null
@@ -44,13 +44,13 @@ describe('FxState', () => {
 
   // TODO why null in actionsFactory but not noParamsActions
   const type = 'TEST'
-  const noParamsActions = fxActionCreatorsFactory('NOPARAMS', noParamsSource$)(id)
-  const actionsFactory = fxActionCreatorsFactory(type, withParamsSource$)
+  const noParamsActions = fxActionCreatorsFactory('NOPARAMS', noParamsEffect$)(id)
+  const actionsFactory = fxActionCreatorsFactory(type, withParamsEffect$)
   const forIdActions = actionsFactory(id)
 
   const errorState: FxState<Item> = { status: 'error', params: null, error, data }
-  const subscribedState: FxState<Item, Params> = {
-    status: 'subscribed',
+  const openState: FxState<Item, Params> = {
+    status: 'active',
     params,
     error: null,
     data,
@@ -86,9 +86,9 @@ describe('FxState', () => {
 
     describe('selector', () => {
       it('should return a selector that returns the owned state of a set of actions', () => {
-        const state = fxSlice(subscribedState)
+        const state = fxSlice(openState)
         const selector = forIdActions.selector
-        expect(selector(state)).to.have.property('status', 'subscribed')
+        expect(selector(state)).to.have.property('status', 'active')
         expect(selector(state)).to.have.property('data', data)
       })
     })
@@ -101,8 +101,8 @@ describe('FxState', () => {
       beforeEach(() => {
         state = fxReducer(fxSlice(errorState), forIdActions.subscribe(params)).fx[id]
       })
-      it('should set `state` to "subscribing"', () => {
-        expect(state).to.have.property('status', 'subscribing')
+      it('should set `state` to "open"', () => {
+        expect(state).to.have.property('status', 'active')
       })
       it('should set `params` to the value passed into the action', () => {
         expect(state).to.have.property('params', params)
@@ -114,28 +114,13 @@ describe('FxState', () => {
 
     describe('no-params #subscribe action', () => {
       beforeEach(() => {
-        state = fxReducer(fxSlice(subscribedState), noParamsActions.subscribe()).fx[id]
+        state = fxReducer(fxSlice(openState), noParamsActions.subscribe()).fx[id]
       })
-      it('should set `state` to "subscribing"', () => {
-        expect(state).to.have.property('status', 'subscribing')
+      it('should set `state` to "open"', () => {
+        expect(state).to.have.property('status', 'active')
       })
       it('should set `params` to null', () => {
         expect(state).to.have.property('params', null)
-      })
-      it('should set `error` to null', () => {
-        expect(state).to.have.property('error', null)
-      })
-    })
-
-    describe('#subscribe action', () => {
-      beforeEach(() => {
-        state = fxReducer(fxSlice(errorState), forIdActions.subscribe(params)).fx[id]
-      })
-      it('should set `state` to "subscribing"', () => {
-        expect(state).to.have.property('status', 'subscribing')
-      })
-      it('should set `params` to the value passed into the action', () => {
-        expect(state).to.have.property('params', params)
       })
       it('should set `error` to null', () => {
         expect(state).to.have.property('error', null)
@@ -148,9 +133,6 @@ describe('FxState', () => {
         state = fxReducer(fxSlice(state), forIdActions.next(data)).fx[id]
       })
 
-      it('should set `state` to "subscribed"', () => {
-        expect(state).to.have.property('status', 'subscribed')
-      })
       it('should replace `data` with the value passed to the action', () => {
         expect(state).to.have.property('data', data)
       })
@@ -161,7 +143,7 @@ describe('FxState', () => {
 
     describe('#error action', () => {
       beforeEach(() => {
-        state = fxReducer(fxSlice(subscribedState), forIdActions.error(error)).fx[id]
+        state = fxReducer(fxSlice(openState), forIdActions.error(error)).fx[id]
       })
       it('should set `state` to "error"', () => {
         expect(state).to.have.property('status', 'error')
@@ -173,7 +155,7 @@ describe('FxState', () => {
 
     describe('#complete action', () => {
       beforeEach(() => {
-        state = fxReducer(fxSlice(subscribedState), forIdActions.complete()).fx[id]
+        state = fxReducer(fxSlice(openState), forIdActions.complete()).fx[id]
       })
       it('should set `state` to "completed"', () => {
         expect(state).to.have.property('status', 'completed')
@@ -185,7 +167,7 @@ describe('FxState', () => {
 
     describe('#unsubscribe action', () => {
       beforeEach(() => {
-        state = fxReducer(fxSlice(subscribedState), forIdActions.unsubscribe()).fx[id]
+        state = fxReducer(fxSlice(openState), forIdActions.unsubscribe()).fx[id]
       })
       it('should set `state` to null', () => {
         expect(state).to.have.property('status', null)
@@ -204,7 +186,7 @@ describe('FxState', () => {
     describe('#destroy action', () => {
       let slice: FxSlice['fx']
       beforeEach(() => {
-        slice = fxReducer(fxSlice(subscribedState), forIdActions.destroy()).fx
+        slice = fxReducer(fxSlice(openState), forIdActions.destroy()).fx
       })
       it('should remove the ID completely from rx state tracking', () => {
         expect(slice).not.to.have.property(id)
@@ -216,7 +198,7 @@ describe('FxState', () => {
     const id = 'EPICID'
     let asyncObservable$: Observable<Item>
     let asyncObservable$subscriber: Subscriber<Item>
-    let asyncObservableFactory$: FxSource<Item, Params>
+    let asyncObservableFactory$: Effect<Item, Params>
     let actions: FxActionCreators<Item, Params>
     let action$: Observable<AnyAction>
     let action$subscriber: Subscriber<AnyAction>
