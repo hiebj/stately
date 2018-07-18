@@ -7,11 +7,7 @@ const expect = chai.expect
 
 import { FxState, FxSlice, initialFxState } from './FxState'
 
-import {
-  fxActions as fxActionCreatorsFactory,
-  FxActionCreators,
-  NoParamsFxActionCreators,
-} from './actions'
+import { fxActions, FxActionCreators, NoParamsFxActionCreators } from './actions'
 
 import { Effect } from './effects'
 
@@ -60,9 +56,9 @@ describe('FxState', () => {
   let withSubtypeActions: FxActionCreators<any, any>
 
   beforeEach(() => {
-    noParamsActions = fxActionCreatorsFactory(noParamsEffect$)
-    withParamsActions = fxActionCreatorsFactory(withParamsEffect$)
-    withSubtypeActions = fxActionCreatorsFactory({
+    noParamsActions = fxActions(noParamsEffect$)
+    withParamsActions = fxActions(withParamsEffect$)
+    withSubtypeActions = fxActions({
       effect: withParamsEffect$,
       subtype: 'TEST',
     })
@@ -221,7 +217,7 @@ describe('FxState', () => {
       })
       sinon.spy(asyncObservable$, 'subscribe')
       asyncObservableFactory$ = sinon.spy((params: Params) => params && asyncObservable$)
-      actions = fxActionCreatorsFactory(asyncObservableFactory$)
+      actions = fxActions(asyncObservableFactory$)
       action$ = new Observable<AnyAction>(subscriber => {
         action$subscriber = subscriber
       })
