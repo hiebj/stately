@@ -138,7 +138,7 @@ const selectorFactory = (id: string) =>
       // tslint:disable-next-line:no-console
       console.error(
         'fx-state:\n',
-        'FxActionCreators#selector was called, but no state was found the owning FxActionCreators.\n',
+        'FxActionCreators#selector was called, but no state was found for the owning FxActionCreators.\n',
         'It is likely that the `destroy()` action has already been dispatched.\n',
         'The `intialFxState` is being returned, but using `selector` after `destroy` is unsupported.',
       )
