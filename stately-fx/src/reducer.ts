@@ -1,11 +1,11 @@
-import { Reducer } from 'redux'
+import { Reducer, AnyAction } from 'redux'
 
 import { FxState, initialFxState, FxSlice } from './FxState'
 import { isFxAction } from './actions'
 import reduceReducers from './reduceReducers'
 import { get, remove } from './cache'
 
-const subscribeReducer: Reducer<FxState<any, any>> = (state = initialFxState, action) =>
+const subscribeReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
   isFxAction(action) && action.fx.fxType === 'SUBSCRIBE'
     ? {
         ...state,
@@ -16,7 +16,7 @@ const subscribeReducer: Reducer<FxState<any, any>> = (state = initialFxState, ac
       }
     : state
 
-const nextReducer: Reducer<FxState<any, any>> = (state = initialFxState, action) =>
+const nextReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
   isFxAction(action) && action.fx.fxType === 'NEXT'
     ? {
         ...state,
@@ -25,7 +25,7 @@ const nextReducer: Reducer<FxState<any, any>> = (state = initialFxState, action)
       }
     : state
 
-const errorReducer: Reducer<FxState<any, any>> = (state = initialFxState, action) =>
+const errorReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
   isFxAction(action) && action.fx.fxType === 'ERROR'
     ? {
         ...state,
@@ -34,7 +34,7 @@ const errorReducer: Reducer<FxState<any, any>> = (state = initialFxState, action
       }
     : state
 
-const completeReducer: Reducer<FxState<any, any>> = (state = initialFxState, action) =>
+const completeReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
   isFxAction(action) && action.fx.fxType === 'COMPLETE'
     ? {
         ...state,
@@ -43,8 +43,10 @@ const completeReducer: Reducer<FxState<any, any>> = (state = initialFxState, act
       }
     : state
 
-const unsubscribeReducer: Reducer<FxState<any, any>> = (state = initialFxState, action) =>
-  isFxAction(action) && action.fx.fxType === 'UNSUBSCRIBE' ? initialFxState : state
+const unsubscribeReducer: Reducer<FxState<any, any>, AnyAction> = (
+  state = initialFxState,
+  action,
+) => (isFxAction(action) && action.fx.fxType === 'UNSUBSCRIBE' ? initialFxState : state)
 
 export const fxStateReducer = reduceReducers(
   subscribeReducer,
