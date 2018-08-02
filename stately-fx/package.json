@@ -1,6 +1,6 @@
 {
   "name": "fx-state",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Types, actions, reducer, and middleware for managing the state of side-effects in Redux",
   "author": {
     "name": "Jon Hieb",
