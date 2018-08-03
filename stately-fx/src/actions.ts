@@ -5,7 +5,7 @@ import { FxSlice, FxState, initialFxState } from './FxState'
 import { Effect, NoParamsEffect, $fromEffect } from './effects'
 import { set } from './cache'
 
-export type FxActionType = 'SUBSCRIBE' | 'NEXT' | 'ERROR' | 'COMPLETE' | 'UNSUBSCRIBE' | 'DESTROY'
+export type FxActionType = 'subscribe' | 'next' | 'error' | 'complete' | 'unsubscribe' | 'destroy'
 
 export interface FxMeta {
   subtype: string
@@ -23,14 +23,14 @@ export const isFxAction = <Payload = any>(action: AnyAction): action is FxAction
   'fx' in action
 
 export const isSubscribeFxAction = (action: AnyAction): action is FxAction<any> =>
-  isFxAction(action) && action.fx.fxType === 'SUBSCRIBE'
+  isFxAction(action) && action.fx.fxType === 'subscribe'
 
 export interface BaseFxActionCreator<Payload> {
-  id: string
-  type: string
-  fxType: FxActionType
-  subtype: string
-  match: (action: AnyAction) => action is FxAction<Payload>
+  readonly id: string
+  readonly type: string
+  readonly fxType: FxActionType
+  readonly subtype: string
+  readonly match: (action: AnyAction) => action is FxAction<Payload>
 }
 
 export interface FxActionCreator<Payload> extends BaseFxActionCreator<Payload> {
@@ -109,7 +109,7 @@ const fxacf = <Payload>(
   subtype: string,
   fxType: FxActionType,
 ): FxActionCreator<Payload> => {
-  const type = `FX/${subtype}/${fxType}`
+  const type = `fx/${subtype}/${fxType}`
   const actionCreator = (payload: Payload) => ({
     type,
     payload,
@@ -121,13 +121,15 @@ const fxacf = <Payload>(
     action.fx.fxType === fxType &&
     // really, only checking the id is necessary
     action.fx.id === id
-  return Object.assign(actionCreator, {
-    id,
-    type,
-    subtype,
-    fxType,
-    match,
-  })
+  return Object.freeze(
+    Object.assign(actionCreator, {
+      id,
+      type,
+      subtype,
+      fxType,
+      match,
+    }),
+  )
 }
 
 const selectorFactory = (id: string) =>
@@ -164,12 +166,12 @@ function fxActions<Item, Params>(
   const actions = Object.freeze({
     id,
     subtype,
-    subscribe: fxacf<Params>(id, subtype, 'SUBSCRIBE'),
-    next: fxacf<Item>(id, subtype, 'NEXT'),
-    error: fxacf<any>(id, subtype, 'ERROR'),
-    complete: fxacf<undefined>(id, subtype, 'COMPLETE'),
-    unsubscribe: fxacf<undefined>(id, subtype, 'UNSUBSCRIBE'),
-    destroy: fxacf<undefined>(id, subtype, 'DESTROY'),
+    subscribe: fxacf<Params>(id, subtype, 'subscribe'),
+    next: fxacf<Item>(id, subtype, 'next'),
+    error: fxacf<any>(id, subtype, 'error'),
+    complete: fxacf<undefined>(id, subtype, 'complete'),
+    unsubscribe: fxacf<undefined>(id, subtype, 'unsubscribe'),
+    destroy: fxacf<undefined>(id, subtype, 'destroy'),
     selector: selectorFactory(id),
   }) as FxActionCreators<Item, Params>
   set(id, actions, $fromEffect(effect))

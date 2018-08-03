@@ -6,7 +6,7 @@ import reduceReducers from './reduceReducers'
 import { get, remove } from './cache'
 
 const subscribeReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
-  isFxAction(action) && action.fx.fxType === 'SUBSCRIBE'
+  isFxAction(action) && action.fx.fxType === 'subscribe'
     ? {
         ...state,
         status: 'active',
@@ -17,7 +17,7 @@ const subscribeReducer: Reducer<FxState<any, any>, AnyAction> = (state = initial
     : state
 
 const nextReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
-  isFxAction(action) && action.fx.fxType === 'NEXT'
+  isFxAction(action) && action.fx.fxType === 'next'
     ? {
         ...state,
         data: action.payload,
@@ -26,7 +26,7 @@ const nextReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxSta
     : state
 
 const errorReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
-  isFxAction(action) && action.fx.fxType === 'ERROR'
+  isFxAction(action) && action.fx.fxType === 'error'
     ? {
         ...state,
         status: 'error',
@@ -35,7 +35,7 @@ const errorReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxSt
     : state
 
 const completeReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
-  isFxAction(action) && action.fx.fxType === 'COMPLETE'
+  isFxAction(action) && action.fx.fxType === 'complete'
     ? {
         ...state,
         status: 'completed',
@@ -46,7 +46,7 @@ const completeReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialF
 const unsubscribeReducer: Reducer<FxState<any, any>, AnyAction> = (
   state = initialFxState,
   action,
-) => (isFxAction(action) && action.fx.fxType === 'UNSUBSCRIBE' ? initialFxState : state)
+) => (isFxAction(action) && action.fx.fxType === 'unsubscribe' ? initialFxState : state)
 
 export const fxStateReducer = reduceReducers(
   subscribeReducer,
@@ -61,7 +61,7 @@ export const fxSliceReducer: Reducer<FxSlice> = (state = { fx: {} }, action) => 
     const id = action.fx.id
     if (!!get(id)) {
       const nextState = { ...state, fx: { ...state.fx } }
-      if (action.fx.fxType === 'DESTROY') {
+      if (action.fx.fxType === 'destroy') {
         delete nextState.fx[id]
         remove(id)
       } else {

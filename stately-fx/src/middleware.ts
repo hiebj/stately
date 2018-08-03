@@ -44,12 +44,14 @@ export const fxEpic = (action$: Observable<AnyAction>): Observable<AnyAction> =>
   )
 
 export const fxMiddleware: Middleware = store => {
-  let action$next: Subscriber<AnyAction>['next']
-  const action$: Observable<AnyAction> = new Observable(({ next }) => (action$next = next))
+  let action$subscriber: Subscriber<AnyAction>
+  const action$: Observable<AnyAction> = new Observable(subscriber => {
+    action$subscriber = subscriber
+  })
   fxEpic(action$).subscribe(store.dispatch)
   return next => action => {
     const result = next(action)
-    action$next(action)
+    action$subscriber.next(action)
     return result
   }
 }
