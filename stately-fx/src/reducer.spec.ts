@@ -52,17 +52,19 @@ describe('fx-state', () => {
     withParamsActions = fxActions(withParamsEffect$)
   })
 
+  afterEach(() => {
+    fxReducer({ fx: {} }, withParamsActions.destroy())
+    fxReducer({ fx: {} }, noParamsActions.destroy())
+  })
+
   describe('fxReducer', () => {
     let state: FxState<Params> = initialFxState
 
     describe('#subscribe action', () => {
       beforeEach(() => {
-        state = fxReducer(
-          fxSlice(openState, withParamsActions.id),
-          withParamsActions.subscribe(params),
-        ).fx[withParamsActions.id]
+        state = fxReducer({ fx: {} }, withParamsActions.subscribe(params)).fx[withParamsActions.id]
       })
-      it('should set `state` to "open"', () => {
+      it('should set `state` to "active"', () => {
         expect(state).to.have.property('status', 'active')
       })
       it('should set `params` to the value passed into the action', () => {

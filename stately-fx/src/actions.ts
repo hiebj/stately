@@ -93,7 +93,7 @@ function getConfig<Item, Params>(
         }
   if (!config.subtype) {
     // tslint:disable-next-line:no-console
-    console.error(
+    console.warn(
       'fx-state:\n',
       '#fxActions was called with an anonymous side-effect function, and no `subtype` was provided.\n',
       'The action type will be derived using the FxActions uuid, which is ugly and non-descriptive.\n',
@@ -132,22 +132,6 @@ const fxacf = <Payload>(
   )
 }
 
-const selectorFactory = (id: string) =>
-  function selector(state: FxSlice) {
-    if (state.fx[id]) {
-      return state.fx[id]
-    } else {
-      // tslint:disable-next-line:no-console
-      console.error(
-        'fx-state:\n',
-        'FxActionCreators#selector was called, but no state was found for the owning FxActionCreators.\n',
-        'It is likely that the `destroy()` action has already been dispatched.\n',
-        'The `intialFxState` is being returned, but using `selector` after `destroy` is unsupported.',
-      )
-      return initialFxState
-    }
-  }
-
 function fxActions<Item>(
   effectOrConfig: NoParamsEffect<Item> | NoParamsFxActionsConfig<Item>,
 ): NoParamsFxActionCreators<Item>
@@ -172,7 +156,7 @@ function fxActions<Item, Params>(
     complete: fxacf<undefined>(id, subtype, 'complete'),
     unsubscribe: fxacf<undefined>(id, subtype, 'unsubscribe'),
     destroy: fxacf<undefined>(id, subtype, 'destroy'),
-    selector: selectorFactory(id),
+    selector: (state: FxSlice) => state.fx[id] || initialFxState,
   }) as FxActionCreators<Item, Params>
   set(id, actions, $fromEffect(effect))
   return actions

@@ -2,8 +2,8 @@ import { Reducer, AnyAction } from 'redux'
 
 import { FxState, initialFxState, FxSlice } from './FxState'
 import { isFxAction } from './actions'
-import reduceReducers from './reduceReducers'
-import { get, remove } from './cache'
+import chainReducers from './chainReducers'
+import { remove } from './cache'
 
 const subscribeReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
   isFxAction(action) && action.fx.fxType === 'subscribe'
@@ -48,7 +48,7 @@ const unsubscribeReducer: Reducer<FxState<any, any>, AnyAction> = (
   action,
 ) => (isFxAction(action) && action.fx.fxType === 'unsubscribe' ? initialFxState : state)
 
-export const fxStateReducer = reduceReducers(
+export const fxStateReducer = chainReducers(
   subscribeReducer,
   nextReducer,
   errorReducer,
@@ -59,25 +59,14 @@ export const fxStateReducer = reduceReducers(
 export const fxSliceReducer: Reducer<FxSlice> = (state = { fx: {} }, action) => {
   if (isFxAction(action)) {
     const id = action.fx.id
-    if (!!get(id)) {
-      const nextState = { ...state, fx: { ...state.fx } }
-      if (action.fx.fxType === 'destroy') {
-        delete nextState.fx[id]
-        remove(id)
-      } else {
-        nextState.fx[id] = fxStateReducer(nextState.fx[id], action)
-      }
-      return nextState
+    const nextState = { ...state, fx: { ...state.fx } }
+    if (action.fx.fxType === 'destroy') {
+      delete nextState.fx[id]
+      remove(id)
     } else {
-      // tslint:disable-next-line:no-console
-      console.error(
-        'fx-state:\n',
-        'An FxAction was dispatched with a uuid that could not be found.\n',
-        'It is likely that the `destroy()` action for this uuid has already been dispatched, or the action was created by something other than an FxActionCreators instance.\n',
-        'Only non-destroyed actions created by an FxActionCreators instance can be managed by FxState. This action will be ignored.\n',
-        action,
-      )
+      nextState.fx[id] = fxStateReducer(nextState.fx[id], action)
     }
+    return nextState
   }
   return state
 }
