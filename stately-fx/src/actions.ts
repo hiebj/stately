@@ -5,7 +5,7 @@ import { FxSlice, FxState, initialFxState } from './FxState'
 import { Effect, NoParamsEffect, $fromEffect } from './effects'
 import { set } from './cache'
 
-export type FxActionType = 'subscribe' | 'next' | 'error' | 'complete' | 'unsubscribe' | 'destroy'
+export type FxActionType = 'call' | 'data' | 'error' | 'complete' | 'destroy'
 
 export interface FxMeta {
   subtype: string
@@ -22,8 +22,8 @@ export interface FxAction<Payload> extends AnyAction {
 export const isFxAction = <Payload = any>(action: AnyAction): action is FxAction<Payload> =>
   'fx' in action
 
-export const isSubscribeFxAction = (action: AnyAction): action is FxAction<any> =>
-  isFxAction(action) && action.fx.fxType === 'subscribe'
+export const isCallFxAction = (action: AnyAction): action is FxAction<any> =>
+  isFxAction(action) && action.fx.fxType === 'call'
 
 export interface BaseFxActionCreator<Payload> {
   readonly id: string
@@ -44,17 +44,16 @@ export interface EmptyFxActionCreator extends BaseFxActionCreator<undefined> {
 export interface FxActionCreators<Item, Params = undefined> {
   readonly id: string
   readonly subtype: string
-  readonly subscribe: FxActionCreator<Params>
-  readonly next: FxActionCreator<Item>
+  readonly call: FxActionCreator<Params>
+  readonly data: FxActionCreator<Item>
   readonly error: FxActionCreator<any>
   readonly complete: EmptyFxActionCreator
-  readonly unsubscribe: EmptyFxActionCreator
   readonly destroy: EmptyFxActionCreator
   readonly selector: (state: FxSlice) => FxState<Item, Params>
 }
 
 export interface NoParamsFxActionCreators<Item> extends FxActionCreators<Item> {
-  readonly subscribe: EmptyFxActionCreator
+  readonly call: EmptyFxActionCreator
 }
 
 export const isEmptyFxActionCreator = (
@@ -119,7 +118,7 @@ const fxacf = <Payload>(
     isFxAction(action) &&
     action.fx.subtype === subtype &&
     action.fx.fxType === fxType &&
-    // really, only checking the id is necessary
+    // really, only checking the id is actually necessary
     action.fx.id === id
   return Object.freeze(
     Object.assign(actionCreator, {
@@ -150,11 +149,10 @@ function fxActions<Item, Params>(
   const actions = Object.freeze({
     id,
     subtype,
-    subscribe: fxacf<Params>(id, subtype, 'subscribe'),
-    next: fxacf<Item>(id, subtype, 'next'),
+    call: fxacf<Params>(id, subtype, 'call'),
+    data: fxacf<Item>(id, subtype, 'data'),
     error: fxacf<any>(id, subtype, 'error'),
     complete: fxacf<undefined>(id, subtype, 'complete'),
-    unsubscribe: fxacf<undefined>(id, subtype, 'unsubscribe'),
     destroy: fxacf<undefined>(id, subtype, 'destroy'),
     selector: (state: FxSlice) => state.fx[id] || initialFxState,
   }) as FxActionCreators<Item, Params>

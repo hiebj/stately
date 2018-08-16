@@ -27,3 +27,5 @@ export const set = (
 export const remove = (uuid: string) => {
   delete byUuid[uuid]
 }
+
+// could this be made into a WeakMap cache and get rid of the 'destroy' action?

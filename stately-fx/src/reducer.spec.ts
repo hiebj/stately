@@ -60,9 +60,9 @@ describe('fx-state', () => {
   describe('fxReducer', () => {
     let state: FxState<Params> = initialFxState
 
-    describe('#subscribe action', () => {
+    describe('#call action', () => {
       beforeEach(() => {
-        state = fxReducer({ fx: {} }, withParamsActions.subscribe(params)).fx[withParamsActions.id]
+        state = fxReducer({ fx: {} }, withParamsActions.call(params)).fx[withParamsActions.id]
       })
       it('should set `state` to "active"', () => {
         expect(state).to.have.property('status', 'active')
@@ -75,9 +75,9 @@ describe('fx-state', () => {
       })
     })
 
-    describe('no-params #subscribe action', () => {
+    describe('no-params #call action', () => {
       beforeEach(() => {
-        state = fxReducer(fxSlice(openState, noParamsActions.id), noParamsActions.subscribe()).fx[
+        state = fxReducer(fxSlice(openState, noParamsActions.id), noParamsActions.call()).fx[
           noParamsActions.id
         ]
       })
@@ -92,13 +92,13 @@ describe('fx-state', () => {
       })
     })
 
-    describe('#next action', () => {
+    describe('#data action', () => {
       beforeEach(() => {
         state = fxReducer(
           fxSlice(initialFxState, withParamsActions.id),
-          withParamsActions.subscribe(params),
+          withParamsActions.call(params),
         ).fx[withParamsActions.id]
-        state = fxReducer(fxSlice(state, withParamsActions.id), withParamsActions.next(data)).fx[
+        state = fxReducer(fxSlice(state, withParamsActions.id), withParamsActions.data(data)).fx[
           withParamsActions.id
         ]
       })
@@ -131,25 +131,6 @@ describe('fx-state', () => {
       })
       it('should set `state` to "completed"', () => {
         expect(state).to.have.property('status', 'completed')
-      })
-      it('should set `error` to null', () => {
-        expect(state).to.have.property('error', null)
-      })
-    })
-
-    describe('#unsubscribe action', () => {
-      beforeEach(() => {
-        state = fxReducer(fxSlice(openState, withParamsActions.id), withParamsActions.unsubscribe())
-          .fx[withParamsActions.id]
-      })
-      it('should set `state` to null', () => {
-        expect(state).to.have.property('status', null)
-      })
-      it('should set `params` to null', () => {
-        expect(state).to.have.property('params', null)
-      })
-      it('should set `data` to null', () => {
-        expect(state).to.have.property('data', null)
       })
       it('should set `error` to null', () => {
         expect(state).to.have.property('error', null)

@@ -6,7 +6,7 @@ import chainReducers from './chainReducers'
 import { remove } from './cache'
 
 const subscribeReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
-  isFxAction(action) && action.fx.fxType === 'subscribe'
+  isFxAction(action) && action.fx.fxType === 'call'
     ? {
         ...state,
         status: 'active',
@@ -17,7 +17,7 @@ const subscribeReducer: Reducer<FxState<any, any>, AnyAction> = (state = initial
     : state
 
 const nextReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
-  isFxAction(action) && action.fx.fxType === 'next'
+  isFxAction(action) && action.fx.fxType === 'data'
     ? {
         ...state,
         data: action.payload,
@@ -43,17 +43,11 @@ const completeReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialF
       }
     : state
 
-const unsubscribeReducer: Reducer<FxState<any, any>, AnyAction> = (
-  state = initialFxState,
-  action,
-) => (isFxAction(action) && action.fx.fxType === 'unsubscribe' ? initialFxState : state)
-
 export const fxStateReducer = chainReducers(
   subscribeReducer,
   nextReducer,
   errorReducer,
   completeReducer,
-  unsubscribeReducer,
 )
 
 export const fxSliceReducer: Reducer<FxSlice> = (state = { fx: {} }, action) => {

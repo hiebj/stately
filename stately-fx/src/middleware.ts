@@ -1,22 +1,22 @@
 import { Observable, Subscriber, empty as $empty } from 'rxjs'
-import { filter as $filter, mergeMap as $mergeMap } from 'rxjs/operators'
+import { filter as $filter, mergeMap as $mergeMap, first as $first } from 'rxjs/operators'
 import { AnyAction, Middleware } from 'redux'
 
-import { isSubscribeFxAction } from './actions'
+import { isCallFxAction } from './actions'
 import { get } from './cache'
 
 export const fxEpic = (action$: Observable<AnyAction>): Observable<AnyAction> =>
   action$.pipe(
-    $filter(isSubscribeFxAction),
+    $filter(isCallFxAction),
     $mergeMap(action => {
       const uuidEntry = get(action.fx.id)
       if (uuidEntry) {
         const {
           actions: {
-            next,
+            call: { match: matchCall },
+            data,
             error,
             complete,
-            unsubscribe: { match: matchUnsubscribe },
             destroy: { match: matchDestroy },
           },
           effect,
@@ -24,13 +24,14 @@ export const fxEpic = (action$: Observable<AnyAction>): Observable<AnyAction> =>
         return new Observable(subscriber => {
           try {
             const subscription = effect(action.payload).subscribe(
-              data => subscriber.next(next(data)),
+              nextData => subscriber.next(data(nextData)),
               err => subscriber.next(error(err)),
               () => subscriber.next(complete()),
             )
             action$
               .pipe(
-                $filter((action: AnyAction) => matchUnsubscribe(action) || matchDestroy(action)),
+                $filter((action: AnyAction) => matchCall(action) || matchDestroy(action)),
+                $first(),
               )
               .subscribe(() => subscription.unsubscribe())
           } catch (err) {
