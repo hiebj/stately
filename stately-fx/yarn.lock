@@ -12,10 +12,6 @@
   version "4.1.4"
   resolved "http://usbo1part01.schq.secious.com:8081/artifactory/api/npm/npm-virtual/@types/chai/-/chai-4.1.4.tgz#5ca073b330d90b4066d6ce18f60d57f2084ce8ca"
 
-"@types/lodash@^4.14.109":
-  version "4.14.109"
-  resolved "http://usbo1part01.schq.secious.com:8081/artifactory/api/npm/npm-virtual/@types/lodash/-/lodash-4.14.109.tgz#b1c4442239730bf35cabaf493c772b18c045886d"
-
 "@types/mocha@^5.2.2":
   version "5.2.2"
   resolved "http://usbo1part01.schq.secious.com:8081/artifactory/api/npm/npm-virtual/@types/mocha/-/mocha-5.2.2.tgz#202d2b8fe1364c5b617b439b26a54f0e75eac0a7"
@@ -279,10 +275,6 @@ lodash.get@^4.4.2:
   version "4.4.2"
   resolved "http://usbo1part01.schq.secious.com:8081/artifactory/api/npm/npm-virtual/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
 
-lodash@^4.17.10:
-  version "4.17.10"
-  resolved "http://usbo1part01.schq.secious.com:8081/artifactory/api/npm/npm-virtual/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
-
 lolex@^2.3.2, lolex@^2.4.2:
   version "2.7.0"
   resolved "http://usbo1part01.schq.secious.com:8081/artifactory/api/npm/npm-virtual/lolex/-/lolex-2.7.0.tgz#9c087a69ec440e39d3f796767cf1b2cdc43d5ea5"
@@ -530,9 +522,9 @@ type-detect@^4.0.0, type-detect@^4.0.8:
   version "4.0.8"
   resolved "http://usbo1part01.schq.secious.com:8081/artifactory/api/npm/npm-virtual/type-detect/-/type-detect-4.0.8.tgz#7646fb5f18871cfbb7749e69bd39a6388eb7450c"
 
-typescript@^2.9.2:
-  version "2.9.2"
-  resolved "http://usbo1part01.schq.secious.com:8081/artifactory/api/npm/npm-virtual/typescript/-/typescript-2.9.2.tgz#1cbf61d05d6b96269244eb6a3bce4bd914e0f00c"
+typescript@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.0.1.tgz#43738f29585d3a87575520a4b93ab6026ef11fdb"
 
 uuid@^3.2.1:
   version "3.2.1"

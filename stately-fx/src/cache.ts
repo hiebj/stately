@@ -1,9 +1,9 @@
-import { FxActionCreators, NoParamsFxActionCreators } from './actions'
+import { FxActionCreators } from './actions'
 import { ObservableFn } from './effects'
 
 export interface Entry {
-  actions: FxActionCreators<any, any> | NoParamsFxActionCreators<any>
-  effect: ObservableFn<any, any>
+  actions: FxActionCreators<any, any[]>
+  effect: ObservableFn<any, any[]>
 }
 interface Cache {
   [uuid: string]: Entry | undefined
@@ -14,8 +14,8 @@ export const get = (uuid: string) => byUuid[uuid]
 
 export const set = (
   uuid: string,
-  actions: FxActionCreators<any, any>,
-  effect: ObservableFn<any, any>,
+  actions: FxActionCreators<any, any[]>,
+  effect: ObservableFn<any, any[]>,
 ) => {
   byUuid[uuid] = {
     actions,

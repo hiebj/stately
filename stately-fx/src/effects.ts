@@ -1,17 +1,13 @@
 import { Observable, ObservableInput, from as $from } from 'rxjs'
 
-export type ObservableFn<Item, Params> = (params: Params) => Observable<Item>
+export type ObservableFn<Item, Params extends any[]> = (params: Params) => Observable<Item>
 
-type NoParamsObservableInputEffect<Item> = () => ObservableInput<Item>
-type NoParamsAsyncGeneratorEffect<Item> = () => AsyncIterable<Item>
-export type NoParamsEffect<Item> =
-  | NoParamsObservableInputEffect<Item>
-  | NoParamsAsyncGeneratorEffect<Item>
+type ObservableInputEffect<Item, Params extends any[]> = (
+  ...params: Params
+) => ObservableInput<Item>
+type AsyncGeneratorEffect<Item, Params extends any[]> = (...params: Params) => AsyncIterable<Item>
 
-type ObservableInputEffect<Item, Params> = (params: Params) => ObservableInput<Item>
-type AsyncGeneratorEffect<Item, Params> = (params: Params) => AsyncIterable<Item>
-
-export type Effect<Item, Params> =
+export type Effect<Item, Params extends any[]> =
   | ObservableInputEffect<Item, Params>
   | AsyncGeneratorEffect<Item, Params>
 
@@ -36,9 +32,9 @@ const $fromAsyncIterable = <Item>(asyncIterable: AsyncIterable<Item>): Observabl
       })(),
   )
 
-export const $fromEffect = <Item, Params = undefined>(
+export const $fromEffect = <Item, Params extends any[]>(
   effect: Effect<Item, Params>,
 ): ObservableFn<Item, Params> => (params: Params) => {
-  const fxAbstraction = effect(params)
+  const fxAbstraction = effect(...params)
   return isAsyncIterable(fxAbstraction) ? $fromAsyncIterable(fxAbstraction) : $from(fxAbstraction)
 }

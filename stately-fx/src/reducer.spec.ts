@@ -6,7 +6,7 @@ const expect = chai.expect
 import { FxState, FxSlice, initialFxState } from './FxState'
 
 import { fxReducer } from './reducer'
-import { NoParamsFxActionCreators, FxActionCreators, fxActions } from './actions'
+import { FxActionCreators, fxActions } from './actions'
 
 describe('fx-state', () => {
   interface Params {
@@ -44,7 +44,7 @@ describe('fx-state', () => {
     fx: { [id]: fxState },
   })
 
-  let noParamsActions: NoParamsFxActionCreators<any>
+  let noParamsActions: FxActionCreators<any, []>
   let withParamsActions: FxActionCreators<any, any>
 
   beforeEach(() => {
@@ -68,7 +68,7 @@ describe('fx-state', () => {
         expect(state).to.have.property('status', 'active')
       })
       it('should set `params` to the value passed into the action', () => {
-        expect(state).to.have.property('params', params)
+        expect(state).to.deep.property('params', [params])
       })
       it('should set `error` to null', () => {
         expect(state).to.have.property('error', null)
@@ -85,7 +85,7 @@ describe('fx-state', () => {
         expect(state).to.have.property('status', 'active')
       })
       it('should set `params` to null', () => {
-        expect(state).to.have.property('params', null)
+        expect(state).to.deep.property('params', [])
       })
       it('should set `error` to null', () => {
         expect(state).to.have.property('error', null)

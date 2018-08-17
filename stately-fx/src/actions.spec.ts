@@ -1,6 +1,6 @@
 import * as chai from 'chai'
-import 'mocha'
 import { of as $of } from 'rxjs'
+import 'mocha'
 const expect = chai.expect
 
 import { FxState, FxSlice } from './FxState'
@@ -56,14 +56,14 @@ describe('fx-state', () => {
     it('should return a new set of action creators for a unique ID', () => {
       const nextAction = withParamsActions.data(data)
       expect(nextAction).to.have.property('type', `fx/withParamsEffect$/data`)
-      expect(nextAction).to.have.property('payload', data)
+      expect(nextAction).to.deep.property('payload', [data])
       expect(nextAction.fx).to.have.property('id')
     })
 
     it('should return a new set of action creators for a given subtype', () => {
       const nextAction = withSubtypeActions.data(data)
       expect(nextAction).to.have.property('type', `fx/TEST/data`)
-      expect(nextAction).to.have.property('payload', data)
+      expect(nextAction).to.deep.property('payload', [data])
       expect(nextAction.fx).to.have.property('id')
     })
 

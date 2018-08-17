@@ -2,7 +2,7 @@ import { AnyAction } from 'redux'
 import { v4 as uuid } from 'uuid'
 
 import { FxSlice, FxState, initialFxState } from './FxState'
-import { Effect, NoParamsEffect, $fromEffect } from './effects'
+import { Effect, $fromEffect } from './effects'
 import { set } from './cache'
 
 export type FxActionType = 'call' | 'data' | 'error' | 'complete' | 'destroy'
@@ -13,19 +13,19 @@ export interface FxMeta {
   id: string
 }
 
-export interface FxAction<Payload> extends AnyAction {
+export interface FxAction<Payload extends any[]> extends AnyAction {
   type: string
   payload: Payload
   fx: FxMeta
 }
 
-export const isFxAction = <Payload = any>(action: AnyAction): action is FxAction<Payload> =>
+export const isFxAction = <Payload extends any[]>(action: AnyAction): action is FxAction<Payload> =>
   'fx' in action
 
 export const isCallFxAction = (action: AnyAction): action is FxAction<any> =>
   isFxAction(action) && action.fx.fxType === 'call'
 
-export interface BaseFxActionCreator<Payload> {
+export interface BaseFxActionCreator<Payload extends any[]> {
   readonly id: string
   readonly type: string
   readonly fxType: FxActionType
@@ -33,51 +33,29 @@ export interface BaseFxActionCreator<Payload> {
   readonly match: (action: AnyAction) => action is FxAction<Payload>
 }
 
-export interface FxActionCreator<Payload> extends BaseFxActionCreator<Payload> {
-  (payload: Payload): FxAction<Payload>
+export interface FxActionCreator<Payload extends any[]> extends BaseFxActionCreator<Payload> {
+  (...payload: Payload): FxAction<Payload>
 }
 
-export interface EmptyFxActionCreator extends BaseFxActionCreator<undefined> {
-  (): FxAction<undefined>
-}
-
-export interface FxActionCreators<Item, Params = undefined> {
+export interface FxActionCreators<Item, Params extends any[]> {
   readonly id: string
   readonly subtype: string
   readonly call: FxActionCreator<Params>
-  readonly data: FxActionCreator<Item>
-  readonly error: FxActionCreator<any>
-  readonly complete: EmptyFxActionCreator
-  readonly destroy: EmptyFxActionCreator
+  readonly data: FxActionCreator<[Item]>
+  readonly error: FxActionCreator<[any]>
+  readonly complete: FxActionCreator<[]>
+  readonly destroy: FxActionCreator<[]>
   readonly selector: (state: FxSlice) => FxState<Item, Params>
 }
 
-export interface NoParamsFxActionCreators<Item> extends FxActionCreators<Item> {
-  readonly call: EmptyFxActionCreator
-}
-
-export const isEmptyFxActionCreator = (
-  actionCreator: FxActionCreator<any>,
-): actionCreator is EmptyFxActionCreator => !!actionCreator.length
-
-export interface FxActionsConfig<Item, Params> {
+export interface FxActionsConfig<Item, Params extends any[]> {
   effect: Effect<Item, Params>
   subtype?: string
   // TODO errorResolver?: (error: any) => Err
 }
 
-export interface NoParamsFxActionsConfig<Item> {
-  effect: NoParamsEffect<Item>
-  subtype?: string
-  // TODO errorResolver?: (error: any) => Err
-}
-
-function getConfig<Item, Params>(
-  effect:
-    | NoParamsEffect<Item>
-    | NoParamsFxActionsConfig<Item>
-    | Effect<Item, Params>
-    | FxActionsConfig<Item, Params>,
+function getConfig<Item, Params extends any[]>(
+  effect: Effect<Item, Params> | FxActionsConfig<Item, Params>,
   id: string,
 ) {
   const config =
@@ -103,18 +81,18 @@ function getConfig<Item, Params>(
   return config
 }
 
-const fxacf = <Payload>(
+const fxacf = <Params extends any[]>(
   id: string,
   subtype: string,
   fxType: FxActionType,
-): FxActionCreator<Payload> => {
+): FxActionCreator<Params> => {
   const type = `fx/${subtype}/${fxType}`
-  const actionCreator = (payload: Payload) => ({
+  const actionCreator = (...payload: Params) => ({
     type,
     payload,
     fx: { subtype, fxType, id },
   })
-  const match = (action: AnyAction): action is FxAction<Payload> =>
+  const match = (action: AnyAction): action is FxAction<Params> =>
     isFxAction(action) &&
     action.fx.subtype === subtype &&
     action.fx.fxType === fxType &&
@@ -131,29 +109,19 @@ const fxacf = <Payload>(
   )
 }
 
-function fxActions<Item>(
-  effectOrConfig: NoParamsEffect<Item> | NoParamsFxActionsConfig<Item>,
-): NoParamsFxActionCreators<Item>
-function fxActions<Item, Params>(
+function fxActions<Item, Params extends any[]>(
   effectOrConfig: Effect<Item, Params> | FxActionsConfig<Item, Params>,
-): FxActionCreators<Item, Params>
-function fxActions<Item, Params>(
-  effectOrConfig:
-    | NoParamsEffect<Item>
-    | NoParamsFxActionsConfig<Item>
-    | Effect<Item, Params>
-    | FxActionsConfig<Item, Params>,
-): NoParamsFxActionCreators<Item> | FxActionCreators<Item, Params> {
+): FxActionCreators<Item, Params> {
   const id = uuid()
   const { effect, subtype } = getConfig(effectOrConfig, id)
   const actions = Object.freeze({
     id,
     subtype,
     call: fxacf<Params>(id, subtype, 'call'),
-    data: fxacf<Item>(id, subtype, 'data'),
+    data: fxacf<[Item]>(id, subtype, 'data'),
     error: fxacf<any>(id, subtype, 'error'),
-    complete: fxacf<undefined>(id, subtype, 'complete'),
-    destroy: fxacf<undefined>(id, subtype, 'destroy'),
+    complete: fxacf<[]>(id, subtype, 'complete'),
+    destroy: fxacf<[]>(id, subtype, 'destroy'),
     selector: (state: FxSlice) => state.fx[id] || initialFxState,
   }) as FxActionCreators<Item, Params>
   set(id, actions, $fromEffect(effect))

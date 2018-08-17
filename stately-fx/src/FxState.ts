@@ -5,7 +5,7 @@ export interface InitialFxState {
   error: null
 }
 
-export interface SubscribedFxState<Item, Params> {
+export interface ActiveFxState<Item, Params> {
   status: 'active'
   params: Params | null
   data: Item | null
@@ -28,7 +28,7 @@ export interface CompletedFxState<Item, Params> {
 
 export type FxState<Item, Params = undefined> =
   | InitialFxState
-  | SubscribedFxState<Item, Params>
+  | ActiveFxState<Item, Params>
   | ErrorFxState<Item, Params>
   | CompletedFxState<Item, Params>
 

@@ -1,8 +1,8 @@
 import * as chai from 'chai'
 import * as sinon from 'sinon'
 import { Observable, Subscriber } from 'rxjs'
-import 'mocha'
 import { Store, createStore, applyMiddleware, Reducer, AnyAction } from 'redux'
+import 'mocha'
 const expect = chai.expect
 
 import { fxActions, FxActionCreators } from './actions'
@@ -12,16 +12,14 @@ import { Effect } from './effects'
 import { fxMiddleware, fxEpic } from './middleware'
 
 describe('fx-state', () => {
-  interface Params {
-    param1: string
-    param2: string
-  }
+  type Params = [string, number]
   interface Item {
     prop1: boolean
     prop2: number
   }
 
-  const params: Params = { param1: 'abc', param2: '123' }
+  const param1 = 'abc'
+  const param2 = 123
   const data: Item = { prop1: true, prop2: 10 }
   const error = 'error'
 
@@ -39,7 +37,7 @@ describe('fx-state', () => {
         asyncObservable$subscriber = subscriber
       })
       sinon.spy(asyncObservable$, 'subscribe')
-      asyncObservableFactory$ = sinon.spy((params: Params) => params && asyncObservable$)
+      asyncObservableFactory$ = sinon.spy((_1: string, _2: number) => asyncObservable$)
       actions = fxActions(asyncObservableFactory$)
       action$ = new Observable<AnyAction>(subscriber => {
         action$subscriber = subscriber
@@ -51,18 +49,18 @@ describe('fx-state', () => {
       describe('given an ObservableFactory', () => {
         it('should call a given ObservableFactory and subscribe to the resulting Observable', () => {
           action$out.subscribe()
-          action$subscriber.next(actions.call(params))
-          expect(asyncObservableFactory$).to.have.been.calledWith(params)
+          action$subscriber.next(actions.call(param1, param2))
+          expect(asyncObservableFactory$).to.have.been.calledWith(param1, param2)
           expect(asyncObservable$.subscribe).to.have.been.called
         })
 
         it('should unsubscribe from the previous Observable when there is a new call action', () => {
           const subscription = sinon.spy()
           action$out.subscribe(subscription)
-          action$subscriber.next(actions.call(params))
+          action$subscriber.next(actions.call(param1, param2))
           asyncObservable$subscriber.next(data)
           expect(subscription).to.have.been.calledWithMatch(actions.data(data))
-          action$subscriber.next(actions.call({ param1: 'other', param2: 'params' }))
+          action$subscriber.next(actions.call(param1, param2))
           asyncObservable$subscriber.next(data)
           expect(subscription).not.to.have.been.calledTwice
         })
@@ -74,7 +72,7 @@ describe('fx-state', () => {
         it('should dispatch a `data` action with the payload sent by the Observable', () => {
           const subscription = sinon.spy()
           action$out.subscribe(subscription)
-          action$subscriber.next(actions.call(params))
+          action$subscriber.next(actions.call(param1, param2))
           asyncObservable$subscriber.next(data)
           expect(subscription).to.have.been.calledWithMatch(actions.data(data))
         })
@@ -84,7 +82,7 @@ describe('fx-state', () => {
         it('should dispatch an `error` action with the payload sent by the Observable', () => {
           const subscription = sinon.spy()
           action$out.subscribe(subscription)
-          action$subscriber.next(actions.call(params))
+          action$subscriber.next(actions.call(param1, param2))
           asyncObservable$subscriber.error(error)
           expect(subscription).to.have.been.calledWithMatch(actions.error(error))
         })
@@ -94,7 +92,7 @@ describe('fx-state', () => {
         it('should dispatch a `complete` action', () => {
           const subscription = sinon.spy()
           action$out.subscribe(subscription)
-          action$subscriber.next(actions.call(params))
+          action$subscriber.next(actions.call(param1, param2))
           asyncObservable$subscriber.complete()
           expect(subscription).to.have.been.calledWithMatch(actions.complete())
         })
@@ -105,7 +103,7 @@ describe('fx-state', () => {
       it('should unsubscribe from the Observable', () => {
         const subscription = sinon.spy()
         action$out.subscribe(subscription)
-        action$subscriber.next(actions.call(params))
+        action$subscriber.next(actions.call(param1, param2))
         asyncObservable$subscriber.next(data)
         expect(subscription).to.have.been.calledWithMatch(actions.data(data))
         action$subscriber.next(actions.destroy())
@@ -135,7 +133,7 @@ describe('fx-state', () => {
           }),
       )
       actions = fxActions(effect)
-      callAction = actions.call(params)
+      callAction = actions.call(param1, param2)
       store.dispatch(callAction)
     })
 
@@ -145,7 +143,7 @@ describe('fx-state', () => {
       })
 
       it('should call the effect', () => {
-        expect(effect).to.have.been.calledWithMatch(params)
+        expect(effect).to.have.been.calledWithMatch(param1, param2)
       })
     })
 
