@@ -17,7 +17,8 @@
     "test": "mocha --opts mocha.opts",
     "test:watch": "mocha --opts mocha.opts --watch",
     "lint": "tslint src/**/*.ts*",
-    "precommit": "./precommit.sh"
+    "precommit": "./precommit.sh",
+    "docs": "static dist/docs -a 0.0.0.0"
   },
   "license": "MIT",
   "dependencies": {
@@ -33,6 +34,7 @@
     "chai": "^4.1.2",
     "husky": "0.14.3",
     "mocha": "^5.2.0",
+    "node-static": "^0.7.10",
     "prettier": "1.13.5",
     "redux": "^4.0.0",
     "sinon": "^6.0.0",
@@ -41,6 +43,7 @@
     "tslint": "^5.7.0",
     "tslint-config-prettier": "1.13.0",
     "tslint-eslint-rules": "^5.3.1",
+    "typedoc": "^0.12.0",
     "typescript": "^3.0.1"
   },
   "prettier": {

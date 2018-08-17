@@ -48,7 +48,7 @@ describe('fx-state', () => {
     withParamsActions = fxActions(withParamsEffect$)
     withSubtypeActions = fxActions({
       effect: withParamsEffect$,
-      subtype: 'TEST',
+      effectName: 'TEST',
     })
   })
 

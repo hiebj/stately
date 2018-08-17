@@ -37,7 +37,7 @@ export const initialFxState = Object.freeze({
   params: null,
   data: null,
   error: null,
-} as InitialFxState)
+}) as InitialFxState
 
 export interface FxSlice {
   fx: { [key: string]: FxState<any, any> }

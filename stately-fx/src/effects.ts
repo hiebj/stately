@@ -2,10 +2,12 @@ import { Observable, ObservableInput, from as $from } from 'rxjs'
 
 export type ObservableFn<Item, Params extends any[]> = (params: Params) => Observable<Item>
 
-type ObservableInputEffect<Item, Params extends any[]> = (
+export type ObservableInputEffect<Item, Params extends any[]> = (
   ...params: Params
 ) => ObservableInput<Item>
-type AsyncGeneratorEffect<Item, Params extends any[]> = (...params: Params) => AsyncIterable<Item>
+export type AsyncGeneratorEffect<Item, Params extends any[]> = (
+  ...params: Params
+) => AsyncIterable<Item>
 
 export type Effect<Item, Params extends any[]> =
   | ObservableInputEffect<Item, Params>

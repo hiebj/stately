@@ -8,7 +8,7 @@ import { set } from './cache'
 export type FxActionType = 'call' | 'data' | 'error' | 'complete' | 'destroy'
 
 export interface FxMeta {
-  subtype: string
+  effectName: string
   fxType: FxActionType
   id: string
 }
@@ -29,7 +29,7 @@ export interface BaseFxActionCreator<Payload extends any[]> {
   readonly id: string
   readonly type: string
   readonly fxType: FxActionType
-  readonly subtype: string
+  readonly effectName: string
   readonly match: (action: AnyAction) => action is FxAction<Payload>
 }
 
@@ -39,7 +39,7 @@ export interface FxActionCreator<Payload extends any[]> extends BaseFxActionCrea
 
 export interface FxActionCreators<Item, Params extends any[]> {
   readonly id: string
-  readonly subtype: string
+  readonly effectName: string
   readonly call: FxActionCreator<Params>
   readonly data: FxActionCreator<[Item]>
   readonly error: FxActionCreator<[any]>
@@ -50,7 +50,7 @@ export interface FxActionCreators<Item, Params extends any[]> {
 
 export interface FxActionsConfig<Item, Params extends any[]> {
   effect: Effect<Item, Params>
-  subtype?: string
+  effectName?: string
   // TODO errorResolver?: (error: any) => Err
 }
 
@@ -62,39 +62,39 @@ function getConfig<Item, Params extends any[]>(
     typeof effect === 'function'
       ? {
           effect,
-          subtype: effect.name,
+          effectName: effect.name,
         }
       : {
           ...effect,
-          subtype: effect.subtype || effect.effect.name,
+          effectName: effect.effectName || effect.effect.name,
         }
-  if (!config.subtype) {
+  if (!config.effectName) {
     // tslint:disable-next-line:no-console
     console.warn(
       'fx-state:\n',
-      '#fxActions was called with an anonymous side-effect function, and no `subtype` was provided.\n',
+      '#fxActions was called with an anonymous side-effect function, and no `effectName` was provided.\n',
       'The action type will be derived using the FxActions uuid, which is ugly and non-descriptive.\n',
-      'It is recommended that you either provide a non-anonymous Effect or provide a `subtype`.',
+      'It is recommended that you either provide a non-anonymous Effect or provide a `effectName`.',
     )
-    config.subtype = id
+    config.effectName = id
   }
   return config
 }
 
 const fxacf = <Params extends any[]>(
   id: string,
-  subtype: string,
+  effectName: string,
   fxType: FxActionType,
 ): FxActionCreator<Params> => {
-  const type = `fx/${subtype}/${fxType}`
+  const type = `fx/${effectName}/${fxType}`
   const actionCreator = (...payload: Params) => ({
     type,
     payload,
-    fx: { subtype, fxType, id },
+    fx: { effectName, fxType, id },
   })
   const match = (action: AnyAction): action is FxAction<Params> =>
     isFxAction(action) &&
-    action.fx.subtype === subtype &&
+    action.fx.effectName === effectName &&
     action.fx.fxType === fxType &&
     // really, only checking the id is actually necessary
     action.fx.id === id
@@ -102,30 +102,28 @@ const fxacf = <Params extends any[]>(
     Object.assign(actionCreator, {
       id,
       type,
-      subtype,
+      effectName,
       fxType,
       match,
     }),
   )
 }
 
-function fxActions<Item, Params extends any[]>(
+export const fxActions = <Item, Params extends any[]>(
   effectOrConfig: Effect<Item, Params> | FxActionsConfig<Item, Params>,
-): FxActionCreators<Item, Params> {
+): FxActionCreators<Item, Params> => {
   const id = uuid()
-  const { effect, subtype } = getConfig(effectOrConfig, id)
+  const { effect, effectName } = getConfig(effectOrConfig, id)
   const actions = Object.freeze({
     id,
-    subtype,
-    call: fxacf<Params>(id, subtype, 'call'),
-    data: fxacf<[Item]>(id, subtype, 'data'),
-    error: fxacf<any>(id, subtype, 'error'),
-    complete: fxacf<[]>(id, subtype, 'complete'),
-    destroy: fxacf<[]>(id, subtype, 'destroy'),
+    effectName,
+    call: fxacf<Params>(id, effectName, 'call'),
+    data: fxacf<[Item]>(id, effectName, 'data'),
+    error: fxacf<any>(id, effectName, 'error'),
+    complete: fxacf<[]>(id, effectName, 'complete'),
+    destroy: fxacf<[]>(id, effectName, 'destroy'),
     selector: (state: FxSlice) => state.fx[id] || initialFxState,
   }) as FxActionCreators<Item, Params>
   set(id, actions, $fromEffect(effect))
   return actions
 }
-
-export { fxActions }
