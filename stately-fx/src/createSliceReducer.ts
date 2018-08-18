@@ -12,6 +12,7 @@ import { Reducer, AnyAction } from 'redux'
  * })
  *
  * // typeof sliceReducerOfA: Reducer<{ a: A }>
+ * ```
  */
 const createSliceReducer = <State extends { [k: string]: any }>(
   reducerDict: { [K in keyof State]: Reducer<State[K]> },
