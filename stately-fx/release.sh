@@ -5,9 +5,6 @@ yarn install
 yarn test
 npm version $@
 yarn build
-#git push && git push --tags
-echo "pushing"
+git push && git push --tags
 cd dist
-#npm publish
-echo "publishing"
-cat package.json | grep version
+npm publish
