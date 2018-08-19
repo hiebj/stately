@@ -8,4 +8,3 @@ yarn build
 git push && git push --tags
 cd dist
 npm publish
-cat package.json | grep version
