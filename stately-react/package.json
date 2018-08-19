@@ -17,8 +17,7 @@
     "test": "mocha --opts mocha.opts",
     "lint": "tslint src/**/*.ts*",
     "precommit": "./precommit.sh",
-    "docs": "static dist/docs -a 0.0.0.0",
-    "release": "./release.sh"
+    "docs": "static dist/docs -a 0.0.0.0"
   },
   "license": "MIT",
   "dependencies": {
