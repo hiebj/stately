@@ -37,25 +37,25 @@ export interface FxActionCreator<Payload extends any[]> extends BaseFxActionCrea
   (...payload: Payload): FxAction<Payload>
 }
 
-export interface FxActionCreators<Item, Params extends any[]> {
+export interface FxActionCreators<Data, Params extends any[]> {
   readonly id: string
   readonly effectName: string
   readonly call: FxActionCreator<Params>
-  readonly data: FxActionCreator<[Item]>
+  readonly data: FxActionCreator<[Data]>
   readonly error: FxActionCreator<[any]>
   readonly complete: FxActionCreator<[]>
   readonly destroy: FxActionCreator<[]>
-  readonly selector: (state: FxSlice) => FxState<Item, Params>
+  readonly selector: (state: FxSlice) => FxState<Data, Params>
 }
 
-export interface FxActionsConfig<Item, Params extends any[]> {
-  effect: Effect<Item, Params>
+export interface FxActionsConfig<Data, Params extends any[]> {
+  effect: Effect<Data, Params>
   effectName?: string
   // TODO errorResolver?: (error: any) => Err
 }
 
-function getConfig<Item, Params extends any[]>(
-  effect: Effect<Item, Params> | FxActionsConfig<Item, Params>,
+function getConfig<Data, Params extends any[]>(
+  effect: Effect<Data, Params> | FxActionsConfig<Data, Params>,
   id: string,
 ) {
   const config =
@@ -109,21 +109,21 @@ const fxacf = <Params extends any[]>(
   )
 }
 
-export const fxActions = <Item, Params extends any[]>(
-  effectOrConfig: Effect<Item, Params> | FxActionsConfig<Item, Params>,
-): FxActionCreators<Item, Params> => {
+export const fxActions = <Data, Params extends any[]>(
+  effectOrConfig: Effect<Data, Params> | FxActionsConfig<Data, Params>,
+): FxActionCreators<Data, Params> => {
   const id = uuid()
   const { effect, effectName } = getConfig(effectOrConfig, id)
   const actions = Object.freeze({
     id,
     effectName,
     call: fxacf<Params>(id, effectName, 'call'),
-    data: fxacf<[Item]>(id, effectName, 'data'),
+    data: fxacf<[Data]>(id, effectName, 'data'),
     error: fxacf<any>(id, effectName, 'error'),
     complete: fxacf<[]>(id, effectName, 'complete'),
     destroy: fxacf<[]>(id, effectName, 'destroy'),
     selector: (state: FxSlice) => state.fx[id] || initialFxState,
-  }) as FxActionCreators<Item, Params>
+  }) as FxActionCreators<Data, Params>
   set(id, actions, $fromEffect(effect))
   return actions
 }

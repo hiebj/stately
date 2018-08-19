@@ -5,32 +5,32 @@ export interface InitialFxState {
   error: null
 }
 
-export interface ActiveFxState<Item, Params> {
+export interface ActiveFxState<Data, Params> {
   status: 'active'
   params: Params | null
-  data: Item | null
+  data: Data | null
   error: null
 }
 
-export interface ErrorFxState<Item, Params> {
+export interface ErrorFxState<Data, Params> {
   status: 'error'
   params: Params | null
-  data: Item | null
+  data: Data | null
   error: any
 }
 
-export interface CompletedFxState<Item, Params> {
+export interface CompletedFxState<Data, Params> {
   status: 'completed'
   params: Params | null
-  data: Item
+  data: Data
   error: null
 }
 
-export type FxState<Item, Params = undefined> =
+export type FxState<Data, Params = undefined> =
   | InitialFxState
-  | ActiveFxState<Item, Params>
-  | ErrorFxState<Item, Params>
-  | CompletedFxState<Item, Params>
+  | ActiveFxState<Data, Params>
+  | ErrorFxState<Data, Params>
+  | CompletedFxState<Data, Params>
 
 export const initialFxState = Object.freeze({
   status: null,

@@ -12,13 +12,13 @@ describe('fx-state', () => {
     param1: string
     param2: string
   }
-  interface Item {
+  interface Data {
     prop1: boolean
     prop2: number
   }
 
   const params: Params = { param1: 'abc', param2: '123' }
-  const data: Item = { prop1: true, prop2: 10 }
+  const data: Data = { prop1: true, prop2: 10 }
 
   const noParamsEffect$ = () => $of(data)
 
@@ -31,13 +31,13 @@ describe('fx-state', () => {
     }
   }
 
-  const openState: FxState<Item, Params> = {
+  const openState: FxState<Data, Params> = {
     status: 'active',
     params,
     error: null,
     data,
   }
-  const fxSlice = <Item, Params>(fxState: FxState<Item, Params>, id: string): FxSlice => ({
+  const fxSlice = <Data, Params>(fxState: FxState<Data, Params>, id: string): FxSlice => ({
     fx: { [id]: fxState },
   })
 

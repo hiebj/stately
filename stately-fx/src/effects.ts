@@ -1,31 +1,31 @@
 import { Observable, ObservableInput, from as $from } from 'rxjs'
 
-export type ObservableFn<Item, Params extends any[]> = (params: Params) => Observable<Item>
+export type ObservableFn<Data, Params extends any[]> = (params: Params) => Observable<Data>
 
-export type ObservableInputEffect<Item, Params extends any[]> = (
+export type ObservableInputEffect<Data, Params extends any[]> = (
   ...params: Params
-) => ObservableInput<Item>
-export type AsyncGeneratorEffect<Item, Params extends any[]> = (
+) => ObservableInput<Data>
+export type AsyncGeneratorEffect<Data, Params extends any[]> = (
   ...params: Params
-) => AsyncIterable<Item>
+) => AsyncIterable<Data>
 
-export type Effect<Item, Params extends any[]> =
-  | ObservableInputEffect<Item, Params>
-  | AsyncGeneratorEffect<Item, Params>
+export type Effect<Data, Params extends any[]> =
+  | ObservableInputEffect<Data, Params>
+  | AsyncGeneratorEffect<Data, Params>
 
-const isAsyncIterable = <Item>(obj: AsyncIterable<Item> | any): obj is AsyncIterable<Item> =>
+const isAsyncIterable = <Data>(obj: AsyncIterable<Data> | any): obj is AsyncIterable<Data> =>
   Symbol.asyncIterator in obj && typeof obj[Symbol.asyncIterator] === 'function'
 
-const $fromAsyncIterable = <Item>(asyncIterable: AsyncIterable<Item>): Observable<Item> =>
+const $fromAsyncIterable = <Data>(asyncIterable: AsyncIterable<Data>): Observable<Data> =>
   new Observable(
     subscriber =>
       void (async () => {
         try {
-          for await (const item of asyncIterable) {
+          for await (const data of asyncIterable) {
             if (subscriber.closed) {
               return
             }
-            subscriber.next(item)
+            subscriber.next(data)
           }
           subscriber.complete()
         } catch (e) {
@@ -34,9 +34,9 @@ const $fromAsyncIterable = <Item>(asyncIterable: AsyncIterable<Item>): Observabl
       })(),
   )
 
-export const $fromEffect = <Item, Params extends any[]>(
-  effect: Effect<Item, Params>,
-): ObservableFn<Item, Params> => (params: Params) => {
+export const $fromEffect = <Data, Params extends any[]>(
+  effect: Effect<Data, Params>,
+): ObservableFn<Data, Params> => (params: Params) => {
   const fxAbstraction = effect(...params)
   return isAsyncIterable(fxAbstraction) ? $fromAsyncIterable(fxAbstraction) : $from(fxAbstraction)
 }
