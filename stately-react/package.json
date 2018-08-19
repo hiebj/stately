@@ -1,0 +1,70 @@
+{
+  "name": "react-fx-state",
+  "version": "0.0.1",
+  "description": "Render-prop and high-order components that expose the fx-state API to React consumers",
+  "author": {
+    "name": "Jon Hieb",
+    "email": "hiebj@live.com",
+    "url": "https://github.com/hiebj"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hiebj/react-fx-state"
+  },
+  "scripts": {
+    "build": "./build.sh",
+    "dev": "tsc --w",
+    "test": "mocha --opts mocha.opts",
+    "lint": "tslint src/**/*.ts*",
+    "precommit": "./precommit.sh",
+    "docs": "static dist/docs -a 0.0.0.0"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "fx-state": "^0.0.9",
+    "react": "16.4.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.4",
+    "@types/chai-enzyme": "^0.6.4",
+    "@types/enzyme": "^3.1.10",
+    "@types/enzyme-adapter-react-16": "^1.0.2",
+    "@types/jsdom": "^11.0.5",
+    "@types/mocha": "^5.2.2",
+    "@types/prop-types": "^15.5.2",
+    "@types/react": "16.3.17",
+    "@types/react-redux": "^6.0.2",
+    "@types/sinon": "^5.0.1",
+    "@types/sinon-chai": "^3.2.0",
+    "chai": "^4.1.2",
+    "chai-enzyme": "1.0.0-beta.1",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "husky": "0.14.3",
+    "jsdom": "^11.11.0",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^5.2.0",
+    "node-static": "^0.7.10",
+    "prettier": "1.13.5",
+    "react-dom": "16.4.1",
+    "react-redux": "^5.0.7",
+    "react-test-renderer": "^16.4.1",
+    "redux": "^4.0.0",
+    "sinon": "^6.0.0",
+    "sinon-chai": "^3.2.0",
+    "ts-node": "^6.1.1",
+    "tslint": "^5.7.0",
+    "tslint-config-prettier": "1.13.0",
+    "tslint-eslint-rules": "^5.3.1",
+    "tslint-react": "^3.2.0",
+    "typedoc": "^0.12.0",
+    "typescript": "^3.0.1"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "printWidth": 100
+  }
+}

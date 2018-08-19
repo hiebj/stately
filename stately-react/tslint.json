@@ -1,0 +1,16 @@
+{
+  "extends": ["tslint:recommended", "tslint-eslint-rules", "tslint-config-prettier"],
+  "rules": {
+    "arrow-parens": false,
+    "ordered-imports": [false],
+    "trailing-comma": [false],
+    "interface-name": [false],
+    "no-unused-expression": [false],
+    "no-shadowed-variable": [false],
+    "max-line-length": [false],
+    "member-access": [false],
+    "member-ordering": [false],
+    "object-literal-sort-keys": false,
+    "variable-name": [true, "allow-leading-underscore"]
+  }
+}
