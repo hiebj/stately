@@ -11,6 +11,7 @@
     "member-access": [false],
     "member-ordering": [false],
     "object-literal-sort-keys": false,
-    "variable-name": [true, "allow-leading-underscore"]
+    "variable-name": [true, "allow-leading-underscore", "allow-pascal-case"],
+    "only-arrow-functions": false
   }
 }
