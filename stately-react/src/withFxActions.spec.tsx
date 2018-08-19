@@ -19,5 +19,6 @@ describe('withFxActions(Component)', () => {
     expect(wrapper.props().fxActions).to.have.property('call')
     expect(wrapper.props().fxActions).to.have.property('destroy')
     expect(wrapper.props().fxActions).to.have.property('selector')
+    expect(wrapper.props().fxActions.call('abc', 123)).to.deep.property('payload', ['abc', 123])
   })
 })

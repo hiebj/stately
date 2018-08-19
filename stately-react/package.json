@@ -21,7 +21,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "fx-state": "^0.0.9",
+    "fx-state": "^0.0.10",
     "react": "16.4.1"
   },
   "devDependencies": {
