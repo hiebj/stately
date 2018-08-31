@@ -1,6 +1,6 @@
 {
   "name": "react-fx-state",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Render-prop and high-order components that expose the fx-state API to React consumers",
   "author": {
     "name": "Jon Hieb",
