@@ -1,3 +1,1 @@
-export {
-  withFxActions
-} from './withFxActions'
+export { withFxActions } from './withFxActions'

@@ -16,7 +16,7 @@ export const withFxActions = <Data, Params extends any[]>(
     class WithFxActions extends React.Component<Subtract<Props, FxActionsProps<Data, Params>>> {
       fxActions: FxActionCreators<Data, Params>
 
-      constructor(props: Exclude<Props, keyof FxActionsProps<Data, Params>>) {
+      constructor(props: Subtract<Props, FxActionsProps<Data, Params>>) {
         super(props)
         this.fxActions = fxActions(effectOrConfig)
       }
@@ -33,11 +33,13 @@ export const withFxActions = <Data, Params extends any[]>(
             'This component is unmounting, but the associated `fxActions` was not destroyed.',
             'It is the responsibility of a component using `withFxActions` to clean up after itself,',
             'as `withFxActions` does not have access to `dispatch`.\n',
-            'Failing to destroy `fxActions` will result in a slow memory leak.',
+            'Failing to destroy `fxActions` may cause a memory leak.',
           )
         }
       }
     }
-    ;(WithFxActions as any).displayName = displayName
+    ;(WithFxActions as React.ComponentClass<
+      Subtract<Props, FxActionsProps<Data, Params>>
+    >).displayName = displayName
     return WithFxActions
   }
