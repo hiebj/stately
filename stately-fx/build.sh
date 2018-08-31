@@ -2,7 +2,7 @@
 set -e
 rm -rf dist
 mkdir dist
-tsc -d
+tsc
 typedoc src/ --out dist/docs --exclude '**/*.spec.*'
 cp -r src/ dist/src
 cp package.json dist/
