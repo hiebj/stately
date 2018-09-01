@@ -63,6 +63,33 @@ export interface CallableEffectProps<Data, Params extends any[]> {
 
 type Props<Data, Params extends any[]> = CallableEffectProps<Data, Params>
 
+/**
+ * CallableEffect is a React render-prop component that injects FxState for any side effect into its children.
+ * It gives the consumer control over when the side-effect is executed.
+ * This can be used for user-initiated side-effect calls, such as submitting a search or deleting a record.
+ * Each instance of a CallableEffect will own its own unique FxState and FxActions.
+ * On unmount, the component will destroy its FxState, cleaning up after itself.
+ * 
+ * The following complete example initiates the given side-effect when the button is clicked.
+ * While it is pending, it renders a loading indicator.
+ * When it resolves, it renders the value given to `resolve()`.
+ * If the Promise is rejected, it renders the error given to `reject()`.
+ * 
+ * @example
+ * ```
+ * // typeof effect: (p1: number, p2: string) => Promise<string>
+ * 
+ * <CallableEffect effect={effect}>
+ *   {(state, call) =>
+ *     <div>
+ *       {state.error ? <span className="error">{state.error}</span>
+ *          : state.data ? <span className="response">{state.data}</span>
+            : state.status === 'active' && <span className="loading" />}
+ *       <button onClick={() => call(123, 'abc')}>call effect</button>
+ *     </div>}
+ * </CallableEffect>
+ * ```
+ */
 export class CallableEffect<Data, Params extends any[]> extends React.Component<
   Props<Data, Params>
 > {

@@ -81,6 +81,32 @@ export interface DeclarativeEffectProps<Data, Params extends any[]> {
 
 type Props<Data, Params extends any[]> = DeclarativeEffectProps<Data, Params>
 
+/**
+ * DeclarativeEffect is a React render-prop component that injects FxState for any side effect into its children.
+ * It executes the given side-effect on mount and when the given `params` change.
+ * This can be used to render the results of a query, such as search results or a specific record.
+ * Each instance of a DeclarativeEffect will own its own unique FxState and FxActions.
+ * On unmount, the component will destroy its FxState, cleaning up after itself.
+ * 
+ * The following complete example initiates the given side effect when the component mounts.
+ * While it is pending, it renders a loading indicator.
+ * When it resolves, it renders the value given to `resolve()`.
+ * If the Promise is rejected, it renders the error given to `reject()`.
+ * 
+ * @example
+ * ```
+ * // typeof effect: (p1: number, p2: string) => Promise<string>
+ * 
+ * <DeclarativeEffect effect={effect} params={[123, 'abc'] as [number, string]}>
+ *   {state =>
+ *     <div>
+ *       {state.error ? <span className="error">{state.error}</span>
+ *          : state.data ? <span className="response">{state.data}</span>
+            : state.status === 'active' && <span className="loading" />}
+ *     </div>}
+ * </DeclarativeEffect>
+ * ```
+ */
 export class DeclarativeEffect<Data, Params extends any[]> extends React.Component<
   Props<Data, Params>
 > {
