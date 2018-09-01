@@ -70,7 +70,7 @@ type Props<Data, Params extends any[]> = CallableEffectProps<Data, Params>
  * Each instance of a CallableEffect will own its own unique FxState and FxActions.
  * On unmount, the component will destroy its FxState, cleaning up after itself.
  * 
- * The following complete example initiates the given side-effect when the button is clicked.
+ * The following example initiates the given side-effect when the button is clicked.
  * While it is pending, it renders a loading indicator.
  * When it resolves, it renders the value given to `resolve()`.
  * If the Promise is rejected, it renders the error given to `reject()`.
