@@ -1,6 +1,6 @@
 import * as chai from 'chai'
 import * as sinon from 'sinon'
-import { Observable, Subscriber } from 'rxjs'
+import { Observable, Subject } from 'rxjs'
 import { Store, createStore, applyMiddleware, Reducer, AnyAction } from 'redux'
 import 'mocha'
 const expect = chai.expect
@@ -24,24 +24,20 @@ describe('fx-state', () => {
   const error = 'error'
 
   describe('fxEpic', () => {
-    let asyncObservable$: Observable<Item>
-    let asyncObservable$subscriber: Subscriber<Item>
-    let asyncObservableFactory$: Effect<Item, Params>
+    let fakeEffectSubject$: Subject<Item>
+    let effect: Effect<Item, Params>
     let actions: FxActionCreators<Item, Params>
-    let action$: Observable<AnyAction>
-    let action$subscriber: Subscriber<AnyAction>
+    let action$: Subject<AnyAction>
     let action$out: Observable<AnyAction>
 
     beforeEach(() => {
-      asyncObservable$ = new Observable<Item>(subscriber => {
-        asyncObservable$subscriber = subscriber
+      effect = sinon.spy((_1: string, _2: number) => {
+        fakeEffectSubject$ = new Subject()
+        sinon.spy(fakeEffectSubject$, 'subscribe')
+        return fakeEffectSubject$
       })
-      sinon.spy(asyncObservable$, 'subscribe')
-      asyncObservableFactory$ = sinon.spy((_1: string, _2: number) => asyncObservable$)
-      actions = fxActions(asyncObservableFactory$)
-      action$ = new Observable<AnyAction>(subscriber => {
-        action$subscriber = subscriber
-      })
+      actions = fxActions(effect)
+      action$ = new Subject()
       action$out = fxEpic(action$)
     })
 
@@ -49,19 +45,29 @@ describe('fx-state', () => {
       describe('given an ObservableFactory', () => {
         it('should call a given ObservableFactory and subscribe to the resulting Observable', () => {
           action$out.subscribe()
-          action$subscriber.next(actions.call(param1, param2))
-          expect(asyncObservableFactory$).to.have.been.calledWith(param1, param2)
-          expect(asyncObservable$.subscribe).to.have.been.called
+          action$.next(actions.call(param1, param2))
+          expect(effect).to.have.been.calledWith(param1, param2)
+          expect(fakeEffectSubject$.subscribe).to.have.been.called
         })
 
         it('should unsubscribe from the previous Observable when there is a new call action', () => {
           const subscription = sinon.spy()
           action$out.subscribe(subscription)
-          action$subscriber.next(actions.call(param1, param2))
-          asyncObservable$subscriber.next(data)
+          action$.next(actions.call(param1, param2))
+          const origSubject = fakeEffectSubject$
+          fakeEffectSubject$.next(data)
           expect(subscription).to.have.been.calledWithMatch(actions.data(data))
-          action$subscriber.next(actions.call(param1, param2))
-          asyncObservable$subscriber.next(data)
+          action$.next(actions.call(param1, param2))
+          origSubject.next(data)
+          expect(subscription).not.to.have.been.calledTwice
+        })
+
+        it('should dispatch actions for a subsequent call action', () => {
+          const subscription = sinon.spy()
+          action$out.subscribe(subscription)
+          action$.next(actions.call(param1, param2))
+          action$.next(actions.call(param1, param2))
+          fakeEffectSubject$.next(data)
           expect(subscription).not.to.have.been.calledTwice
         })
       })
@@ -72,8 +78,8 @@ describe('fx-state', () => {
         it('should dispatch a `data` action with the payload sent by the Observable', () => {
           const subscription = sinon.spy()
           action$out.subscribe(subscription)
-          action$subscriber.next(actions.call(param1, param2))
-          asyncObservable$subscriber.next(data)
+          action$.next(actions.call(param1, param2))
+          fakeEffectSubject$.next(data)
           expect(subscription).to.have.been.calledWithMatch(actions.data(data))
         })
       })
@@ -82,8 +88,8 @@ describe('fx-state', () => {
         it('should dispatch an `error` action with the payload sent by the Observable', () => {
           const subscription = sinon.spy()
           action$out.subscribe(subscription)
-          action$subscriber.next(actions.call(param1, param2))
-          asyncObservable$subscriber.error(error)
+          action$.next(actions.call(param1, param2))
+          fakeEffectSubject$.error(error)
           expect(subscription).to.have.been.calledWithMatch(actions.error(error))
         })
       })
@@ -92,8 +98,8 @@ describe('fx-state', () => {
         it('should dispatch a `complete` action', () => {
           const subscription = sinon.spy()
           action$out.subscribe(subscription)
-          action$subscriber.next(actions.call(param1, param2))
-          asyncObservable$subscriber.complete()
+          action$.next(actions.call(param1, param2))
+          fakeEffectSubject$.complete()
           expect(subscription).to.have.been.calledWithMatch(actions.complete())
         })
       })
@@ -103,11 +109,11 @@ describe('fx-state', () => {
       it('should unsubscribe from the Observable', () => {
         const subscription = sinon.spy()
         action$out.subscribe(subscription)
-        action$subscriber.next(actions.call(param1, param2))
-        asyncObservable$subscriber.next(data)
+        action$.next(actions.call(param1, param2))
+        fakeEffectSubject$.next(data)
         expect(subscription).to.have.been.calledWithMatch(actions.data(data))
-        action$subscriber.next(actions.destroy())
-        asyncObservable$subscriber.next(data)
+        action$.next(actions.destroy())
+        fakeEffectSubject$.next(data)
         expect(subscription).not.to.have.been.calledTwice
       })
     })

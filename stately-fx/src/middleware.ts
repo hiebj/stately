@@ -1,4 +1,4 @@
-import { Observable, Subscriber, empty as $empty } from 'rxjs'
+import { Observable, empty as $empty, Subject } from 'rxjs'
 import { filter as $filter, mergeMap as $mergeMap, first as $first } from 'rxjs/operators'
 import { AnyAction, Middleware } from 'redux'
 
@@ -45,14 +45,11 @@ export const fxEpic = (action$: Observable<AnyAction>): Observable<AnyAction> =>
   )
 
 export const fxMiddleware: Middleware = store => {
-  let action$subscriber: Subscriber<AnyAction>
-  const action$: Observable<AnyAction> = new Observable(subscriber => {
-    action$subscriber = subscriber
-  })
+  const action$: Subject<AnyAction> = new Subject()
   fxEpic(action$).subscribe(store.dispatch)
   return next => action => {
     const result = next(action)
-    action$subscriber.next(action)
+    action$.next(action)
     return result
   }
 }
