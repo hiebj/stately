@@ -22,7 +22,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "fx-state": "^0.0.10",
+    "fx-state": "^0.0.12",
     "react": "^16.4.1",
     "react-redux": "^5.0.7"
   },
