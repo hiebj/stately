@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { Dispatch, Unsubscribe, Store } from 'redux'
+
 import { StoreConsumer } from './StoreConsumer'
+import weakMapMemoize from './weakMapMemoize'
 
 export interface ConnectedProps<State, Derived> {
   store: Store<State>
@@ -8,80 +10,56 @@ export interface ConnectedProps<State, Derived> {
   deriveState: (state: State) => Derived
 }
 
-interface ConnectedState<Derived> {
-  state: Derived | null
-}
-
-const shallowEquals = (
-  v: { [k: string]: any; [k: number]: any },
-  o: { [k: string]: any; [k: number]: any },
-) => {
-  for (const key in v) {
-    if (!(key in o) || v[key] !== o[key]) {
-      return false
-    }
-  }
-  for (const key in o) {
-    if (!(key in v) || v[key] !== o[key]) {
-      return false
-    }
-  }
-  return true
+interface ReplaceableState<State> {
+  state: State
 }
 
 export class Connected<State, Derived = State> extends React.Component<
   ConnectedProps<State, Derived>,
-  ConnectedState<Derived>
+  ReplaceableState<Derived>
 > {
   static defaultProps = {
-    deriveState: function<S>(s: S) {
-      return s
+    deriveState: function<T>(x: T) {
+      return x
     },
   }
-  unsubscribe?: Unsubscribe
-  state: ConnectedState<Derived> // replaceState
+
+  deriveState: (state: State) => Derived
+  state: ReplaceableState<Derived>
+  unsubscribe: Unsubscribe
 
   constructor(props: ConnectedProps<State, Derived>) {
     super(props)
+    this.deriveState = weakMapMemoize(this.props.deriveState)
     this.state = { state: this.getDerivedState() }
+    this.unsubscribe = this.props.store.subscribe(this.onStoreUpdate)
+    // TODO handle props change? they really shouldn't ever...
+    // could use derivedStateFromProps to bind these into state, maybe.
+    // either that or spit warnings into the console...
+  }
+
+  replace(state: Derived) {
+    this.setState({ state })
   }
 
   getDerivedState() {
-    if (this.props.store) {
-      const nextState = this.props.store.getState()
-      return this.props.deriveState!(nextState)
-    } else {
-      return null
-    }
+    return this.deriveState(this.props.store.getState())
   }
 
   onStoreUpdate = () => {
-    const nextState = this.getDerivedState()
-    if (nextState && !shallowEquals(this.state, nextState)) {
-      this.setState({ state: nextState })
-    }
+    this.replace(this.getDerivedState())
   }
 
   render() {
-    const { store } = this.props
-    if (store && this.state.state) {
-      return this.props.children(this.state.state, store.dispatch)
-    } else {
-      return null
-    }
+    return this.props.children(this.state.state, this.props.store.dispatch)
   }
 
   componentDidMount() {
-    if (this.props.store) {
-      this.unsubscribe = this.props.store.subscribe(this.onStoreUpdate)
-      this.onStoreUpdate()
-    }
+    this.onStoreUpdate()
   }
 
   componentWillUnmount() {
-    if (this.unsubscribe) {
-      this.unsubscribe()
-    }
+    this.unsubscribe()
   }
 }
 

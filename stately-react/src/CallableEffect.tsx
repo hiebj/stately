@@ -69,6 +69,7 @@ export interface CallableEffectProps<Data, Params extends any[]> {
  */
 // TODO with variadic generics, withFxActions could passthrough generics to this component.
 // That would allow CallableEffect to be rewritten as a SFC
+// https://github.com/Microsoft/TypeScript/issues/5453
 export class CallableEffect<Data, Params extends any[]> extends React.Component<
   CallableEffectProps<Data, Params>
 > {
