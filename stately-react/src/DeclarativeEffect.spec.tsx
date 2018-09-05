@@ -11,7 +11,7 @@ import 'mocha'
 const expect = chai.expect
 
 import { testMiddleware, AddTestActionListener } from './middleware.spec'
-import { DeclarativeEffect } from './DeclarativeEffect'
+import { ContextDeclarativeEffect } from './DeclarativeEffect'
 
 let clock: SinonFakeTimers
 let testStore: Store<FxSlice>
@@ -24,7 +24,7 @@ const effect = (p1: number, p2: string) =>
 
 const TestApp: React.SFC<{ params: [number, string] }> = ({ params }) => (
   <Provider store={testStore}>
-    <DeclarativeEffect effect={effect} params={params}>
+    <ContextDeclarativeEffect effect={effect} params={params}>
       {state => (
         <div>
           {state.data
@@ -39,7 +39,7 @@ const TestApp: React.SFC<{ params: [number, string] }> = ({ params }) => (
             : state.status === 'active' && <span className="loading" />}
         </div>
       )}
-    </DeclarativeEffect>
+    </ContextDeclarativeEffect>
   </Provider>
 )
 

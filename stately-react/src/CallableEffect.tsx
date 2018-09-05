@@ -1,26 +1,28 @@
 import * as React from 'react'
-import { Dispatch } from 'redux'
-import { connect } from 'react-redux'
+import { Store, Dispatch } from 'redux'
 
 import { Effect, FxState, fxActions, FxSlice } from 'fx-state'
 import { FxActionCreators, FxActionsConfig } from 'fx-state/actions'
-import { FxActionsProps } from './withFxActions'
+import { fxReducer } from 'fx-state/reducer'
+
+import Controllable from './Controllable'
+import { Connected } from './Connected'
+import { StoreConsumer } from './StoreConsumer'
 
 type CallableEffectChildren<Data, Params extends any[]> = (
   state: FxState<Data, Params>,
   call: (...params: Params) => void,
 ) => Renderable
 
-interface InnerCallableEffectProps<Data, Params extends any[]>
-  extends FxActionsProps<Data, Params> {
+interface LifecycleCallableEffectProps<Data, Params extends any[]> {
   children: CallableEffectChildren<Data, Params>
   state: FxState<Data, Params>
   call: (...params: Params) => void
   destroy: () => void
 }
 
-class InnerCallableEffect<Data, Params extends any[]> extends React.Component<
-  InnerCallableEffectProps<Data, Params>
+class LifecycleCallableEffect<Data, Params extends any[]> extends React.Component<
+  LifecycleCallableEffectProps<Data, Params>
 > {
   render() {
     const { children, state, call } = this.props
@@ -32,36 +34,11 @@ class InnerCallableEffect<Data, Params extends any[]> extends React.Component<
   }
 }
 
-const mapStateToProps = <Data, Params extends any[]>(
-  state: FxSlice,
-  { fxActions: { selector } }: FxActionsProps<Data, Params>,
-) => ({ state: selector(state) })
-const mapDispatchToProps = <Data, Params extends any[]>(
-  dispatch: Dispatch,
-  { fxActions: { call, destroy } }: FxActionsProps<Data, Params>,
-) => ({
-  call: (...params: Params) => {
-    dispatch(call(...params))
-  },
-  destroy: () => {
-    dispatch(destroy())
-  },
-})
-
-type ConnectedProps = 'state' | 'call' | 'destroy'
-
-const ConnectedCallableEffect = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(InnerCallableEffect)
-ConnectedCallableEffect.displayName = 'InnerCallableEffect'
-
 export interface CallableEffectProps<Data, Params extends any[]> {
   effect: Effect<Data, Params> | FxActionsConfig<Data, Params>
   children: CallableEffectChildren<Data, Params>
+  store?: Store<FxSlice>
 }
-
-type Props<Data, Params extends any[]> = CallableEffectProps<Data, Params>
 
 /**
  * CallableEffect is a React render-prop component that injects FxState for any side effect into its children.
@@ -79,7 +56,7 @@ type Props<Data, Params extends any[]> = CallableEffectProps<Data, Params>
  * ```
  * // typeof effect: (p1: number, p2: string) => Promise<string>
  * 
- * <CallableEffect effect={effect}>
+ * <CallableEffect effect={effect} store={store}>
  *   {(state, call) =>
  *     <div>
  *       {state.error ? <span className="error">{state.error}</span>
@@ -90,25 +67,59 @@ type Props<Data, Params extends any[]> = CallableEffectProps<Data, Params>
  * </CallableEffect>
  * ```
  */
+// TODO with variadic generics, withFxActions could passthrough generics to this component.
+// That would allow CallableEffect to be rewritten as a SFC
 export class CallableEffect<Data, Params extends any[]> extends React.Component<
-  Props<Data, Params>
+  CallableEffectProps<Data, Params>
 > {
   fxActions: FxActionCreators<Data, Params>
 
-  constructor(props: Props<Data, Params>) {
+  constructor(props: CallableEffectProps<Data, Params>) {
     super(props)
     this.fxActions = fxActions(props.effect)
   }
 
   render() {
-    // connect() is the worst thing
-    const CastConnectedCallableEffect = (ConnectedCallableEffect as any) as React.ComponentClass<
-      Omit<InnerCallableEffectProps<Data, Params>, ConnectedProps>
-    >
-    return (
-      <CastConnectedCallableEffect fxActions={this.fxActions}>
+    const { selector, call, destroy } = this.fxActions
+    const { store } = this.props
+    const lifecycleCallableEffect = (state: FxSlice, dispatch: Dispatch) => (
+      <LifecycleCallableEffect
+        state={selector(state)}
+        call={(...params: Params) => {
+          dispatch(call(...params))
+        }}
+        destroy={() => {
+          dispatch(destroy())
+        }}
+      >
         {this.props.children}
-      </CastConnectedCallableEffect>
+      </LifecycleCallableEffect>
+    )
+    return store ? (
+      <Connected store={store}>
+        {(state, dispatch) => (
+          <Controllable reducer={fxReducer} state={state} dispatch={dispatch}>
+            {lifecycleCallableEffect}
+          </Controllable>
+        )}
+      </Connected>
+    ) : (
+      <Controllable reducer={fxReducer}>{lifecycleCallableEffect}</Controllable>
+    )
+  }
+}
+
+/**
+ * ContextCallableEffect is identical to CallableEffect, except that it uses StoreConsumer to pull the `store` prop off of Legacy React Context.
+ */
+export class ContextCallableEffect<Data, Params extends any[]> extends React.Component<
+  Omit<CallableEffectProps<Data, Params>, 'store'>
+> {
+  render() {
+    return (
+      <StoreConsumer<FxSlice>>
+        {store => <CallableEffect {...this.props} store={store} />}
+      </StoreConsumer>
     )
   }
 }

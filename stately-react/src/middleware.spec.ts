@@ -4,7 +4,7 @@ import { filter as $filter, first as $first } from 'rxjs/operators'
 
 export type AddTestActionListener = (
   matchAction: (action: AnyAction) => boolean,
-  handler: () => void,
+  handler: (action: AnyAction) => void,
   done?: Mocha.Done,
 ) => void
 
@@ -23,9 +23,9 @@ export const testMiddleware = () => {
         $filter(matchAction),
         $first(),
       )
-      .subscribe(() => {
+      .subscribe(action => {
         try {
-          handler()
+          handler(action)
         } catch (e) {
           if (done) {
             done(e)

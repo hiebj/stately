@@ -10,7 +10,7 @@ import { mount } from 'enzyme'
 import 'mocha'
 const expect = chai.expect
 
-import { CallableEffect } from './CallableEffect'
+import { ContextCallableEffect } from './CallableEffect'
 import { AddTestActionListener, testMiddleware } from './middleware.spec'
 
 let clock: SinonFakeTimers
@@ -24,7 +24,7 @@ const effect = (p1: number, p2: string) =>
 
 const TestApp: React.SFC = () => (
   <Provider store={testStore}>
-    <CallableEffect effect={effect}>
+    <ContextCallableEffect effect={effect}>
       {(state, call) => (
         <div>
           {state.data
@@ -44,7 +44,7 @@ const TestApp: React.SFC = () => (
           />
         </div>
       )}
-    </CallableEffect>
+    </ContextCallableEffect>
   </Provider>
 )
 

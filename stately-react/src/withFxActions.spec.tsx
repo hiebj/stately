@@ -13,8 +13,8 @@ const TestComponent: React.SFC<{ text: string } & FxActionsProps<any, any>> = ({
 describe('withFxActions(Component)', () => {
   it('should inject an `fxActions` prop into the given component', () => {
     const effect = () => Promise.resolve(10)
-    const WithFxActions = withFxActions(effect)(TestComponent)
-    const wrapper = shallow(<WithFxActions text={'this is a component'} />)
+    const WithFxActions = withFxActions(TestComponent)
+    const wrapper = shallow(<WithFxActions effect={effect} text={'this is a component'} />)
     expect(wrapper.props()).to.have.property('fxActions')
     expect(wrapper.props().fxActions).to.have.property('call')
     expect(wrapper.props().fxActions).to.have.property('destroy')
