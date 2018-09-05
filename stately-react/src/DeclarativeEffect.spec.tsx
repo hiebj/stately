@@ -22,6 +22,8 @@ const effect = (p1: number, p2: string) =>
     setTimeout(() => resolve({ r1: p1 + 1, r2: p2.toLowerCase() }), 10)
   })
 
+// with literal tuple type inference, you would not need to cast params.
+// https://github.com/Microsoft/TypeScript/issues/24350
 const TestApp: React.SFC<{ params: [number, string] }> = ({ params }) => (
   <Provider store={testStore}>
     <ContextDeclarativeEffect effect={effect} params={params}>
