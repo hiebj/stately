@@ -1,3 +1,3 @@
 export { withFxActions } from './withFxActions'
-export { CallableEffect } from './CallableEffect'
-export { DeclarativeEffect } from './DeclarativeEffect'
+export { CallableEffect, ContextCallableEffect } from './CallableEffect'
+export { DeclarativeEffect, ContextDeclarativeEffect } from './DeclarativeEffect'
