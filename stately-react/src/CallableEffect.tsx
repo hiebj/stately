@@ -1,10 +1,17 @@
 import * as React from 'react'
 import { Store, Dispatch } from 'redux'
 
-import { Effect, FxState, fxActions, FxSlice } from 'fx-state'
-import { FxActionCreators, FxActionsConfig } from 'fx-state/actions'
-import { fxReducer } from 'fx-state/reducer'
+import {
+  Effect,
+  FxState,
+  fxActions,
+  FxSlice,
+  FxActionCreators,
+  FxActionsConfig,
+  fxReducer,
+} from 'fx-state'
 
+import { Renderable, Omit } from './types'
 import Controllable from './Controllable'
 import { Connected } from './Connected'
 import { StoreConsumer } from './StoreConsumer'

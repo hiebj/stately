@@ -1,3 +1,3 @@
-type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
-type Subtract<T, K> = Omit<T, keyof K>
-type Renderable = ReturnType<React.Component['render']>
+export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
+export type Subtract<T, K> = Omit<T, keyof K>
+export type Renderable = ReturnType<React.Component['render']>

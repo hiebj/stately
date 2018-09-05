@@ -2,6 +2,8 @@ import * as React from 'react'
 import { Store } from 'redux'
 import * as PropTypes from 'prop-types'
 
+import { Renderable } from './types'
+
 export interface StoreConsumerProps<State> {
   children: (store: Store<State>) => Renderable
 }

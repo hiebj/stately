@@ -1,7 +1,10 @@
 import * as React from 'react'
+
 import { Effect, fxActions } from 'fx-state'
 import { FxActionCreators, FxActionsConfig } from 'fx-state/actions'
 import { get as fxCacheGet } from 'fx-state/cache'
+
+import { Subtract } from './types'
 
 export interface WithFxActionsProps<Data, Params extends any[]> {
   effect: Effect<Data, Params> | FxActionsConfig<Data, Params>

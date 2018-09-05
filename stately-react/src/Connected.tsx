@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Dispatch, Unsubscribe, Store } from 'redux'
 
+import { Renderable, Omit } from './types'
 import { StoreConsumer } from './StoreConsumer'
 import weakMapMemoize from './weakMapMemoize'
 
