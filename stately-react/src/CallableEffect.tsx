@@ -49,8 +49,8 @@ export interface CallableEffectProps<Data, Params extends any[]> {
  * 
  * The following example initiates the given side-effect when the button is clicked.
  * While it is pending, it renders a loading indicator.
- * When it resolves, it renders the value given to `resolve()`.
- * If the Promise is rejected, it renders the error given to `reject()`.
+ * When it resolves, it renders the value that was passed to `resolve()`.
+ * If the Promise is rejected, it renders the error that was passed to `reject()`.
  * 
  * @example
  * ```
