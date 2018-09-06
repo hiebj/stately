@@ -1,7 +1,7 @@
 {
-  "name": "react-fx-state",
-  "version": "0.0.9",
-  "description": "Render-prop and high-order components that expose the fx-state API to React consumers",
+  "name": "stately-react",
+  "version": "0.0.1",
+  "description": "Types and components for simplifying management and integration of state in React apps",
   "author": {
     "name": "Jon Hieb",
     "email": "hiebj@live.com",
@@ -9,20 +9,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/hiebj/react-fx-state"
+    "url": "https://github.com/hiebj/stately"
   },
   "scripts": {
-    "dev": "tsc --w",
+    "tsc": "tsc",
     "prettier": "prettier --write src/**/*.ts*",
-    "test": "mocha --opts mocha.opts",
-    "precommit": "./precommit.sh",
-    "build": "./build.sh",
-    "release": "./release.sh",
+    "test": "mocha --opts ./mocha.opts",
+    "build": "../build.sh",
+    "release": "../release.sh",
     "docs": "static dist/docs -a 0.0.0.0"
   },
   "license": "MIT",
   "dependencies": {
-    "fx-state": "^0.0.12",
+    "stately-fx": "^0.0.1",
     "react": "^16.4.1"
   },
   "devDependencies": {
@@ -41,7 +40,6 @@
     "chai-enzyme": "1.0.0-beta.1",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
-    "husky": "0.14.3",
     "jsdom": "^11.11.0",
     "jsdom-global": "^3.0.2",
     "mocha": "^5.2.0",
@@ -56,12 +54,5 @@
     "ts-node": "^6.1.1",
     "typedoc": "^0.12.0",
     "typescript": "^3.0.1"
-  },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "all",
-    "bracketSpacing": true,
-    "printWidth": 100
   }
 }

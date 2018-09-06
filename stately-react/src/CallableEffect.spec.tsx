@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { createStore, compose, applyMiddleware, Store, AnyAction } from 'redux'
 import { Provider } from 'react-redux'
-import { fxReducer, fxMiddleware, FxSlice } from 'fx-state'
-import { FxActionType, isFxAction } from 'fx-state/actions'
+import { fxReducer, fxMiddleware, FxSlice } from 'stately-fx'
+import { FxActionType, isFxAction } from 'stately-fx/actions'
 
 import * as chai from 'chai'
 import { SinonFakeTimers, useFakeTimers } from 'sinon'

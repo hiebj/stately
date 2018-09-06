@@ -1,7 +1,7 @@
 {
-  "name": "fx-state",
-  "version": "0.0.12",
-  "description": "Types, actions, reducer, and middleware for managing the state of side-effects in Redux",
+  "name": "stately-fx",
+  "version": "0.0.1",
+  "description": "Types and functions for managing the state of side-effects, following the Reducer pattern and the Observable spec",
   "author": {
     "name": "Jon Hieb",
     "email": "hiebj@live.com",
@@ -9,15 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/hiebj/fx-state"
+    "url": "https://github.com/hiebj/stately"
   },
   "scripts": {
-    "dev": "tsc --w",
+    "tsc": "tsc",
     "prettier": "prettier --write src/**/*.ts*",
-    "test": "mocha --opts mocha.opts",
-    "precommit": "./precommit.sh",
-    "build": "./build.sh",
-    "release": "./release.sh",
+    "test": "mocha --opts ./mocha.opts",
+    "build": "../build.sh",
+    "release": "../release.sh",
     "docs": "static dist/docs -a 0.0.0.0"
   },
   "license": "MIT",
@@ -32,7 +31,6 @@
     "@types/sinon-chai": "^3.2.0",
     "@types/uuid": "^3.4.3",
     "chai": "^4.1.2",
-    "husky": "0.14.3",
     "mocha": "^5.2.0",
     "node-static": "^0.7.10",
     "prettier": "1.13.5",
@@ -42,12 +40,5 @@
     "ts-node": "^6.1.1",
     "typedoc": "^0.12.0",
     "typescript": "^3.0.1"
-  },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "all",
-    "bracketSpacing": true,
-    "printWidth": 100
   }
 }
