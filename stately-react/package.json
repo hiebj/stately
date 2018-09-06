@@ -1,6 +1,6 @@
 {
   "name": "stately-react",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Components and related types for simplifying management and integration of state in React apps",
   "author": {
     "name": "Jon Hieb",
@@ -22,7 +22,8 @@
   "license": "MIT",
   "dependencies": {
     "stately-fx": "^0.0.1",
-    "react": "^16.4.1"
+    "react": "^16.4.1",
+    "redux": "^4.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",
@@ -48,7 +49,6 @@
     "react-dom": "16.4.1",
     "react-redux": "^5.0.7",
     "react-test-renderer": "^16.4.1",
-    "redux": "^4.0.0",
     "sinon": "^6.0.0",
     "sinon-chai": "^3.2.0",
     "ts-node": "^6.1.1",
