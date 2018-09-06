@@ -27,7 +27,7 @@ const testReducer: Reducer<State> = (s = initialState, a) =>
 const store = createStore(testReducer)
 
 describe('<Connected>', () => {
-  describe('NaturalConnectedProps', () => {
+  describe('basic store integration', () => {
     const wrapper = shallow(
       <Connected store={store}>
         {s => (
@@ -38,12 +38,12 @@ describe('<Connected>', () => {
       </Connected>,
     )
 
-    it('should bind data from the given store into the `children` render-prop', () => {
+    it('should pass the root state from the given store to the `children` render-prop', () => {
       expect(wrapper).to.contain(<span className="test">john</span>)
     })
   })
 
-  describe('DerivedConnectedProps', () => {
+  describe('derived state integration', () => {
     const wrapper = shallow(
       // TODO this sucks. why can't TypeScript infer the type of Derived from the given deriveState?
       <Connected<State, Derived>
@@ -58,12 +58,12 @@ describe('<Connected>', () => {
       </Connected>,
     )
 
-    it('should bind data from the given store into the `children` render-prop', () => {
+    it('should use `deriveState` to transform the root state, and pass the result to the `children` render-prop', () => {
       expect(wrapper).to.contain(<span className="test">smith, john</span>)
     })
   })
 
-  describe('dispatch binding', () => {
+  describe('dispatch hook', () => {
     const wrapper = shallow(
       <Connected store={store}>
         {(s, d) => <button onClick={() => d({ type: 'CONNECTED_TEST' })}>{s.person.first}</button>}
@@ -74,7 +74,7 @@ describe('<Connected>', () => {
       testReducerSpy = spy()
     })
 
-    it('should dispatch actions to the connected Store when the given Dispatch is called', () => {
+    it('should dispatch actions on the given store', () => {
       expect(testReducerSpy).not.to.have.been.called
       wrapper.simulate('click')
       expect(testReducerSpy).to.have.been.called
@@ -94,7 +94,7 @@ describe('<Connected>', () => {
       </Provider>,
     )
 
-    it('should bind data from the given store into the `children` render-prop', () => {
+    it('should pull a `store` off React 15 context and pass it through', () => {
       expect(wrapper).to.contain(<span className="test">john</span>)
     })
   })

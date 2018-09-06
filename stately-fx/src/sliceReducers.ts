@@ -1,4 +1,4 @@
-import { Reducer, AnyAction } from 'redux'
+import { Reducer, Action } from 'redux'
 
 /**
  * The function `sliceReducers` is a function that is like `chainReducers`, but each given reducer
@@ -135,7 +135,7 @@ export default function sliceReducers(...reducers: Array<Reducer<{}>>): Reducer<
 function reduceAndMergeAfterChecking<S extends {}>(
   nextReducer: Reducer<Partial<S>>,
   currentState: S | undefined,
-  action: AnyAction,
+  action: Action,
   accumulatedState: Partial<S>,
 ) {
   const nextStateToMerge = nextReducer(currentState, action)

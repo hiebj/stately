@@ -7,52 +7,52 @@ import { FxState, FxSlice } from './FxState'
 
 import { fxActions, FxActionCreators } from './actions'
 
-describe('fx-state', () => {
-  interface Params {
-    param1: string
-    param2: string
-  }
-  interface Data {
-    prop1: boolean
-    prop2: number
-  }
+interface Params {
+  param1: string
+  param2: string
+}
+interface Data {
+  prop1: boolean
+  prop2: number
+}
 
-  const params: Params = { param1: 'abc', param2: '123' }
-  const data: Data = { prop1: true, prop2: 10 }
+const params: Params = { param1: 'abc', param2: '123' }
+const data: Data = { prop1: true, prop2: 10 }
 
-  const noParamsEffect$ = () => $of(data)
+const noParamsEffect$ = () => $of(data)
 
-  async function* withParamsEffect$(params: Params) {
-    if (params) {
-      const toYield = await noParamsEffect$().toPromise()
-      yield toYield
-    } else {
-      yield null
-    }
+async function* withParamsEffect$(params: Params) {
+  if (params) {
+    const toYield = await noParamsEffect$().toPromise()
+    yield toYield
+  } else {
+    yield null
   }
+}
 
-  const openState: FxState<Data, Params> = {
-    status: 'active',
-    params,
-    error: null,
-    data,
-  }
-  const fxSlice = <Data, Params>(fxState: FxState<Data, Params>, id: string): FxSlice => ({
-    fx: { [id]: fxState },
+const openState: FxState<Data, Params> = {
+  status: 'active',
+  params,
+  error: null,
+  data,
+}
+const fxSlice = <Data, Params>(fxState: FxState<Data, Params>, id: string): FxSlice => ({
+  fx: { [id]: fxState },
+})
+
+let withParamsActions: FxActionCreators<any, any>
+let withSubtypeActions: FxActionCreators<any, any>
+
+beforeEach(() => {
+  withParamsActions = fxActions(withParamsEffect$)
+  withSubtypeActions = fxActions({
+    effect: withParamsEffect$,
+    effectName: 'TEST',
   })
+})
 
-  let withParamsActions: FxActionCreators<any, any>
-  let withSubtypeActions: FxActionCreators<any, any>
-
-  beforeEach(() => {
-    withParamsActions = fxActions(withParamsEffect$)
-    withSubtypeActions = fxActions({
-      effect: withParamsEffect$,
-      effectName: 'TEST',
-    })
-  })
-
-  it('should return a new set of action creators for a unique ID', () => {
+describe('fxActions', () => {
+  it('should return a new set of action creators with a unique ID', () => {
     const nextAction = withParamsActions.data(data)
     expect(nextAction).to.have.property('type', `fx/withParamsEffect$/data`)
     expect(nextAction).to.deep.property('payload', [data])
@@ -65,8 +65,10 @@ describe('fx-state', () => {
     expect(nextAction).to.deep.property('payload', [data])
     expect(nextAction.fx).to.have.property('id')
   })
+})
 
-  describe('actions#selector', () => {
+describe('FxActions instance', () => {
+  describe('#selector', () => {
     it('should return the owned state of a set of actions', () => {
       const state = fxSlice(openState, withParamsActions.id)
       const selector = withParamsActions.selector
@@ -75,7 +77,7 @@ describe('fx-state', () => {
     })
   })
 
-  describe('actions#<action>#match', () => {
+  describe('#<action>#match', () => {
     it('should return a function that returns true iff it is given an action created by this exact action creator', () => {
       expect(withParamsActions.data.match(withParamsActions.data(''))).to.be.true
       expect(withParamsActions.data.match(withParamsActions.call(''))).to.be.false

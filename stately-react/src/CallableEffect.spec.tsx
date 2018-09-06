@@ -1,8 +1,10 @@
 import * as React from 'react'
-import { createStore, compose, applyMiddleware, Store, AnyAction } from 'redux'
+import { createStore, compose, applyMiddleware, Store } from 'redux'
 import { Provider } from 'react-redux'
+
 import { fxReducer, fxMiddleware, FxSlice } from 'stately-fx'
-import { FxActionType, isFxAction } from 'stately-fx/actions'
+import { isFxActionOfType } from 'stately-fx/actions'
+import { AddTestActionListener, action$Middleware, onNext as $onNext } from 'stately-fx/middleware'
 
 import * as chai from 'chai'
 import { SinonFakeTimers, useFakeTimers } from 'sinon'
@@ -11,7 +13,6 @@ import 'mocha'
 const expect = chai.expect
 
 import { ContextCallableEffect } from './CallableEffect'
-import { AddTestActionListener, testMiddleware } from './middleware.spec'
 
 let clock: SinonFakeTimers
 let testStore: Store<FxSlice>
@@ -48,16 +49,13 @@ const TestApp: React.SFC = () => (
   </Provider>
 )
 
-const isFxActionOfType = (type: FxActionType) => (action: AnyAction) =>
-  isFxAction(action) && action.fx.fxType === type
-
 const isCompleteAction = isFxActionOfType('complete')
 
 describe('<CallableEffect>', () => {
   beforeEach(() => {
     clock = useFakeTimers()
-    const { onNext: on, middleware } = testMiddleware()
-    onNext = on
+    const { action$, middleware } = action$Middleware()
+    onNext = $onNext(action$)
     testStore = createStore(
       fxReducer,
       compose(
@@ -71,39 +69,47 @@ describe('<CallableEffect>', () => {
     clock.restore()
   })
 
-  it('should not render spinner or response data initially', () => {
-    const wrapper = mount(<TestApp />)
-    expect(wrapper).not.to.have.descendants('.loading')
-    expect(wrapper).not.to.have.descendants('.r1')
-    expect(wrapper).not.to.have.descendants('.r2')
+  describe('mount', () => {
+    it('should pass initial effect state', () => {
+      const wrapper = mount(<TestApp />)
+      expect(wrapper).not.to.have.descendants('.loading')
+      expect(wrapper).not.to.have.descendants('.r1')
+      expect(wrapper).not.to.have.descendants('.r2')
+    })
   })
 
-  it('should dispatch a `call` action and render spinner on click', () => {
-    const wrapper = mount(<TestApp />)
-    wrapper.find('button').simulate('click')
-    expect(wrapper).to.have.descendants('.loading')
+  describe('call hook', () => {
+    it('should trigger the given `effect` and pass "active" effect state', () => {
+      const wrapper = mount(<TestApp />)
+      wrapper.find('button').simulate('click')
+      expect(wrapper).to.have.descendants('.loading')
+    })
   })
 
-  it('should render data when effect resolves and store updates', done => {
-    const wrapper = mount(<TestApp />)
-    wrapper.find('button').simulate('click')
-    onNext(
-      isCompleteAction,
-      () => {
-        wrapper.update()
-        expect(wrapper.find('.r1')).to.have.text('2')
-        expect(wrapper.find('.r2')).to.have.text('param')
-        done()
-      },
-      done,
-    )
-    clock.next()
+  describe('`effect` yields data', () => {
+    it('should pass the new data in the effect state', done => {
+      const wrapper = mount(<TestApp />)
+      wrapper.find('button').simulate('click')
+      onNext(
+        isCompleteAction,
+        () => {
+          wrapper.update()
+          expect(wrapper.find('.r1')).to.have.text('2')
+          expect(wrapper.find('.r2')).to.have.text('param')
+          done()
+        },
+        done,
+      )
+      clock.next()
+    })
   })
 
-  it('should destroy the state when the component unmounts', () => {
-    const wrapper = mount(<TestApp />)
-    wrapper.find('button').simulate('click')
-    wrapper.unmount()
-    expect(Object.keys(testStore.getState().fx)).to.have.property('length', 0)
+  describe('unmount', () => {
+    it('should remove the effect state from the state tree', () => {
+      const wrapper = mount(<TestApp />)
+      wrapper.find('button').simulate('click')
+      wrapper.unmount()
+      expect(Object.keys(testStore.getState().fx)).to.have.property('length', 0)
+    })
   })
 })

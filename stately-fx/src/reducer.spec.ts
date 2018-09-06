@@ -142,7 +142,7 @@ describe('fxReducer', () => {
     beforeEach(() => {
       slice = fxReducer(fxSlice(openState, withParamsActions.id), withParamsActions.destroy()).fx
     })
-    it('should remove the ID completely from rx state tracking', () => {
+    it('should remove the ID completely from the FxSlice', () => {
       expect(slice).not.to.have.property(withParamsActions.id)
     })
   })

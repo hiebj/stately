@@ -11,7 +11,7 @@ const TestComponent: React.SFC<{ text: string } & FxActionsProps<any, any>> = ({
 )
 
 describe('withFxActions(Component)', () => {
-  it('should inject an `fxActions` prop into the given component', () => {
+  it('should expose an `effect` prop, and inject a corresponding `fxActions` prop', () => {
     const effect = () => Promise.resolve(10)
     const WithFxActions = withFxActions(TestComponent)
     const wrapper = shallow(<WithFxActions effect={effect} text={'this is a component'} />)

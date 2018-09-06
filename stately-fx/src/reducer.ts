@@ -1,11 +1,11 @@
-import { Reducer, AnyAction } from 'redux'
+import { Reducer, Action } from 'redux'
 
 import { FxState, initialFxState, FxSlice } from './FxState'
 import { isFxAction } from './actions'
 import chainReducers from './chainReducers'
 import { remove } from './cache'
 
-const callReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
+const callReducer: Reducer<FxState<any, any>, Action> = (state = initialFxState, action) =>
   isFxAction(action) && action.fx.fxType === 'call'
     ? {
         ...state,
@@ -16,7 +16,7 @@ const callReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxSta
       }
     : state
 
-const dataReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
+const dataReducer: Reducer<FxState<any, any>, Action> = (state = initialFxState, action) =>
   isFxAction(action) && action.fx.fxType === 'data'
     ? {
         ...state,
@@ -25,7 +25,7 @@ const dataReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxSta
       }
     : state
 
-const errorReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
+const errorReducer: Reducer<FxState<any, any>, Action> = (state = initialFxState, action) =>
   isFxAction(action) && action.fx.fxType === 'error'
     ? {
         ...state,
@@ -34,7 +34,7 @@ const errorReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxSt
       }
     : state
 
-const completeReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialFxState, action) =>
+const completeReducer: Reducer<FxState<any, any>, Action> = (state = initialFxState, action) =>
   isFxAction(action) && action.fx.fxType === 'complete'
     ? {
         ...state,
@@ -43,8 +43,19 @@ const completeReducer: Reducer<FxState<any, any>, AnyAction> = (state = initialF
       }
     : state
 
+/**
+ * A reducer that handles `FxAction`s for a single `FxActionCreators` instance.
+ * In other words, this reducer manages the `FxState` that is returned by `FxActionCreators#selector`.
+ * It is called by `fxSliceReducer`. Generally you should not have to integrate this reducer into your store directly. 
+ */
 export const fxStateReducer = chainReducers(callReducer, dataReducer, errorReducer, completeReducer)
 
+/**
+ * A reducer that manages the `FxSlice` in the root state of a state tree.
+ * It maps actions by their uuid to individual `FxState` instances.
+ * This reducer must be integrated into your store for the library to work.
+ * It is aliased and exported as `fxReducer` from the library's `index`.
+ */
 export const fxSliceReducer: Reducer<FxSlice> = (state = { fx: {} }, action) => {
   if (isFxAction(action)) {
     const id = action.fx.id

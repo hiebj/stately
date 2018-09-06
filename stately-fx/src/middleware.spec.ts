@@ -1,7 +1,7 @@
 import * as chai from 'chai'
 import * as sinon from 'sinon'
 import { Observable, Subject } from 'rxjs'
-import { Store, createStore, applyMiddleware, Reducer, AnyAction } from 'redux'
+import { Store, createStore, applyMiddleware, Reducer, Action } from 'redux'
 import 'mocha'
 const expect = chai.expect
 
@@ -26,8 +26,8 @@ describe('fxEpic', () => {
   let fakeEffectSubject$: Subject<Item>
   let effect: Effect<Item, Params>
   let actions: FxActionCreators<Item, Params>
-  let action$: Subject<AnyAction>
-  let action$out: Observable<AnyAction>
+  let action$: Subject<Action>
+  let action$out: Observable<Action>
 
   beforeEach(() => {
     effect = sinon.spy((_1: string, _2: number) => {
@@ -40,16 +40,16 @@ describe('fxEpic', () => {
     action$out = fxEpic(action$)
   })
 
-  describe('#call action', () => {
-    describe('given an ObservableFactory', () => {
-      it('should call a given ObservableFactory and subscribe to the resulting Observable', () => {
-        action$out.subscribe()
-        action$.next(actions.call(param1, param2))
-        expect(effect).to.have.been.calledWith(param1, param2)
-        expect(fakeEffectSubject$.subscribe).to.have.been.called
-      })
+  describe('a \'call\' FxAction is dispatched', () => {
+    it('should call the corresponding Effect and subscribe to the resulting Observable', () => {
+      action$out.subscribe()
+      action$.next(actions.call(param1, param2))
+      expect(effect).to.have.been.calledWith(param1, param2)
+      expect(fakeEffectSubject$.subscribe).to.have.been.called
+    })
 
-      it('should unsubscribe from the previous Observable when there is a new call action', () => {
+    describe('a subsequent \'call\' action is dispatched', () => {
+      it('should unsubscribe from the previous Observable', () => {
         const subscription = sinon.spy()
         action$out.subscribe(subscription)
         action$.next(actions.call(param1, param2))
@@ -61,7 +61,7 @@ describe('fxEpic', () => {
         expect(subscription).not.to.have.been.calledTwice
       })
 
-      it('should dispatch actions for a subsequent call action', () => {
+      it('should dispatch actions corresponding to the new Observable', () => {
         const subscription = sinon.spy()
         action$out.subscribe(subscription)
         action$.next(actions.call(param1, param2))
@@ -72,8 +72,8 @@ describe('fxEpic', () => {
     })
   })
 
-  describe('observable$', () => {
-    describe('#data', () => {
+  describe('the subscribed Observable returned by the configured Effect', () => {
+    describe('on #data', () => {
       it('should dispatch a `data` action with the payload sent by the Observable', () => {
         const subscription = sinon.spy()
         action$out.subscribe(subscription)
@@ -83,7 +83,7 @@ describe('fxEpic', () => {
       })
     })
 
-    describe('#error', () => {
+    describe('on #error', () => {
       it('should dispatch an `error` action with the payload sent by the Observable', () => {
         const subscription = sinon.spy()
         action$out.subscribe(subscription)
@@ -93,8 +93,8 @@ describe('fxEpic', () => {
       })
     })
 
-    describe('#complete', () => {
-      it('should dispatch a `complete` action', () => {
+    describe('on #complete', () => {
+      it('should dispatch an empty `complete` action', () => {
         const subscription = sinon.spy()
         action$out.subscribe(subscription)
         action$.next(actions.call(param1, param2))
@@ -104,8 +104,8 @@ describe('fxEpic', () => {
     })
   })
 
-  describe('#destroy action', () => {
-    it('should unsubscribe from the Observable', () => {
+  describe('a \'destroy\' FxAction is dispatched', () => {
+    it('should unsubscribe from the corresponding Observable', () => {
       const subscription = sinon.spy()
       action$out.subscribe(subscription)
       action$.next(actions.call(param1, param2))
@@ -125,10 +125,10 @@ describe('fxMiddleware', () => {
   let actions: FxActionCreators<Item, Params>
   let resolve: (i: Item) => void
   let reject: (reason: any) => void
-  let callAction: AnyAction
+  let callAction: Action
 
   beforeEach(() => {
-    reducer = sinon.spy((_state: {}, _action: AnyAction) => ({}))
+    reducer = sinon.spy((_state: {}, _action: Action) => ({}))
     store = createStore(reducer, {}, applyMiddleware(fxMiddleware))
     effect = sinon.spy(
       async (_p: Params) =>
@@ -142,14 +142,12 @@ describe('fxMiddleware', () => {
     store.dispatch(callAction)
   })
 
-  describe('dispatch #call action', () => {
-    it('should call the reducer', () => {
-      expect(reducer).to.have.been.calledWithMatch({}, callAction)
-    })
+  it('should call the reducer', () => {
+    expect(reducer).to.have.been.calledWithMatch({}, callAction)
+  })
 
-    it('should call the effect', () => {
-      expect(effect).to.have.been.calledWithMatch(param1, param2)
-    })
+  it('should call the effect', () => {
+    expect(effect).to.have.been.calledWithMatch(param1, param2)
   })
 
   describe('effect resolves', () => {

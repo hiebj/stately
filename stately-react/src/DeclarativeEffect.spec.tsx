@@ -1,8 +1,10 @@
 import * as React from 'react'
-import { createStore, applyMiddleware, compose, Store, AnyAction } from 'redux'
+import { createStore, applyMiddleware, compose, Store } from 'redux'
 import { Provider } from 'react-redux'
+
 import { fxReducer, fxMiddleware, FxSlice } from 'stately-fx'
-import { isFxAction, FxActionType } from 'stately-fx/actions'
+import { isFxActionOfType } from 'stately-fx/actions'
+import { AddTestActionListener, action$Middleware, onNext as $onNext } from 'stately-fx/middleware'
 
 import * as chai from 'chai'
 import { SinonFakeTimers, useFakeTimers } from 'sinon'
@@ -10,7 +12,6 @@ import { mount } from 'enzyme'
 import 'mocha'
 const expect = chai.expect
 
-import { testMiddleware, AddTestActionListener } from './middleware.spec'
 import { ContextDeclarativeEffect } from './DeclarativeEffect'
 
 let clock: SinonFakeTimers
@@ -45,16 +46,13 @@ const TestApp: React.SFC<{ params: [number, string] }> = ({ params }) => (
   </Provider>
 )
 
-const isFxActionOfType = (type: FxActionType) => (action: AnyAction) =>
-  isFxAction(action) && action.fx.fxType === type
-
 const isCompleteAction = isFxActionOfType('complete')
 
 describe('<DeclarativeEffect>', () => {
   beforeEach(() => {
     clock = useFakeTimers()
-    const { onNext: on, middleware } = testMiddleware()
-    onNext = on
+    const { action$, middleware } = action$Middleware()
+    onNext = $onNext(action$)
     testStore = createStore(
       fxReducer,
       compose(
@@ -68,58 +66,66 @@ describe('<DeclarativeEffect>', () => {
     clock.restore()
   })
 
-  it('should call the effect on mount, and render spinner initially', () => {
-    const wrapper = mount(<TestApp params={[1, 'PARAM']} />)
-    expect(wrapper).to.have.descendants('.loading')
+  describe('mount', () => {
+    it('should immediately trigger the `effect` with the given `params`, and pass "active" effect state', () => {
+      const wrapper = mount(<TestApp params={[1, 'PARAM']} />)
+      expect(wrapper).to.have.descendants('.loading')
+    })
   })
 
-  it('should render data when effect resolves and store updates', done => {
-    const wrapper = mount(<TestApp params={[1, 'PARAM']} />)
-    onNext(
-      isCompleteAction,
-      () => {
-        wrapper.update()
-        expect(wrapper.find('.r1')).to.have.text('2')
-        expect(wrapper.find('.r2')).to.have.text('param')
-        done()
-      },
-      done,
-    )
-    clock.next()
+  describe('`effect` yields data', () => {
+    it('should pass the new data in the effect state', done => {
+      const wrapper = mount(<TestApp params={[1, 'PARAM']} />)
+      onNext(
+        isCompleteAction,
+        () => {
+          wrapper.update()
+          expect(wrapper.find('.r1')).to.have.text('2')
+          expect(wrapper.find('.r2')).to.have.text('param')
+          done()
+        },
+        done,
+      )
+      clock.next()
+    })
   })
 
-  it('should call the effect when the params change, and render the spinner', done => {
-    const wrapper = mount(<TestApp params={[1, 'PARAM']} />)
-    expect(wrapper).to.have.descendants('.loading')
-    onNext(
-      isCompleteAction,
-      () => {
-        wrapper.update()
-        expect(wrapper.find('.r1')).to.have.text('2')
-        expect(wrapper.find('.r2')).to.have.text('param')
-        wrapper.setProps({ params: [2, 'OTHER'] })
-        wrapper.update()
-        expect(wrapper).to.have.descendants('.loading')
-        onNext(
-          isCompleteAction,
-          () => {
-            wrapper.update()
-            expect(wrapper.find('.r1')).to.have.text('3')
-            expect(wrapper.find('.r2')).to.have.text('other')
-            done()
-          },
-          done,
-        )
-        clock.next()
-      },
-      done,
-    )
-    clock.next()
+  describe('`params` prop changed', () => {
+    it('should trigger the `effect`, and pass "active" effect state', done => {
+      const wrapper = mount(<TestApp params={[1, 'PARAM']} />)
+      expect(wrapper).to.have.descendants('.loading')
+      onNext(
+        isCompleteAction,
+        () => {
+          wrapper.update()
+          expect(wrapper.find('.r1')).to.have.text('2')
+          expect(wrapper.find('.r2')).to.have.text('param')
+          wrapper.setProps({ params: [2, 'OTHER'] })
+          wrapper.update()
+          expect(wrapper).to.have.descendants('.loading')
+          onNext(
+            isCompleteAction,
+            () => {
+              wrapper.update()
+              expect(wrapper.find('.r1')).to.have.text('3')
+              expect(wrapper.find('.r2')).to.have.text('other')
+              done()
+            },
+            done,
+          )
+          clock.next()
+        },
+        done,
+      )
+      clock.next()
+    })
   })
 
-  it('should destroy the state when the component unmounts', () => {
-    const wrapper = mount(<TestApp params={[1, 'PARAM']} />)
-    wrapper.unmount()
-    expect(Object.keys(testStore.getState().fx)).to.have.property('length', 0)
+  describe('unmount', () => {
+    it('should remove the state from the state tree', () => {
+      const wrapper = mount(<TestApp params={[1, 'PARAM']} />)
+      wrapper.unmount()
+      expect(Object.keys(testStore.getState().fx)).to.have.property('length', 0)
+    })
   })
 })

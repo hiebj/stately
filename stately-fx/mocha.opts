@@ -1,6 +1,5 @@
 --require ts-node/register
 --require ./mocha.config.ts
---reporter list
 --colors
 --watch-extensions ts
 src/**/*.spec.*

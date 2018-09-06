@@ -16,9 +16,9 @@ import { Reducer } from 'redux'
  * Naive example:
  * ```
  * type OpenClosed = { open: boolean }
- * const openReducer = (state: OpenClosed, action: AnyAction) =>
+ * const openReducer = (state: OpenClosed, action: Action) =>
  *   action.type === 'OPEN' ? { open: true } : state
- * const closeReducer = (state: OpenClosed, action: AnyAction) =>
+ * const closeReducer = (state: OpenClosed, action: Action) =>
  *   action.type === 'CLOSE' ? { open: false } : state
  * const openCloseReducer = chainReducers(openReducer, closeReducer)
  * export default openCloseReducer
