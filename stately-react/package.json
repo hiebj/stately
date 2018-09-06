@@ -1,6 +1,6 @@
 {
   "name": "stately-react",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Components and related types for simplifying management and integration of state in React apps",
   "author": {
     "name": "Jon Hieb",
@@ -21,7 +21,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "stately-fx": "^0.0.1",
+    "stately-fx": "^0.0.2",
     "react": "^16.4.1",
     "redux": "^4.0.0"
   },
