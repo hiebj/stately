@@ -1,7 +1,7 @@
 {
   "name": "stately",
   "version": "0.0.1",
-  "description": "Repository of modules providing types and tools for state management and integration, primarily for React apps",
+  "description": "Repository of modules providing tools and types for state management and integration, primarily for React apps",
   "private": true,
   "author": {
     "name": "Jon Hieb",

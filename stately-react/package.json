@@ -1,7 +1,7 @@
 {
   "name": "stately-react",
   "version": "0.0.1",
-  "description": "Types and components for simplifying management and integration of state in React apps",
+  "description": "Components and related types for simplifying management and integration of state in React apps",
   "author": {
     "name": "Jon Hieb",
     "email": "hiebj@live.com",
