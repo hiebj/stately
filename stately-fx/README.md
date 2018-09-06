@@ -10,8 +10,8 @@ npm docs
 
 This will host a static TypeDoc site at `8080`. It is generated from JSDoc and TypeScript definitions, and currently limited, but you can at least see the API.
 
-Start with the exports defined in [`index.ts`](/src/index.ts).
+Start with the exports defined in [`index.ts`](/stately-fx/src/index.ts).
 
-For (mocked) example usage, check the `spec.ts` for the file in question; e.g. to see how to create an `FxActions` instance, check out [`actions.spec.ts`](/src/actions.spec.ts).
+For (mocked) example usage, check the `spec.ts` for the file in question; e.g. to see how to create an `FxActions` instance, check out [`actions.spec.ts`](/stately-fx/src/actions.spec.ts).
 
 When I write a real README I'll add the TypeDoc to GitHub pages.
