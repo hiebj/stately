@@ -1,5 +1,5 @@
 {
-  "name": "stately-fx",
+  "name": "stately-async",
   "version": "0.0.3",
   "description": "Functions and related types for managing the state of side-effects, following the Reducer pattern and the Observable spec",
   "author": {
