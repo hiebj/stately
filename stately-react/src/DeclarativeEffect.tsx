@@ -9,7 +9,7 @@ import {
   FxActionCreators,
   FxActionsConfig,
   fxReducer,
-} from 'stately-fx'
+} from 'stately-async'
 
 import { Renderable, Omit } from './types'
 import { Connected } from './Connected'

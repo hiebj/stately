@@ -1,7 +1,7 @@
 import * as React from 'react'
 
-import { Effect, fxActions, FxActionCreators, FxActionsConfig } from 'stately-fx'
-import { get as fxCacheGet } from 'stately-fx/cache'
+import { Effect, fxActions, FxActionCreators, FxActionsConfig } from 'stately-async'
+import { get as fxCacheGet } from 'stately-async/cache'
 
 import { Subtract } from './types'
 

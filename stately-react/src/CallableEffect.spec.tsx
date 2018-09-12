@@ -2,9 +2,9 @@ import * as React from 'react'
 import { createStore, compose, applyMiddleware, Store } from 'redux'
 import { Provider } from 'react-redux'
 
-import { fxReducer, fxMiddleware, FxSlice } from 'stately-fx'
-import { isFxActionOfType } from 'stately-fx/actions'
-import { AddTestActionListener, action$Middleware, onNext as $onNext } from 'stately-fx/middleware'
+import { fxReducer, fxMiddleware, FxSlice } from 'stately-async'
+import { isFxActionOfType } from 'stately-async/actions'
+import { AddTestActionListener, action$Middleware, onNext as $onNext } from 'stately-async/middleware'
 
 import * as chai from 'chai'
 import { SinonFakeTimers, useFakeTimers } from 'sinon'

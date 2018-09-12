@@ -1,21 +1,28 @@
+/** Defines {@link statelyAsyncMiddleware} and {@link statelyAsyncEpic}. */
+
+/** @ignore */
 import { Observable, empty as $empty, Subject } from 'rxjs'
 import { filter as $filter, mergeMap as $mergeMap, first as $first } from 'rxjs/operators'
 import { Action, Middleware } from 'redux'
 
-import { isFxActionOfType } from './actions'
+import { asyncActionMatcher } from './actions'
 import { get } from './cache'
+import { StatelyAsyncSymbol } from './AsyncSession'
 
 /**
- * Accepts an `Observable<Action>` and, when a `'call'` `FxAction` is detected, triggers its corresponding `Effect`.
- * The `Effect`'s data, error, and resolve/complete handlers are mapped to `'data'`, `'error'`, and `'complete'` `FxAction`s, respectively.
- * The function signature matches the `Epic` type from `redux-observable`, and is meant to be given to `combineEpics` if you are using `redux-observable` in your project.
- * If you are not using `redux-observable`, use `fxMiddleware` instead.
+ * Accepts an `Observable<Action>` and subscribes to it.
+ * When an {@link AsyncSessionAction} of type `call` is received, the epic triggers the corresponding {@link AsyncFunction}.
+ * 
+ * When the `AsyncFunction` emits data, encounters an error, or is completed, the `'data'`, `'error'`, and `'complete'` actions are dispatched, respectively.
+ * 
+ * The function signature matches the `Epic` type from `redux-observable`, and is meant to be used with `combineEpics` if you are using `redux-observable` in your project.
+ * If you are not using `redux-observable`, use {@link statelyAsyncMiddleware} instead.
  */
-export const fxEpic = (action$: Observable<Action>): Observable<Action> =>
+export const statelyAsyncEpic = (action$: Observable<Action>): Observable<Action> =>
   action$.pipe(
-    $filter(isFxActionOfType('call')),
+    $filter(asyncActionMatcher('call')),
     $mergeMap(action => {
-      const uuidEntry = get(action.fx.id)
+      const uuidEntry = get(action[StatelyAsyncSymbol].sid)
       if (uuidEntry) {
         const {
           actions: {
@@ -70,12 +77,12 @@ export const action$Middleware = () => {
 }
 
 /**
- * Calls the `fxEpic` with the `action$` returned by `#action$Middleware`.
+ * Calls the `statelyAsyncEpic` with the `action$` returned by {@link action$Middleware}.
  * Lightweight integration middleware, intended for projects that are not using `redux-observable`.
  */
-export const fxMiddleware: Middleware = store => {
+export const statelyAsyncMiddleware: Middleware = store => {
   const { action$, middleware } = action$Middleware()
-  fxEpic(action$).subscribe(store.dispatch)
+  statelyAsyncEpic(action$).subscribe(store.dispatch)
   return middleware(store)
 }
 

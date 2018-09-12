@@ -1,19 +1,21 @@
 import { Reducer } from 'redux'
 
 /**
- * The function `chainReducers` is the naive implementation of a "reduce reducers" pattern.
+ * The function `chainReducers` is the naïve implementation of a "reduce reducers" pattern.
  *
  * The intended use case is to compose reducers which together manage a single slice of
  * a state tree. They all should accept, and return, the same shape.
  *
- * You should use this in a situation where you want to write a single reducer to handle
+ * You should use this in a situation where you want to write reducers which each handle
  * a single action, but have multiple actions that affect a shared state shape in
  * different ways.
  *
  * This can be preferential to avoid writing massive reducers using e.g. a `switch`
  * or complex, nested ternary matchers.
  *
- * Naive example:
+ * Naïve example:
+ * 
+ * @example
  * ```
  * type OpenClosed = { open: boolean }
  * const openReducer = (state: OpenClosed, action: Action) =>
@@ -25,6 +27,8 @@ import { Reducer } from 'redux'
  * ```
  *
  * Order matters in `chainReducers`. Essentially,
+ * 
+ * @example
  * ```
  * chainReducers(reducer1, reducer2, reducer3) =>
  *   (state, action) => reducer3(reducer2(reducer1(state, action), action), action)
