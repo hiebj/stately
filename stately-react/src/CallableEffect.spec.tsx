@@ -2,8 +2,8 @@ import * as React from 'react'
 import { createStore, compose, applyMiddleware, Store } from 'redux'
 import { Provider } from 'react-redux'
 
-import { fxReducer, fxMiddleware, FxSlice } from 'stately-async'
-import { isFxActionOfType } from 'stately-async/actions'
+import { asyncActionMatcher, statelyAsyncReducer, statelyAsyncMiddleware, AsyncSessionSlice } from 'stately-async'
+import { StatelyAsyncSymbol } from 'stately-async/AsyncSession'
 import { AddTestActionListener, action$Middleware, onNext as $onNext } from 'stately-async/middleware'
 
 import * as chai from 'chai'
@@ -15,7 +15,7 @@ const expect = chai.expect
 import { ContextCallableEffect } from './CallableEffect'
 
 let clock: SinonFakeTimers
-let testStore: Store<FxSlice>
+let testStore: Store<AsyncSessionSlice>
 let onNext: AddTestActionListener
 
 const effect = (p1: number, p2: string) =>
@@ -49,7 +49,7 @@ const TestApp: React.SFC = () => (
   </Provider>
 )
 
-const isCompleteAction = isFxActionOfType('complete')
+const isCompleteAction = asyncActionMatcher('complete')
 
 describe('<CallableEffect>', () => {
   beforeEach(() => {
@@ -57,9 +57,9 @@ describe('<CallableEffect>', () => {
     const { action$, middleware } = action$Middleware()
     onNext = $onNext(action$)
     testStore = createStore(
-      fxReducer,
+      statelyAsyncReducer,
       compose(
-        applyMiddleware(fxMiddleware),
+        applyMiddleware(statelyAsyncMiddleware),
         applyMiddleware(middleware),
       ),
     )
@@ -109,7 +109,7 @@ describe('<CallableEffect>', () => {
       const wrapper = mount(<TestApp />)
       wrapper.find('button').simulate('click')
       wrapper.unmount()
-      expect(Object.keys(testStore.getState().fx)).to.have.property('length', 0)
+      expect(Object.keys(testStore.getState()[StatelyAsyncSymbol])).to.have.property('length', 0)
     })
   })
 })

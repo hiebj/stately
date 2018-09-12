@@ -24,18 +24,18 @@ const error = 'error'
 
 describe('statelyAsyncEpic', () => {
   let fakeEffectSubject$: Subject<Item>
-  let effect: AsyncFunction<Item, Params>
+  let asyncFn: AsyncFunction<Item, Params>
   let actions: AsyncSessionManager<Item, Params>
   let action$: Subject<Action>
   let action$out: Observable<Action>
 
   beforeEach(() => {
-    effect = sinon.spy((_1: string, _2: number) => {
+    asyncFn = sinon.spy((_1: string, _2: number) => {
       fakeEffectSubject$ = new Subject()
       sinon.spy(fakeEffectSubject$, 'subscribe')
       return fakeEffectSubject$
     })
-    actions = createAsyncSession(effect)
+    actions = createAsyncSession(asyncFn)
     action$ = new Subject()
     action$out = statelyAsyncEpic(action$)
   })
@@ -44,7 +44,7 @@ describe('statelyAsyncEpic', () => {
     it('should call the corresponding AsyncFunction and begin listening for output', () => {
       action$out.subscribe()
       action$.next(actions.call(param1, param2))
-      expect(effect).to.have.been.calledWith(param1, param2)
+      expect(asyncFn).to.have.been.calledWith(param1, param2)
       expect(fakeEffectSubject$.subscribe).to.have.been.called
     })
 
@@ -124,7 +124,7 @@ describe('statelyAsyncEpic', () => {
 describe('statelyAsyncMiddleware: integration tests', () => {
   let reducer: Reducer<{}> & sinon.SinonSpy
   let store: Store<{}>
-  let effect: AsyncFunction<Item, Params>
+  let asyncFn: AsyncFunction<Item, Params>
   let actions: AsyncSessionManager<Item, Params>
   let resolve: (i: Item) => void
   let reject: (reason: any) => void
@@ -133,14 +133,14 @@ describe('statelyAsyncMiddleware: integration tests', () => {
   beforeEach(() => {
     reducer = sinon.spy((_state: {}, _action: Action) => ({}))
     store = createStore(reducer, {}, applyMiddleware(statelyAsyncMiddleware))
-    effect = sinon.spy(
+    asyncFn = sinon.spy(
       async (_p: Params) =>
         new Promise<Item>((res, rej) => {
           resolve = res
           reject = rej
         }),
     )
-    actions = createAsyncSession(effect)
+    actions = createAsyncSession(asyncFn)
     callAction = actions.call(param1, param2)
     store.dispatch(callAction)
   })
@@ -151,7 +151,7 @@ describe('statelyAsyncMiddleware: integration tests', () => {
     })
   
     it('should call the AsyncFunction', () => {
-      expect(effect).to.have.been.calledWithMatch(param1, param2)
+      expect(asyncFn).to.have.been.calledWithMatch(param1, param2)
     })
   
     describe('async function resolves', () => {

@@ -4,21 +4,21 @@ import { shallow } from 'enzyme'
 import 'mocha'
 const expect = chai.expect
 
-import { withFxActions, FxActionsProps } from './withFxActions'
+import { withAsyncSessionManager, AsyncSessionManagerProps } from './withAsyncSessionManager'
 
-const TestComponent: React.SFC<{ text: string } & FxActionsProps<any, any>> = ({ text }) => (
+const TestComponent: React.SFC<{ text: string } & AsyncSessionManagerProps<any, any>> = ({ text }) => (
   <div>{text}</div>
 )
 
-describe('withFxActions(Component)', () => {
+describe('withAsyncSessionManager(Component)', () => {
   it('should expose an `effect` prop, and inject a corresponding `fxActions` prop', () => {
     const effect = () => Promise.resolve(10)
-    const WithFxActions = withFxActions(TestComponent)
-    const wrapper = shallow(<WithFxActions effect={effect} text={'this is a component'} />)
-    expect(wrapper.props()).to.have.property('fxActions')
-    expect(wrapper.props().fxActions).to.have.property('call')
-    expect(wrapper.props().fxActions).to.have.property('destroy')
-    expect(wrapper.props().fxActions).to.have.property('selector')
-    expect(wrapper.props().fxActions.call('abc', 123)).to.deep.property('payload', ['abc', 123])
+    const WithAsyncSession = withAsyncSessionManager(TestComponent)
+    const wrapper = shallow(<WithAsyncSession asyncFunction={effect} text={'this is a component'} />)
+    expect(wrapper.props()).to.have.property('asyncSessionManager')
+    expect(wrapper.props().asyncSessionManager).to.have.property('call')
+    expect(wrapper.props().asyncSessionManager).to.have.property('destroy')
+    expect(wrapper.props().asyncSessionManager).to.have.property('selector')
+    expect(wrapper.props().asyncSessionManager.call('abc', 123)).to.deep.property('payload', ['abc', 123])
   })
 })

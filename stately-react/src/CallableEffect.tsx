@@ -2,13 +2,12 @@ import * as React from 'react'
 import { Store, Dispatch } from 'redux'
 
 import {
-  Effect,
-  FxState,
-  fxActions,
-  FxSlice,
-  FxActionCreators,
-  FxActionsConfig,
-  fxReducer,
+  AsyncFunction,
+  AsyncSession,
+  createAsyncSession,
+  AsyncSessionSlice,
+  AsyncSessionManager,
+  statelyAsyncReducer,
 } from 'stately-async'
 
 import { Renderable, Omit } from './types'
@@ -17,13 +16,13 @@ import { Connected } from './Connected'
 import { StoreConsumer } from './StoreConsumer'
 
 type CallableEffectChildren<Data, Params extends any[]> = (
-  state: FxState<Data, Params>,
+  state: AsyncSession<Data, Params>,
   call: (...params: Params) => void,
 ) => Renderable
 
 interface LifecycleCallableEffectProps<Data, Params extends any[]> {
   children: CallableEffectChildren<Data, Params>
-  state: FxState<Data, Params>
+  state: AsyncSession<Data, Params>
   call: (...params: Params) => void
   destroy: () => void
 }
@@ -42,9 +41,9 @@ class LifecycleCallableEffect<Data, Params extends any[]> extends React.Componen
 }
 
 export interface CallableEffectProps<Data, Params extends any[]> {
-  effect: Effect<Data, Params> | FxActionsConfig<Data, Params>
+  effect: AsyncFunction<Data, Params>
   children: CallableEffectChildren<Data, Params>
-  store?: Store<FxSlice>
+  store?: Store<AsyncSessionSlice>
 }
 
 /**
@@ -80,17 +79,17 @@ export interface CallableEffectProps<Data, Params extends any[]> {
 export class CallableEffect<Data, Params extends any[]> extends React.Component<
   CallableEffectProps<Data, Params>
 > {
-  fxActions: FxActionCreators<Data, Params>
+  fxActions: AsyncSessionManager<Data, Params>
 
   constructor(props: CallableEffectProps<Data, Params>) {
     super(props)
-    this.fxActions = fxActions(props.effect)
+    this.fxActions = createAsyncSession(props.effect)
   }
 
   render() {
     const { selector, call, destroy } = this.fxActions
     const { store } = this.props
-    const lifecycleCallableEffect = (state: FxSlice, dispatch: Dispatch) => (
+    const lifecycleCallableEffect = (state: AsyncSessionSlice, dispatch: Dispatch) => (
       <LifecycleCallableEffect
         state={selector(state)}
         call={(...params: Params) => {
@@ -106,13 +105,13 @@ export class CallableEffect<Data, Params extends any[]> extends React.Component<
     return store ? (
       <Connected store={store}>
         {(state, dispatch) => (
-          <Controllable reducer={fxReducer} state={state} dispatch={dispatch}>
+          <Controllable reducer={statelyAsyncReducer} state={state} dispatch={dispatch}>
             {lifecycleCallableEffect}
           </Controllable>
         )}
       </Connected>
     ) : (
-      <Controllable reducer={fxReducer}>{lifecycleCallableEffect}</Controllable>
+      <Controllable reducer={statelyAsyncReducer}>{lifecycleCallableEffect}</Controllable>
     )
   }
 }
@@ -125,7 +124,7 @@ export class ContextCallableEffect<Data, Params extends any[]> extends React.Com
 > {
   render() {
     return (
-      <StoreConsumer<FxSlice>>
+      <StoreConsumer<AsyncSessionSlice>>
         {store => <CallableEffect {...this.props} store={store} />}
       </StoreConsumer>
     )

@@ -73,10 +73,10 @@ describe('AsyncSessionManager', () => {
         expect(withParamsActions.data.match(withParamsActions.data(data))).to.be.true
         expect(withParamsActions.data.match(withParamsActions.call(params))).to.be.false
         // giving it a name so that fxActions doesn't complain
-        function effect() {
+        function asyncFn() {
           return Promise.resolve(10)
         }
-        expect(withParamsActions.data.match(createAsyncSession(effect).data(10))).to.be.false
+        expect(withParamsActions.data.match(createAsyncSession(asyncFn).data(10))).to.be.false
         expect(withParamsActions.data.match({ type: 'BLAH' })).to.be.false
       })
     })

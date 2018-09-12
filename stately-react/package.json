@@ -21,7 +21,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "stately-async": "^0.0.1",
+    "stately-async": "^0.1.0",
     "react": "^16.4.1",
     "redux": "^4.0.0"
   },

@@ -4,7 +4,7 @@ One of the most common tasks in client-side applications is the execution and re
 
 All of these asynchronous tasks have a very similar lifecycle: they are called, data is emitted once or multiple times, and either the task is completed or an error is encountered. Typically, the code to manage this lifecycle is duplicated for every consumer.
 
-How many times have you written `setState({ loading: true })`?
+How many times have you written `setState({ loading: true })`, or defined a `loadingReducer`?
 
 This module provides functions and types that allow a consumer to create self-managing "sessions" for arbitrary asynchronous tasks. These sessions represent the lifecycle described above for any asynchronous function, regardless of its parameter arity, output type, or underlying implementation.
 

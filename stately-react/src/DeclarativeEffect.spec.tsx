@@ -2,8 +2,8 @@ import * as React from 'react'
 import { createStore, applyMiddleware, compose, Store } from 'redux'
 import { Provider } from 'react-redux'
 
-import { fxReducer, fxMiddleware, FxSlice } from 'stately-async'
-import { isFxActionOfType } from 'stately-async/actions'
+import { asyncActionMatcher, statelyAsyncReducer, statelyAsyncMiddleware, AsyncSessionSlice } from 'stately-async'
+import { StatelyAsyncSymbol } from 'stately-async/AsyncSession'
 import { AddTestActionListener, action$Middleware, onNext as $onNext } from 'stately-async/middleware'
 
 import * as chai from 'chai'
@@ -15,7 +15,7 @@ const expect = chai.expect
 import { ContextDeclarativeEffect } from './DeclarativeEffect'
 
 let clock: SinonFakeTimers
-let testStore: Store<FxSlice>
+let testStore: Store<AsyncSessionSlice>
 let onNext: AddTestActionListener
 
 const effect = (p1: number, p2: string) =>
@@ -46,7 +46,7 @@ const TestApp: React.SFC<{ params: [number, string] }> = ({ params }) => (
   </Provider>
 )
 
-const isCompleteAction = isFxActionOfType('complete')
+const isCompleteAction = asyncActionMatcher('complete')
 
 describe('<DeclarativeEffect>', () => {
   beforeEach(() => {
@@ -54,9 +54,9 @@ describe('<DeclarativeEffect>', () => {
     const { action$, middleware } = action$Middleware()
     onNext = $onNext(action$)
     testStore = createStore(
-      fxReducer,
+      statelyAsyncReducer,
       compose(
-        applyMiddleware(fxMiddleware),
+        applyMiddleware(statelyAsyncMiddleware),
         applyMiddleware(middleware),
       ),
     )
@@ -125,7 +125,7 @@ describe('<DeclarativeEffect>', () => {
     it('should remove the state from the state tree', () => {
       const wrapper = mount(<TestApp params={[1, 'PARAM']} />)
       wrapper.unmount()
-      expect(Object.keys(testStore.getState().fx)).to.have.property('length', 0)
+      expect(Object.keys(testStore.getState()[StatelyAsyncSymbol])).to.have.property('length', 0)
     })
   })
 })

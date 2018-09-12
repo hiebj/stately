@@ -2,13 +2,12 @@ import * as React from 'react'
 import { Dispatch, Store } from 'redux'
 
 import {
-  Effect,
-  FxState,
-  fxActions,
-  FxSlice,
-  FxActionCreators,
-  FxActionsConfig,
-  fxReducer,
+  AsyncFunction,
+  AsyncSession,
+  createAsyncSession,
+  AsyncSessionSlice,
+  AsyncSessionManager,
+  statelyAsyncReducer,
 } from 'stately-async'
 
 import { Renderable, Omit } from './types'
@@ -17,13 +16,13 @@ import Controllable from './Controllable'
 import { StoreConsumer } from './StoreConsumer'
 
 type DeclarativeEffectChildren<Data, Params extends any[]> = (
-  state: FxState<Data, Params>,
+  state: AsyncSession<Data, Params>,
 ) => Renderable
 
 interface DeclarativeEffectLifecycleProps<Data, Params extends any[]> {
   children: DeclarativeEffectChildren<Data, Params>
   params: Params
-  state: FxState<Data, Params>
+  state: AsyncSession<Data, Params>
   call: (...params: Params) => void
   destroy: () => void
 }
@@ -59,10 +58,10 @@ class DeclarativeEffectLifecycle<Data, Params extends any[]> extends React.Compo
 }
 
 export interface DeclarativeEffectProps<Data, Params extends any[]> {
-  effect: Effect<Data, Params> | FxActionsConfig<Data, Params>
+  effect: AsyncFunction<Data, Params>
   params: Params
   children: DeclarativeEffectChildren<Data, Params>
-  store?: Store<FxSlice>
+  store?: Store<AsyncSessionSlice>
 }
 
 /**
@@ -97,17 +96,17 @@ export interface DeclarativeEffectProps<Data, Params extends any[]> {
 export class DeclarativeEffect<Data, Params extends any[]> extends React.Component<
   DeclarativeEffectProps<Data, Params>
 > {
-  fxActions: FxActionCreators<Data, Params>
+  fxActions: AsyncSessionManager<Data, Params>
 
   constructor(props: DeclarativeEffectProps<Data, Params>) {
     super(props)
-    this.fxActions = fxActions(props.effect)
+    this.fxActions = createAsyncSession(props.effect)
   }
 
   render() {
     const { selector, call, destroy } = this.fxActions
     const { params, store } = this.props
-    const lifecycleDeclarativeEffect = (state: FxSlice, dispatch: Dispatch) => (
+    const lifecycleDeclarativeEffect = (state: AsyncSessionSlice, dispatch: Dispatch) => (
       <DeclarativeEffectLifecycle
         params={params}
         state={selector(state)}
@@ -124,13 +123,13 @@ export class DeclarativeEffect<Data, Params extends any[]> extends React.Compone
     return store ? (
       <Connected store={store}>
         {(state, dispatch) => (
-          <Controllable reducer={fxReducer} state={state} dispatch={dispatch}>
+          <Controllable reducer={statelyAsyncReducer} state={state} dispatch={dispatch}>
             {lifecycleDeclarativeEffect}
           </Controllable>
         )}
       </Connected>
     ) : (
-      <Controllable reducer={fxReducer}>{lifecycleDeclarativeEffect}</Controllable>
+      <Controllable reducer={statelyAsyncReducer}>{lifecycleDeclarativeEffect}</Controllable>
     )
   }
 }
@@ -143,7 +142,7 @@ export class ContextDeclarativeEffect<Data, Params extends any[]> extends React.
 > {
   render() {
     return (
-      <StoreConsumer<FxSlice>>
+      <StoreConsumer<AsyncSessionSlice>>
         {store => <DeclarativeEffect {...this.props} store={store} />}
       </StoreConsumer>
     )
