@@ -3,10 +3,10 @@ import { of as $of } from 'rxjs'
 import 'mocha'
 const expect = chai.expect
 
-import { AsyncSession, AsyncSessionSlice, initialAsyncSession, StatelyAsyncSymbol } from './AsyncSession'
+import { AsyncState, AsyncSlice, initialAsyncState, StatelyAsyncSymbol } from './AsyncState'
 
 import { statelyAsyncReducer } from './reducer'
-import { createAsyncSession, AsyncSessionManager } from './actions'
+import { AsyncLifecycle, asyncLifecycle } from './AsyncLifecycle'
 
 interface Params {
   param1: string
@@ -32,23 +32,23 @@ async function* withParamsEffect$(params: Params) {
   }
 }
 
-const errorState: AsyncSession<Item> = { status: 'error', params: null, error, data }
-const openState: AsyncSession<Item, Params> = {
+const errorState: AsyncState<Item> = { status: 'error', params: null, error, data }
+const openState: AsyncState<Item, Params> = {
   status: 'active',
   params,
   error: null,
   data,
 }
-const fxSlice = <Item, Params>(fxState: AsyncSession<Item, Params>, id: string): AsyncSessionSlice => ({
-  [StatelyAsyncSymbol]: { [id]: fxState },
+const createAsyncSlice = <Item, Params>(asyncState: AsyncState<Item, Params>, id: string): AsyncSlice => ({
+  [StatelyAsyncSymbol]: { [id]: asyncState },
 })
 
-let noParamsActions: AsyncSessionManager<any, []>
-let withParamsActions: AsyncSessionManager<any, any>
+let noParamsActions: AsyncLifecycle<any, []>
+let withParamsActions: AsyncLifecycle<any, any>
 
 beforeEach(() => {
-  noParamsActions = createAsyncSession(noParamsEffect$)
-  withParamsActions = createAsyncSession(withParamsEffect$)
+  noParamsActions = asyncLifecycle(noParamsEffect$)
+  withParamsActions = asyncLifecycle(withParamsEffect$)
 })
 
 afterEach(() => {
@@ -57,11 +57,11 @@ afterEach(() => {
 })
 
 describe('statelyAsyncReducer', () => {
-  let state: AsyncSession<Params> = initialAsyncSession
+  let state: AsyncState<Params> = initialAsyncState
 
   describe('#call action', () => {
     beforeEach(() => {
-      state = statelyAsyncReducer({ [StatelyAsyncSymbol]: {} }, withParamsActions.call(params))[StatelyAsyncSymbol][withParamsActions.sid]
+      state = statelyAsyncReducer({ [StatelyAsyncSymbol]: {} }, withParamsActions.call(params))[StatelyAsyncSymbol][withParamsActions.id]
     })
     it('should set `state` to "active"', () => {
       expect(state).to.have.property('status', 'active')
@@ -76,8 +76,8 @@ describe('statelyAsyncReducer', () => {
 
   describe('no-params #call action', () => {
     beforeEach(() => {
-      state = statelyAsyncReducer(fxSlice(openState, noParamsActions.sid), noParamsActions.call())[StatelyAsyncSymbol][
-        noParamsActions.sid
+      state = statelyAsyncReducer(createAsyncSlice(openState, noParamsActions.id), noParamsActions.call())[StatelyAsyncSymbol][
+        noParamsActions.id
       ]
     })
     it('should set `state` to "open"', () => {
@@ -94,11 +94,11 @@ describe('statelyAsyncReducer', () => {
   describe('#data action', () => {
     beforeEach(() => {
       state = statelyAsyncReducer(
-        fxSlice(initialAsyncSession, withParamsActions.sid),
+        createAsyncSlice(initialAsyncState, withParamsActions.id),
         withParamsActions.call(params),
-      )[StatelyAsyncSymbol][withParamsActions.sid]
-      state = statelyAsyncReducer(fxSlice(state, withParamsActions.sid), withParamsActions.data(data))[StatelyAsyncSymbol][
-        withParamsActions.sid
+      )[StatelyAsyncSymbol][withParamsActions.id]
+      state = statelyAsyncReducer(createAsyncSlice(state, withParamsActions.id), withParamsActions.data(data))[StatelyAsyncSymbol][
+        withParamsActions.id
       ]
     })
 
@@ -112,8 +112,8 @@ describe('statelyAsyncReducer', () => {
 
   describe('#error action', () => {
     beforeEach(() => {
-      state = statelyAsyncReducer(fxSlice(openState, withParamsActions.sid), withParamsActions.error(error))
-        [StatelyAsyncSymbol][withParamsActions.sid]
+      state = statelyAsyncReducer(createAsyncSlice(openState, withParamsActions.id), withParamsActions.error(error))
+        [StatelyAsyncSymbol][withParamsActions.id]
     })
     it('should set `state` to "error"', () => {
       expect(state).to.have.property('status', 'error')
@@ -125,8 +125,8 @@ describe('statelyAsyncReducer', () => {
 
   describe('#complete action', () => {
     beforeEach(() => {
-      state = statelyAsyncReducer(fxSlice(errorState, withParamsActions.sid), withParamsActions.complete())[StatelyAsyncSymbol][
-        withParamsActions.sid
+      state = statelyAsyncReducer(createAsyncSlice(errorState, withParamsActions.id), withParamsActions.complete())[StatelyAsyncSymbol][
+        withParamsActions.id
       ]
     })
     it('should set `state` to "completed"', () => {
@@ -138,12 +138,12 @@ describe('statelyAsyncReducer', () => {
   })
 
   describe('#destroy action', () => {
-    let slice: AsyncSessionSlice[typeof StatelyAsyncSymbol]
+    let slice: AsyncSlice[typeof StatelyAsyncSymbol]
     beforeEach(() => {
-      slice = statelyAsyncReducer(fxSlice(openState, withParamsActions.sid), withParamsActions.destroy())[StatelyAsyncSymbol]
+      slice = statelyAsyncReducer(createAsyncSlice(openState, withParamsActions.id), withParamsActions.destroy())[StatelyAsyncSymbol]
     })
-    it('should remove the ID completely from the FxSlice', () => {
-      expect(slice).not.to.have.property(withParamsActions.sid)
+    it('should remove the AsyncState with the matching `id` completely from the state tree', () => {
+      expect(slice).not.to.have.property(withParamsActions.id)
     })
   })
 })

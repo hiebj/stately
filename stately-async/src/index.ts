@@ -1,11 +1,13 @@
 /**
  * Defines the public API of the library.
  * 
- * From `AsyncSession`: {@link AsyncSessionSlice}, {@link AsyncSession}, {@link AsyncSessionStatus}
+ * From `AsyncState`: {@link AsyncSlice}, {@link AsyncState}, {@link AsyncStateStatus}
  * 
- * From `AsyncFunction`: {@link AsyncFunction}
+ * From `AsyncOperation`: {@link AsyncOperation}
  * 
- * From `actions`: {@link createAsyncSession}, {@link AsyncSessionManager}, {@link asyncActionMatcher}
+ * From `AsyncLifecycle`: {@link AsyncLifecycle}, {@link asyncLifecycle}
+ * 
+ * From `actions`: {@link asyncActionMatcher}
  * 
  * From `reducer`: {@link statelyAsyncReducer}
  * 
@@ -13,8 +15,9 @@
  */
 
 /** @ignore */
-export { AsyncSessionSlice, AsyncSession, AsyncSessionStatus } from './AsyncSession'
-export { AsyncFunction } from './AsyncFunction'
-export { createAsyncSession, AsyncSessionManager, asyncActionMatcher } from './actions'
+export { AsyncSlice, AsyncState, AsyncStateStatus } from './AsyncState'
+export { AsyncOperation } from './AsyncOperation'
+export { AsyncLifecycle, asyncLifecycle } from './AsyncLifecycle'
+export { asyncActionMatcher } from './actions'
 export { statelyAsyncReducer } from './reducer'
 export { statelyAsyncEpic, statelyAsyncMiddleware } from './middleware'

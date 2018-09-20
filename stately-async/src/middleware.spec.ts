@@ -5,9 +5,9 @@ import { Store, createStore, applyMiddleware, Reducer, Action } from 'redux'
 import 'mocha'
 const expect = chai.expect
 
-import { createAsyncSession, AsyncSessionManager } from './actions'
+import { AsyncLifecycle, asyncLifecycle } from './AsyncLifecycle'
 
-import { AsyncFunction } from './AsyncFunction'
+import { AsyncOperation } from './AsyncOperation'
 
 import { statelyAsyncMiddleware, statelyAsyncEpic } from './middleware'
 
@@ -24,8 +24,8 @@ const error = 'error'
 
 describe('statelyAsyncEpic', () => {
   let fakeEffectSubject$: Subject<Item>
-  let asyncFn: AsyncFunction<Item, Params>
-  let actions: AsyncSessionManager<Item, Params>
+  let asyncFn: AsyncOperation<Item, Params>
+  let actions: AsyncLifecycle<Item, Params>
   let action$: Subject<Action>
   let action$out: Observable<Action>
 
@@ -35,13 +35,13 @@ describe('statelyAsyncEpic', () => {
       sinon.spy(fakeEffectSubject$, 'subscribe')
       return fakeEffectSubject$
     })
-    actions = createAsyncSession(asyncFn)
+    actions = asyncLifecycle(asyncFn)
     action$ = new Subject()
     action$out = statelyAsyncEpic(action$)
   })
 
-  describe('a \'call\' AsyncSessionAction is dispatched', () => {
-    it('should call the corresponding AsyncFunction and begin listening for output', () => {
+  describe('a \'call\' AsyncAction is dispatched', () => {
+    it('should call the corresponding AsyncOperation and begin listening for output', () => {
       action$out.subscribe()
       action$.next(actions.call(param1, param2))
       expect(asyncFn).to.have.been.calledWith(param1, param2)
@@ -59,7 +59,7 @@ describe('statelyAsyncEpic', () => {
         expect(subscription).not.to.have.been.called
       })
 
-      it('should call the AsyncFunction again, and begin monitoring the output of the new call', () => {
+      it('should call the AsyncOperation again, and begin monitoring the output of the new call', () => {
         const subscription = sinon.spy()
         action$out.subscribe(subscription)
         action$.next(actions.call(param1, param2))
@@ -75,7 +75,7 @@ describe('statelyAsyncEpic', () => {
     })
   })
 
-  describe('monitoring the output of a called AsyncFunction', () => {
+  describe('monitoring the output of a called AsyncOperation', () => {
     describe('data is emitted', () => {
       it('should emit a `data` action containing the emitted data', () => {
         const subscription = sinon.spy()
@@ -107,7 +107,7 @@ describe('statelyAsyncEpic', () => {
     })
   })
 
-  describe('a \'destroy\' AsyncSessionAction is dispatched', () => {
+  describe('a \'destroy\' AsyncAction is dispatched', () => {
     it('should stop monitoring the output of the active call', () => {
       const subscription = sinon.spy()
       action$out.subscribe(subscription)
@@ -124,8 +124,8 @@ describe('statelyAsyncEpic', () => {
 describe('statelyAsyncMiddleware: integration tests', () => {
   let reducer: Reducer<{}> & sinon.SinonSpy
   let store: Store<{}>
-  let asyncFn: AsyncFunction<Item, Params>
-  let actions: AsyncSessionManager<Item, Params>
+  let asyncFn: AsyncOperation<Item, Params>
+  let actions: AsyncLifecycle<Item, Params>
   let resolve: (i: Item) => void
   let reject: (reason: any) => void
   let callAction: Action
@@ -140,7 +140,7 @@ describe('statelyAsyncMiddleware: integration tests', () => {
           reject = rej
         }),
     )
-    actions = createAsyncSession(asyncFn)
+    actions = asyncLifecycle(asyncFn)
     callAction = actions.call(param1, param2)
     store.dispatch(callAction)
   })
@@ -150,7 +150,7 @@ describe('statelyAsyncMiddleware: integration tests', () => {
       expect(reducer).to.have.been.calledWithMatch({}, callAction)
     })
   
-    it('should call the AsyncFunction', () => {
+    it('should call the AsyncOperation', () => {
       expect(asyncFn).to.have.been.calledWithMatch(param1, param2)
     })
   

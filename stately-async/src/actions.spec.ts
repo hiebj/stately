@@ -3,9 +3,9 @@ import { of as $of } from 'rxjs'
 import 'mocha'
 const expect = chai.expect
 
-import { AsyncSession, AsyncSessionSlice, StatelyAsyncSymbol } from './AsyncSession'
-
-import { createAsyncSession, asyncActionMatcher, AsyncSessionManager } from './actions'
+import { asyncActionMatcher, AsyncActionCreator, asyncActionCreatorFactory } from './actions'
+import { asyncLifecycle } from './AsyncLifecycle'
+import { StatelyAsyncSymbol } from './AsyncState';
 
 interface Params {
   param1: string
@@ -26,68 +26,42 @@ async function* withParamsAsync$(_params: Params) {
   yield toYield
 }
 
-const activeSession: AsyncSession<Data, Params> = {
-  status: 'active',
-  params,
-  error: null,
-  data,
-}
-const sessionSlice = <Data, Params>(fxState: AsyncSession<Data, Params>, id: string): AsyncSessionSlice => ({
-  [StatelyAsyncSymbol]: { [id]: fxState },
-})
-
-let withParamsActions: AsyncSessionManager<Data, [Params]>
+let callActionCreator: AsyncActionCreator<[Params]>
+let dataActionCreator: AsyncActionCreator<[Data]>
 
 beforeEach(() => {
-  withParamsActions = createAsyncSession(withParamsAsync$)
+  callActionCreator = asyncActionCreatorFactory(withParamsAsync$, 'testuuid')<[Params]>('call')
+  dataActionCreator = asyncActionCreatorFactory(withParamsAsync$, 'testuuid')<[Data]>('data')
 })
 
-describe('createAsyncSession()', () => {
-  it('should return a new AsyncSessionManager with a unique ID', () => {
-    expect(withParamsActions).to.have.property('asyncFunction', withParamsAsync$)
-    expect(withParamsActions).to.have.property('sid')
-  })
-})
-
-describe('asyncActionMatcher(type, asyncFunction)', () => {
-  it ('should return a type guard that returns true iff the given action matches the given `type` and `asyncFunction`', () => {
+describe('asyncActionMatcher(type, asyncOperation)', () => {
+  it ('should return a type guard that returns true iff the given action matches the given `type` and `asyncOperation`', () => {
     const matcher = asyncActionMatcher('call', withParamsAsync$)
-    expect(matcher(withParamsActions.call(params))).to.be.true
-    expect(matcher(createAsyncSession(withParamsAsync$).call(params))).to.be.true
-    expect(matcher(withParamsActions.data(data))).to.be.false
-    expect(matcher(createAsyncSession(noParamsAsync$).call())).to.be.false
+    expect(matcher(callActionCreator(params))).to.be.true
+    expect(matcher(asyncLifecycle(withParamsAsync$).call(params))).to.be.true
+    expect(matcher(dataActionCreator(data))).to.be.false
+    expect(matcher(asyncLifecycle(noParamsAsync$).call())).to.be.false
   })
 })
 
-describe('AsyncSessionManager', () => {
-  describe('action creators', () => {
-    it('should create actions with metadata describing the session', () => {
-      const nextAction = withParamsActions.data(data)
-      expect(nextAction).to.have.property('type', `stately-async/withParamsAsync$/data`)
-      expect(nextAction).to.deep.property('payload', [data])
-      expect(nextAction[StatelyAsyncSymbol]).to.have.property('sid')
-    })
-
-    describe('match property', () => {
-      it('should be a type guard that returns true iff the given action matches the type and session ID of the action creator', () => {
-        expect(withParamsActions.data.match(withParamsActions.data(data))).to.be.true
-        expect(withParamsActions.data.match(withParamsActions.call(params))).to.be.false
-        // giving it a name so that fxActions doesn't complain
-        function asyncFn() {
-          return Promise.resolve(10)
-        }
-        expect(withParamsActions.data.match(createAsyncSession(asyncFn).data(10))).to.be.false
-        expect(withParamsActions.data.match({ type: 'BLAH' })).to.be.false
-      })
-    })
+describe('AsyncActionCreator', () => {
+  it('should create actions with lifecycle metadata and the given payload', () => {
+    const nextAction = dataActionCreator(data)
+    expect(nextAction).to.have.property('type', `stately-async/withParamsAsync$/data`)
+    expect(nextAction).to.deep.property('payload', [data])
+    expect(nextAction[StatelyAsyncSymbol]).to.have.property('id', 'testuuid')
   })
 
-  describe('selector', () => {
-    it('should return the AsyncSession managed by this instance', () => {
-      const state = sessionSlice(activeSession, withParamsActions.sid)
-      const selector = withParamsActions.selector
-      expect(selector(state)).to.have.property('status', 'active')
-      expect(selector(state)).to.have.property('data', data)
+  describe('match property', () => {
+    it('should be a type guard that returns true iff the given action matches the type and lifecycle instance ID of the action creator', () => {
+      expect(dataActionCreator.match(dataActionCreator(data))).to.be.true
+      expect(dataActionCreator.match(callActionCreator(params))).to.be.false
+      // giving it a name so that fxActions doesn't complain
+      function asyncFn() {
+        return Promise.resolve(10)
+      }
+      expect(dataActionCreator.match(asyncLifecycle(asyncFn).data(10))).to.be.false
+      expect(dataActionCreator.match({ type: 'BLAH' })).to.be.false
     })
   })
 })

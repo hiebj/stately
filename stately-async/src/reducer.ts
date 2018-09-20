@@ -3,14 +3,14 @@
 /** @ignore */
 import { Reducer, Action } from 'redux'
 
-import { AsyncSession, initialAsyncSession, AsyncSessionSlice } from './AsyncSession'
-import { isAsyncSessionAction } from './actions'
+import { AsyncState, initialAsyncState, AsyncSlice } from './AsyncState'
+import { isAsyncAction } from './actions'
 import chainReducers from './chainReducers'
 import { remove } from './cache'
-import { StatelyAsyncSymbol } from './AsyncSession'
+import { StatelyAsyncSymbol } from './AsyncState'
 
-const callReducer: Reducer<AsyncSession<any, any>, Action> = (state = initialAsyncSession, action) =>
-  isAsyncSessionAction(action) && action[StatelyAsyncSymbol].saction === 'call'
+const callReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyncState, action) =>
+  isAsyncAction(action) && action[StatelyAsyncSymbol].lifecycleEvent === 'call'
     ? {
         ...state,
         status: 'active',
@@ -20,8 +20,8 @@ const callReducer: Reducer<AsyncSession<any, any>, Action> = (state = initialAsy
       }
     : state
 
-const dataReducer: Reducer<AsyncSession<any, any>, Action> = (state = initialAsyncSession, action) =>
-  isAsyncSessionAction(action) && action[StatelyAsyncSymbol].saction === 'data'
+const dataReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyncState, action) =>
+  isAsyncAction(action) && action[StatelyAsyncSymbol].lifecycleEvent === 'data'
     ? {
         ...state,
         data: action.payload[0],
@@ -29,8 +29,8 @@ const dataReducer: Reducer<AsyncSession<any, any>, Action> = (state = initialAsy
       }
     : state
 
-const errorReducer: Reducer<AsyncSession<any, any>, Action> = (state = initialAsyncSession, action) =>
-  isAsyncSessionAction(action) && action[StatelyAsyncSymbol].saction === 'error'
+const errorReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyncState, action) =>
+  isAsyncAction(action) && action[StatelyAsyncSymbol].lifecycleEvent === 'error'
     ? {
         ...state,
         status: 'error',
@@ -38,8 +38,8 @@ const errorReducer: Reducer<AsyncSession<any, any>, Action> = (state = initialAs
       }
     : state
 
-const completeReducer: Reducer<AsyncSession<any, any>, Action> = (state = initialAsyncSession, action) =>
-  isAsyncSessionAction(action) && action[StatelyAsyncSymbol].saction === 'complete'
+const completeReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyncState, action) =>
+  isAsyncAction(action) && action[StatelyAsyncSymbol].lifecycleEvent === 'complete'
     ? {
         ...state,
         status: 'completed',
@@ -48,26 +48,26 @@ const completeReducer: Reducer<AsyncSession<any, any>, Action> = (state = initia
     : state
 
 /**
- * A reducer that handles {@link AsyncSessionAction}s and updates the corresponding {@link AsyncSession}.
+ * A reducer that handles {@link AsyncAction}s and updates the corresponding {@link AsyncState}.
  * It is called by {@link statelyAsyncReducer}. Generally, you should not have to use this reducer directly.
  */
-export const asyncSessionReducer = chainReducers(callReducer, dataReducer, errorReducer, completeReducer)
+export const asyncStateReducer = chainReducers(callReducer, dataReducer, errorReducer, completeReducer)
 
 /**
- * A reducer that manages the {@link AsyncSessionSlice} in the root of a state tree.
- * It maps actions by their uuid to individual {@link AsyncSession} instances.
+ * A reducer that manages the {@link AsyncSlice} in the root of a state tree.
+ * It maps actions by their uuid to individual {@link AsyncLifecycle} instances.
  * This reducer must be integrated into your Store for the library to work.
  * It is aliased and exported as {@link statelyAsyncReducer} from the library's `index`.
  */
-export const statelyAsyncReducer: Reducer<AsyncSessionSlice> = (state = { [StatelyAsyncSymbol]: {} }, action) => {
-  if (isAsyncSessionAction(action)) {
-    const sid = action[StatelyAsyncSymbol].sid
+export const statelyAsyncReducer: Reducer<AsyncSlice> = (state = { [StatelyAsyncSymbol]: {} }, action) => {
+  if (isAsyncAction(action)) {
+    const sid = action[StatelyAsyncSymbol].id
     const nextState = { ...state, [StatelyAsyncSymbol]: { ...state[StatelyAsyncSymbol] } }
-    if (action[StatelyAsyncSymbol].saction === 'destroy') {
+    if (action[StatelyAsyncSymbol].lifecycleEvent === 'destroy') {
       delete nextState[StatelyAsyncSymbol][sid]
       remove(sid)
     } else {
-      nextState[StatelyAsyncSymbol][sid] = asyncSessionReducer(nextState[StatelyAsyncSymbol][sid], action)
+      nextState[StatelyAsyncSymbol][sid] = asyncStateReducer(nextState[StatelyAsyncSymbol][sid], action)
     }
     return nextState
   }
