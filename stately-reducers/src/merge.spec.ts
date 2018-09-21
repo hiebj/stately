@@ -24,7 +24,7 @@ const isOpenReducer: Reducer<IsOpen> = chain(
   openReducer,
   closeReducer,
 )
-const isOpenSliceReducer = box({ isOpen: isOpenReducer })
+const isOpenSliceReducer = box(isOpenReducer, 'isOpen')
 
 // ---- File: User.ts ----
 interface User {
@@ -41,7 +41,7 @@ const changeNameReducer: Reducer<User> = (state = initialUserState, action) =>
   action.type === 'CHANGE_NAME' ? { ...state, name: action.name } : state
 
 const userReducer = chain(changeIdReducer, changeNameReducer)
-const userSliceReducer = box({ user: userReducer })
+const userSliceReducer = box(userReducer, 'user')
 
 // ---- File: store.ts ----
 const composedReducer = merge(isOpenSliceReducer, userSliceReducer)

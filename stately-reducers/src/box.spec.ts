@@ -6,23 +6,23 @@ import { Reducer, Store, createStore } from 'redux';
 
 import box from './box'
 
-interface OpenClosed {
+interface IsOpen {
   open: boolean
 }
 
-const toggleReducer: Reducer<OpenClosed> = (state = { open: false }, action) =>
+const toggleReducer: Reducer<IsOpen> = (state = { open: false }, action) =>
   action.type === 'TOGGLE' ? { open: !state.open } : state
 
-const boxedReducer = box({ openClosed: toggleReducer })
+const boxedReducer = box(toggleReducer, 'isOpen')
 
 describe('box', () => {
-  let store: Store<{ openClosed: OpenClosed }>
+  let store: Store<ReturnType<typeof boxedReducer>>
   beforeEach(() => {
     store = createStore(boxedReducer)
   })
 
-  it('should convert `Reducer<S>` into `Reducer<{ boxName: S }>`', () => {
+  it('box(Reducer<A>, key) => Reducer<{ [key]: A }>', () => {
     store.dispatch({ type: 'TOGGLE' })
-    expect(store.getState().openClosed).to.have.property('open', true)
+    expect(store.getState().isOpen).to.have.property('open', true)
   })
 })
