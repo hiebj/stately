@@ -26,7 +26,7 @@ type chain = <S>(...reducers: Reducer<S>[]) => Reducer<S>
 type box = <S, K>(reducer: Reducer<S>, key: K) => Reducer<{ [K]: S }>
 
 // many independent reducers with different shapes become a root reducer
-type merge = <...S>(...reducers: [Reducer<...S>]) => Reducer<Union<...S>>
+type merge = <...S>(...reducers: Reducer<...S>[]) => Reducer<Union<...S>>
 ```
 
 The following pseudo-example takes three sets of atomic reducers A, B, and C, composing them into models, slices, and finally a root reducer in a single expression:
