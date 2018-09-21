@@ -11,7 +11,7 @@ This module contains functional composers for Redux reducers. Used together, the
 
 Atomic reducers are succinct, readable, testable, and do not require branching logic such as `switch` statements or nested ternary expressions. By defining all of your state management using atomic reducers, then composing them into more complex state trees, many logic bugs and organizational problems can be prevented. Atomic reducers can also be reused by more than one model, keeping code DRY.
 
-`chain` and `box` are typically used together in a single file to define a Model reducer its containing and Slice reducer. These are then composed using `merge` in the store definition. The advantage to this strategy over `combineReducers` is that the shape of a reducer is defined *where the reducer is defined*, rather than *where the store is defined*. Instead of having to go to the store definition to understand where the data from a reducer will live in the state tree, it is evident in the definition of the reducer itself.
+`chain` and `box` are typically used together in a single file to define a Model reducer and its containing and Slice reducer. These are then composed using `merge` in the store definition. The advantage to this strategy over `combineReducers` is that the shape of a reducer is defined *where the reducer is defined*, rather than *where the store is defined*. Instead of having to go to the store definition to understand where the data from a reducer will live in the state tree, it is evident in the definition of the reducer itself.
 
 ## Usage
 
