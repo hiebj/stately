@@ -15,16 +15,14 @@ interface IsOpen {
 }
 const initialIsOpenState: IsOpen = { open: false }
 
+// each reducer is "atomic" - it only handles one action and performs a single state mutation
 const openReducer: Reducer<IsOpen> = (state = initialIsOpenState, action) =>
   action.type === 'CLOSE' ? { open: false } : state
 const closeReducer: Reducer<IsOpen> = (state = initialIsOpenState, action) =>
   action.type === 'OPEN' ? { open: true } : state
 
-const isOpenReducer: Reducer<IsOpen> = chain(
-  openReducer,
-  closeReducer,
-)
-const isOpenSliceReducer = box(isOpenReducer, 'isOpen')
+const isOpenModelReducer: Reducer<IsOpen> = chain(openReducer, closeReducer)
+const isOpenSliceReducer = box(isOpenModelReducer, 'isOpen')
 
 // ---- File: User.ts ----
 interface User {
@@ -40,14 +38,13 @@ const changeIdReducer: Reducer<User> = (state = initialUserState, action) =>
 const changeNameReducer: Reducer<User> = (state = initialUserState, action) =>
   action.type === 'CHANGE_NAME' ? { ...state, name: action.name } : state
 
-const userReducer = chain(changeIdReducer, changeNameReducer)
-const userSliceReducer = box(userReducer, 'user')
+const userModelReducer: Reducer<User> = chain(changeIdReducer, changeNameReducer)
+const userSliceReducer = box(userModelReducer, 'user')
 
 // ---- File: store.ts ----
 const composedReducer = merge(isOpenSliceReducer, userSliceReducer)
 let store: Store<ReturnType<typeof composedReducer>>
-// typeof store is now:
-// Store<{
+// store: Store<{
 //   isOpen: { open: boolean },
 //   user: { id: number, name: string }
 // }>

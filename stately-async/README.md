@@ -49,4 +49,4 @@ const AppComponent = () =>
 
 For working examples, check out the tests. In particular, [`middleware.spec.ts`](/stately-async/src/middleware.spec.ts) contains integration tests, configuring and dispatching actions to a real Store.
 
-For API docs, follow the instructions in [the top-level README](/).
+For API docs, follow the instructions in [the top-level README](https://github.com/hiebj/stately/).
