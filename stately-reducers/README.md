@@ -30,4 +30,4 @@ const allReducers = merge(
 // typeof allReducers: Reducer<{ a: A, b: B, c: C }>
 ```
 
-For a working example of `chain`, `box`, and `merge` used together, see [`merge.spec.ts`](/stately-reducers/src/merge.spec.ts)
+For a working example of `chain`, `box`, and `merge` used together, see [`merge.spec.ts`](/stately-reducers/src/merge.spec.ts).
