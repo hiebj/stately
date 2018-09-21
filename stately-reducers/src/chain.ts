@@ -2,45 +2,29 @@ import { Reducer } from 'redux'
 
 /**
  * The `chain` composer is nearly identical to the commonly-used `reduceReducers` composer.
+ * It behaves identically to the `pipe` function found in most functional programming libraries;
+ * however, it constrains the input reducers by forcing them all to accept and return the same state shape.
  *
- * The intended use case is to compose reducers which together manage a single slice of
- * a state tree. They all should accept, and return, the same shape.
+ * The intended use case is to compose reducers which together manage a single slice of a state tree.
  *
  * An example use case is a situation where multiple actions affect a state shape in different ways.
  * This can be preferential to avoid writing reducers using e.g. a `switch`, or complex, nested ternary matchers.
  *
- * For example:
- * ```
- * type OpenClosed = { open: boolean }
- * const openReducer = (state: OpenClosed, action: Action) =>
- *   action.type === 'OPEN' ? { open: true } : state
- * const closeReducer = (state: OpenClosed, action: Action) =>
- *   action.type === 'CLOSE' ? { open: false } : state
- * const openCloseReducer = chain(openReducer, closeReducer)
- * export default openCloseReducer
- * ```
- *
- * Order matters in `chain`. Essentially,
- * ```
- * chain(reducer1, reducer2, reducer3)
- * ```
- * 
- * yields:
- * ```
- *   (state, action) => reducer3(reducer2(reducer1(state, action), action), action)
- * ```
- *
  * If you want to compose multiple reducers that each handle **separate** slices of a state
  * tree, you should use the {@link merge} composer instead.
+ *
+ * For a working example, see `chain.spec.ts`.
  */
-const chain = <S extends {}>(...reducers: Array<Reducer<S>>): Reducer<S> => (
+const chain = <S extends {}>(firstReducer: Reducer<S>, ...reducers: Reducer<S>[]): Reducer<S> => (
   state,
   action,
 ) =>
   reducers.reduce(
     (accumulatedState, nextReducer) =>
-      Object.assign(accumulatedState, nextReducer(accumulatedState, action)),
-    Object.assign({}, state),
+      accumulatedState ?
+        Object.assign(accumulatedState, nextReducer(accumulatedState, action)) :
+        nextReducer(accumulatedState, action),
+    firstReducer(state, action),
   )
 
 export default chain

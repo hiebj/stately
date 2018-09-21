@@ -2,7 +2,7 @@ import * as chai from 'chai'
 import { Subject } from 'rxjs'
 import { Store, Action, createStore, applyMiddleware } from 'redux'
 import 'mocha'
-const expect = chai.expect
+const { expect } = chai
 
 import { $toMiddleware, $toEvents, EventAPI } from './observables';
 

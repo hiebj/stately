@@ -40,7 +40,9 @@ import { Reducer, Action } from 'redux'
  * This function will log a warning to the console if any overwrite is detected (e.g.
  * if the second reducer modifies the subset of the state tree as the first). If you
  * want to have several reducers manage the same subset of a state tree, you should use
- * the `chain` composer instead.
+ * the {@link chain} composer instead.
+ *
+ * For a working example of {@link chain}, {@link box}, and {@link merge} used together, see `merge.spec.ts`.
  */
 export default function sliceReducers<S>(r1: Reducer<S>): Reducer<S>
 export default function sliceReducers<S1, S2>(r1: Reducer<S1>, r2: Reducer<S2>): Reducer<S1 & S2>
@@ -100,8 +102,10 @@ export default function sliceReducers(...reducers: Array<Reducer<{}>>): Reducer<
         )
       : // give each slice reducer the same "current state"
         reducers.reduce(
-          (accumulatedNextState, nextReducer) =>
-            reduceAndMergeAfterChecking(nextReducer, state, action, accumulatedNextState),
+          (accumulatedNextState, nextReducer) => ({
+            ...accumulatedNextState,
+            ...nextReducer(state, action)
+          }),
           state,
         )
 }
@@ -120,14 +124,15 @@ function reduceAndMergeAfterChecking<S extends {}>(
     ) {
       // tslint:disable-next-line:no-console
       console.warn(
-        'sliceReducers:\n',
-        'A reducer was given to `sliceReducers` that modifies the same subset of the state',
-        'tree as a previous reducer. This is not recommended, as the states are merged',
-        'destructively, so the state returned by the subsequent reducer will always override',
-        'the state of the previous.\n',
+        'stately-reducers:\n',
+        `merge() conflict on key '${key}':\n`,
+        'Two reducers were given to merge() that both modify the same property of the state tree.',
+        'This is not recommended, as the states are merged destructively.',
+        'This means that the last reducer to modify a given property will always take precedence.\n',
         'If you have multiple reducers that are intended to share management of the same slice',
-        'of a state tree, consider using `chainReducers` instead.',
+        'of a state tree, consider using chain() instead.',
       )
+      break
     }
   }
   return {

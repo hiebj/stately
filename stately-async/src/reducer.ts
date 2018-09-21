@@ -2,10 +2,10 @@
 
 /** @ignore */
 import { Reducer, Action } from 'redux'
+import { chain } from 'stately-reducers'
 
 import { AsyncState, initialAsyncState, AsyncSlice } from './AsyncState'
 import { isAsyncAction } from './actions'
-import chainReducers from './chainReducers'
 import { remove } from './cache'
 import { StatelyAsyncSymbol } from './AsyncState'
 
@@ -51,7 +51,7 @@ const completeReducer: Reducer<AsyncState<any, any>, Action> = (state = initialA
  * A reducer that handles {@link AsyncAction}s and updates the corresponding {@link AsyncState}.
  * It is called by {@link statelyAsyncReducer}. Generally, you should not have to use this reducer directly.
  */
-export const asyncStateReducer = chainReducers(callReducer, dataReducer, errorReducer, completeReducer)
+export const asyncStateReducer = chain(callReducer, dataReducer, errorReducer, completeReducer)
 
 /**
  * A reducer that manages the {@link AsyncSlice} in the root of a state tree.

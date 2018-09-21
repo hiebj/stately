@@ -10,7 +10,7 @@ import * as chai from 'chai'
 import { SinonFakeTimers, useFakeTimers } from 'sinon'
 import { mount } from 'enzyme'
 import 'mocha'
-const expect = chai.expect
+const { expect } = chai
 
 import { ContextDeclarativeEffect } from './DeclarativeEffect'
 

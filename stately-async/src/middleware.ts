@@ -8,7 +8,7 @@ import { Action, Middleware } from 'redux'
 import { asyncActionMatcher } from './actions'
 import { get } from './cache'
 import { StatelyAsyncSymbol } from './AsyncState'
-import { $from, rxMiddleware } from './observables';
+import { $from, $toMiddleware } from './observables';
 
 /**
  * Accepts an `Observable<Action>` and subscribes to it.
@@ -64,7 +64,7 @@ export const statelyAsyncEpic = (action$: Observable<Action>): Observable<Action
  */
 export const statelyAsyncMiddleware: Middleware = store => {
   const action$: Subject<Action> = new Subject()
-  const middleware = rxMiddleware(action$)
+  const middleware = $toMiddleware(action$)
   statelyAsyncEpic(action$).subscribe(store.dispatch)
   return middleware(store)
 }

@@ -1,7 +1,7 @@
 import * as chai from 'chai'
 import { of as $of } from 'rxjs'
 import 'mocha'
-const expect = chai.expect
+const { expect } = chai
 
 import { AsyncState, AsyncSlice, initialAsyncState, StatelyAsyncSymbol } from './AsyncState'
 

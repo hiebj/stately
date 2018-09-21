@@ -7,26 +7,15 @@ import { Reducer, Action } from 'redux'
  * By way of analogy, **slice** is to **state-tree** as **table** is to **database**.
  * Intended to be used to create reducers that are then composed with `sliceReducers`.
  *
- * For example:
- * ```
- * type MyState = { someProp: string; otherProp: boolean }
- *
- * const myStateReducer: Reducer<MyState> = ...
- *
- * const myStateSliceReducer = box({
- *   myState: myStateReducer
- * })
- *
- * // typeof myStateSliceReducer: Reducer<{ myState: MyState }>
- * ```
+ * For a working example, see `box.spec.ts`.
  */
-const box = <State extends { [k: string]: any }>(
-  reducerDict: { [K in keyof State]: Reducer<State[K]> },
-): Reducer<State> => <RootState1 extends State>(
-  state: RootState1 = {} as RootState1,
-  action: Action,
-): State =>
-  Object.keys(reducerDict).reduce((rootState: RootState1, ns: keyof State) => {
+const box = <S extends { [k: string]: any }, A extends Action<any>>(
+  reducerDict: { [K in keyof S]: Reducer<S[K]> },
+): Reducer<S, A> => <S1 extends S>(
+  state: S1 = {} as S1,
+  action: A,
+): S =>
+  Object.keys(reducerDict).reduce((rootState: S1, ns: keyof S) => {
     const newState = reducerDict[ns](rootState && rootState[ns], action)
     return newState !== (state && state[ns])
       ? {

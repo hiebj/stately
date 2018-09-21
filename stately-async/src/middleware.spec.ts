@@ -3,7 +3,7 @@ import * as sinon from 'sinon'
 import { Observable, Subject } from 'rxjs'
 import { Store, createStore, applyMiddleware, Reducer, Action } from 'redux'
 import 'mocha'
-const expect = chai.expect
+const { expect } = chai
 
 import { AsyncLifecycle, asyncLifecycle } from './AsyncLifecycle'
 

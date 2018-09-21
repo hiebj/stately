@@ -1,6 +1,6 @@
 {
   "name": "stately-async",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Functions and related types for managing the state of side-effects, following the Reducer pattern and the Observable spec",
   "author": {
     "name": "Jon Hieb",
@@ -21,9 +21,10 @@
   },
   "license": "MIT",
   "dependencies": {
+    "redux": "^4.0.0",
     "rxjs": "^6.2.1",
-    "uuid": "^3.2.1",
-    "redux": "^4.0.0"
+    "stately-reducers": "0.0.1",
+    "uuid": "^3.2.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",

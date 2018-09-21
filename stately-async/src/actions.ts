@@ -83,9 +83,9 @@ const getInfix = <Data, Params extends any[]>(
     // tslint:disable-next-line:no-console
     console.warn(
       'stately-async:\n',
-      '#asyncLifecycle was called with an anonymous AsyncOperation.\n',
+      'asyncLifecycle() was called with an anonymous AsyncOperation.\n',
       'The action type will be derived using the lifecycle\'s uuid, which is ugly and non-descriptive.\n',
-      'This also means it will be impossible to use `asyncActionMatchers` to create matchers for the given AsyncOperation.',
+      'This also means it will be impossible to use asyncActionMatchers() to create matchers for the given AsyncOperation.',
       'It is recommended that only non-anonymous AsyncOperations are used.',
     )
     return id
