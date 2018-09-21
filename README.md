@@ -1,5 +1,4 @@
 # stately
-Elegant state management
 
 **[stately-react](/stately-react)**  
 Components and related types for simplifying management and integration of state in React apps
