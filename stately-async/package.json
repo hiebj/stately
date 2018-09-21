@@ -1,7 +1,7 @@
 {
   "name": "stately-async",
-  "version": "0.2.0",
-  "description": "Functions and related types for managing the state of side-effects, following the Reducer pattern and the Observable spec",
+  "version": "0.2.1",
+  "description": "Functional tools for managing the state of asynchronous operations",
   "author": {
     "name": "Jon Hieb",
     "email": "hiebj@live.com",
@@ -23,7 +23,7 @@
   "dependencies": {
     "redux": "^4.0.0",
     "rxjs": "^6.2.1",
-    "stately-reducers": "0.0.1",
+    "stately-reducers": "^0.0.2",
     "uuid": "^3.2.1"
   },
   "devDependencies": {

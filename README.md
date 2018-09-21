@@ -1,10 +1,10 @@
 # stately
 
 **[stately-react](/stately-react)** `v0.0.6`  
-Components and related types for simplifying management and integration of state in React apps
+Components for simplifying the integration of state into React apps
 
-**[stately-async](/stately-async)** `v0.2.0`  
-Functions and related types for managing the state of side-effects, following the Reducer pattern and the Observable spec
+**[stately-async](/stately-async)** `v0.2.1`  
+Functional tools for managing the state of asynchronous operations
 
-**[stately-reducers](/stately-reducers)** `v0.0.1`  
-Functional composers for Redux reducers, together providing a clean pattern for managing complex state trees
+**[stately-reducers](/stately-reducers)** `v0.0.2`  
+Functional composers allowing complex state trees to be constructed from atomic reducers
