@@ -22,6 +22,64 @@ const param2 = 123
 const data: Item = { prop1: true, prop2: 10 }
 const error = 'error'
 
+describe('statelyAsyncMiddleware: integration tests', () => {
+  let reducer: Reducer<{}> & sinon.SinonSpy
+  let store: Store<{}>
+  let operation: AsyncOperation<Item, Params>
+  let lifecycle: AsyncLifecycle<Item, Params>
+  let resolve: (i: Item) => void
+  let reject: (reason: any) => void
+  let callAction: Action
+
+  const asyncOp = async (_p: Params) =>
+    new Promise<Item>((res, rej) => {
+      resolve = res
+      reject = rej
+    })
+
+  beforeEach(() => {
+    reducer = sinon.spy((_state: {}, _action: Action) => ({}))
+    store = createStore(reducer, applyMiddleware(statelyAsyncMiddleware))
+    operation = sinon.spy(asyncOp)
+    lifecycle = asyncLifecycle(operation)
+    callAction = lifecycle.call(param1, param2)
+    store.dispatch(callAction)
+  })
+
+  describe('a call action is dispatched', () => {
+    it('should call the reducer', () => {
+      expect(reducer).to.have.been.calledWithMatch({}, callAction)
+    })
+
+    it('should call the AsyncOperation', () => {
+      expect(operation).to.have.been.calledWithMatch(param1, param2)
+    })
+
+    describe('async function resolves', () => {
+      it('should dispatch a data() action, followed by a complete() action', done => {
+        const expectedActions = [lifecycle.data(data), lifecycle.complete()]
+        store.subscribe(() => {
+          expect(reducer).to.have.been.calledWithMatch({}, expectedActions.shift())
+          if (!expectedActions.length) {
+            done()
+          }
+        })
+        resolve(data)
+      })
+    })
+
+    describe('async function is rejected', () => {
+      it('should dispatch an error() action', done => {
+        store.subscribe(() => {
+          expect(reducer).to.have.been.calledWithMatch({}, lifecycle.error(error))
+          done()
+        })
+        reject(error)
+      })
+    })
+  })
+})
+
 describe('statelyAsyncEpic', () => {
   let fakeEffectSubject$: Subject<Item>
   let asyncFn: AsyncOperation<Item, Params>
@@ -48,7 +106,7 @@ describe('statelyAsyncEpic', () => {
       expect(fakeEffectSubject$.subscribe).to.have.been.called
     })
 
-    describe('a subsequent \'call\' action is dispatched for the same session', () => {
+    describe('a subsequent \'call\' action is dispatched for the same lifecycle', () => {
       it('should stop monitoring the output of the previous call', () => {
         const subscription = sinon.spy()
         action$out.subscribe(subscription)
@@ -117,64 +175,6 @@ describe('statelyAsyncEpic', () => {
       action$.next(actions.destroy())
       fakeEffectSubject$.next(data)
       expect(subscription).not.to.have.been.calledTwice
-    })
-  })
-})
-
-describe('statelyAsyncMiddleware: integration tests', () => {
-  let reducer: Reducer<{}> & sinon.SinonSpy
-  let store: Store<{}>
-  let asyncFn: AsyncOperation<Item, Params>
-  let actions: AsyncLifecycle<Item, Params>
-  let resolve: (i: Item) => void
-  let reject: (reason: any) => void
-  let callAction: Action
-
-  beforeEach(() => {
-    reducer = sinon.spy((_state: {}, _action: Action) => ({}))
-    store = createStore(reducer, {}, applyMiddleware(statelyAsyncMiddleware))
-    asyncFn = sinon.spy(
-      async (_p: Params) =>
-        new Promise<Item>((res, rej) => {
-          resolve = res
-          reject = rej
-        }),
-    )
-    actions = asyncLifecycle(asyncFn)
-    callAction = actions.call(param1, param2)
-    store.dispatch(callAction)
-  })
-
-  describe('a call action is dispatched', () => {
-    it('should call the reducer', () => {
-      expect(reducer).to.have.been.calledWithMatch({}, callAction)
-    })
-  
-    it('should call the AsyncOperation', () => {
-      expect(asyncFn).to.have.been.calledWithMatch(param1, param2)
-    })
-  
-    describe('async function resolves', () => {
-      it('should dispatch a data() action, followed by a complete() action', done => {
-        const expectedActions = [actions.data(data), actions.complete()]
-        store.subscribe(() => {
-          expect(reducer).to.have.been.calledWithMatch({}, expectedActions.shift())
-          if (!expectedActions.length) {
-            done()
-          }
-        })
-        resolve(data)
-      })
-    })
-  
-    describe('async function is rejected', () => {
-      it('should dispatch an error() action', done => {
-        store.subscribe(() => {
-          expect(reducer).to.have.been.calledWithMatch({}, actions.error(error))
-          done()
-        })
-        reject(error)
-      })
     })
   })
 })

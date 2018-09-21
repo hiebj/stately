@@ -31,3 +31,5 @@ const allReducers = merge(
 ```
 
 For a working example of `chain`, `box`, and `merge` used together, see [`merge.spec.ts`](/stately-reducers/src/merge.spec.ts).
+
+For API docs, follow the instructions in [the top-level README](/).

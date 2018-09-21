@@ -6,58 +6,47 @@ All of these asynchronous tasks have a very similar lifecycle: they are called, 
 
 How many times have you written `setState({ loading: true })`, or defined a `loadingReducer`?
 
-This module provides functions and types that allow a consumer to create self-managing "sessions" for arbitrary asynchronous tasks. These sessions represent the lifecycle described above for any asynchronous function, regardless of its parameter arity, output type, or underlying implementation.
+This module provides functions and types that allow a consumer to create self-managing "lifecycles" for arbitrary asynchronous tasks. A lifecycle can be created for any asynchronous function, regardless of its parameter arity, output type, or underlying implementation.
 
-It is implemented following the action/reducer pattern popularized by Redux, and is intended to work with Redux. Usage of Redux is not strictly necessary, and this library has no runtime dependencies on Redux.
+It is implemented following the action/reducer pattern popularized by Redux, and is intended to work with Redux. Usage of Redux is not strictly necessary, and this module has no runtime dependencies on Redux.
 
-## Example
+## Usage
 The following naïve React example would render a set of tweets for `'@myTwitterHandle'` and `'@yourTwitterHandle'`. The store configuration, `getTweets` definition, and store subscription code is omitted for clarity:
 
 ```
 import store from './myStore'
 import getTweets from './getTweets'
-import { createAsyncSession } from 'stately-async'
+import { asyncLifecycle } from 'stately-async'
 
-const sessionManager1 = createAsyncSession(getTweets)
-store.dispatch(sessionManager1.call('@myTwitterHandle'))
+const lifecycle1 = asyncLifecycle(getTweets)
+store.dispatch(lifecycle1.call('@myTwitterHandle'))
 
-const sessionManager2 = createAsyncSession(getTweets)
-store.dispatch(sessionManager2.call('@yourTwitterHandle'))
+const lifecycle2 = asyncLifecycle(getTweets)
+store.dispatch(lifecycle2.call('@yourTwitterHandle'))
 
-const TweetsComponent = ({ session }) =>
-  session.data ?
+const TweetsComponent = ({ state }) =>
+  state.data ?
     <div className="tweets">
-      {session.data.map(
+      {state.data.map(
         tweet =>
           <Tweet tweet={tweet} />
       )}
     </div> :
-  session.error ?
+  state.error ?
     <div className="error">
-      {String(session.error)}
+      {String(state.error)}
     </div> :
-  session.status === 'active' ?
+  state.status === 'active' ?
     <div className="loading-spinner" /> :
     null
 
 const AppComponent = () =>
   <main>
-    <TweetsComponent session={sessionManager1.selector(store.getState())} />
-    <TweetsComponent session={sessionManager2.selector(store.getState())} />
+    <TweetsComponent state={lifecycle1.selector(store.getState())} />
+    <TweetsComponent state={lifecycle2.selector(store.getState())} />
   </main>
 ```
 
-A complete, working example will be added to this repository as soon as I get around to it.
+For working examples, check out the tests. In particular, [`middleware.spec.ts`](/stately-async/src/middleware.spec.ts) contains integration tests, configuring and dispatching actions to a real Store.
 
-## API
-This project uses TypeDoc, which generates API documentation from TypeScript types and JSDoc. At some point, I'll host the TypeDoc on github pages; for now, you have to run it yourself:
-
-```
-npm install
-npm build
-npm docs
-```
-
-This will host a static TypeDoc site at `8080`.
-
-For mocked, but working examples, check out the tests. In particular, [`middleware.spec.ts`](/stately-async/src/middleware.spec.ts) contains the best end-to-end examples, as it tests the entire lifecycle of an `AsyncSession` across multiple calls.
+For API docs, follow the instructions in [the top-level README](/).
