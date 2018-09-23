@@ -1,10 +1,10 @@
-import * as chai from 'chai'
-import { of as $of } from 'rxjs'
 import 'mocha'
-const { expect } = chai
+import { expect } from 'chai'
+import { stub } from 'sinon'
+
+import { of as $of } from 'rxjs'
 
 import { AsyncState, AsyncSlice, StatelyAsyncSymbol } from './AsyncState'
-
 import { AsyncLifecycle, asyncLifecycle } from './AsyncLifecycle'
 
 interface Params {
@@ -42,10 +42,21 @@ beforeEach(() => {
   withParamsActions = asyncLifecycle(withParamsAsync$)
 })
 
-describe('asyncLifecycle()', () => {
+describe('asyncLifecycle(operation)', () => {
   it('should return a new AsyncLifecycle with a unique ID', () => {
     expect(withParamsActions).to.have.property('operation', withParamsAsync$)
     expect(withParamsActions).to.have.property('id')
+  })
+})
+
+describe('asyncLifecycle(<anonymous>)', () => {
+  it('should return a new AsyncLifecycle with a unique ID, but log a warning to the console', () => {
+    const spy = stub(console, 'warn')
+    const anonymousLifecycle = asyncLifecycle(() => noParamsAsync$())
+    expect(spy).to.have.been.called
+    expect(anonymousLifecycle).to.have.property('operation')
+    expect(typeof anonymousLifecycle.operation).to.equal('function')
+    expect(anonymousLifecycle).to.have.property('id')
   })
 })
 

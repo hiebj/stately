@@ -1,6 +1,6 @@
-import * as chai from 'chai'
-import * as sinon from 'sinon-chai'
+import { use, should } from 'chai'
 
-chai.use(sinon)
+import sinon = require('sinon-chai')
 
-chai.should()
+use(sinon)
+should()

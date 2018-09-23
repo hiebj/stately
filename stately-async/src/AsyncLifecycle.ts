@@ -13,10 +13,12 @@ import { set } from "./cache";
  * An object containing action creators allowing the management of {@link AsyncState} for an {@link AsyncOperation}.
  * 
  * Actions dispatched from this object will only affect the state of the owned `AsyncState`.
- * The `selector` on this instance will retrieve the managed `AsyncState` from the given Store.
+ * The `selector` on this instance will retrieve the managed `AsyncState` from the given root state.
  * 
  * Most consumers will only need to use `selector`, `call`, and `destroy`.
  * Advanced use cases may leverage the additional action creators.
+ * **Do not forget to dispatch {@link AsyncLifecycle#destroy}** when the lifecycle is no longer needed.
+ * Failure to do so will cause a memory leak.
  */
 export interface AsyncLifecycle<Data, Params extends any[]> {
   /** The uuid of the `AsyncState` owned by this manager. */
@@ -45,19 +47,20 @@ export interface AsyncLifecycle<Data, Params extends any[]> {
 }
 
 /**
- * A factory function that will create a new {@link AsyncLifecycle} with a unique ID for a given {@link AsyncOperation}.
- * Generally, you will call this function in the constructor of a component that wishes to monitor the state of an asynchronous call.
+ * A factory function that creates a new, unique {@link AsyncLifecycle} for a given {@link AsyncOperation}.
+ * `AsyncLifecycle` provides a consistent, automated means to track loading, error, success, and data states for asynchronous operations.
+ * This allows consumers to avoid duplicating ugly, error-prone side-effect branching logic and focus on rendering their declarative views.
+ * This is the primary function of this module.
  * 
- * The `AsyncLifecycle` is the primary interface for calling the `AsyncOperation` and monitoring its execution state.
- * Dispatching the {@link AsyncLifecycle#call} action on a properly configured Store will invoke the given `AsyncFuntion` and begin tracking its output in an {@link AsyncLifecycle}.
- * The component should subscribe to changes in the Store, using the {@link AsyncLifecycle#selector} to access the `AsyncState`, and render its view appropriately.
+ * Dispatching the {@link AsyncLifecycle#call} action on a properly configured Store will invoke the given `AsyncOperation` and begin tracking its output in an {@link AsyncState}.
+ * Any component subscribing to state changes can use the {@link AsyncLifecycle#selector} to access the `AsyncState` and render its view appropriately.
  */
 export const asyncLifecycle = <Data, Params extends any[]>(
   operation: AsyncOperation<Data, Params>
 ): AsyncLifecycle<Data, Params> => {
   const id = uuid()
   const factory = asyncActionCreatorFactory(operation, id)
-  const actions = Object.freeze({
+  const actions: AsyncLifecycle<Data, Params> = Object.freeze({
     id,
     operation,
     selector: (state: AsyncSlice) => state[StatelyAsyncSymbol][id] || initialAsyncState,
@@ -66,7 +69,7 @@ export const asyncLifecycle = <Data, Params extends any[]>(
     data: factory<[Data]>('data'),
     error: factory<any>('error'),
     complete: factory<[]>('complete'),
-  }) as AsyncLifecycle<Data, Params>
-  set(id, actions, operation)
+  })
+  set(id, actions)
   return actions
 }

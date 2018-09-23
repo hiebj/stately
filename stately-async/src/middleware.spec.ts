@@ -1,14 +1,12 @@
-import * as chai from 'chai'
-import * as sinon from 'sinon'
+import 'mocha'
+import { expect } from 'chai'
+import { SinonSpy, spy } from 'sinon'
+
 import { Observable, Subject } from 'rxjs'
 import { Store, createStore, applyMiddleware, Reducer, Action } from 'redux'
-import 'mocha'
-const { expect } = chai
 
 import { AsyncLifecycle, asyncLifecycle } from './AsyncLifecycle'
-
 import { AsyncOperation } from './AsyncOperation'
-
 import { statelyAsyncMiddleware, statelyAsyncEpic } from './middleware'
 
 type Params = [string, number]
@@ -23,7 +21,7 @@ const data: Item = { prop1: true, prop2: 10 }
 const error = 'error'
 
 describe('statelyAsyncMiddleware: integration tests', () => {
-  let reducer: Reducer<{}> & sinon.SinonSpy
+  let reducer: Reducer<{}> & SinonSpy
   let store: Store<{}>
   let operation: AsyncOperation<Item, Params>
   let lifecycle: AsyncLifecycle<Item, Params>
@@ -38,9 +36,9 @@ describe('statelyAsyncMiddleware: integration tests', () => {
     })
 
   beforeEach(() => {
-    reducer = sinon.spy((_state: {}, _action: Action) => ({}))
+    reducer = spy((_state: {}, _action: Action) => ({}))
     store = createStore(reducer, applyMiddleware(statelyAsyncMiddleware))
-    operation = sinon.spy(asyncOp)
+    operation = spy(asyncOp)
     lifecycle = asyncLifecycle(operation)
     callAction = lifecycle.call(param1, param2)
     store.dispatch(callAction)
@@ -88,9 +86,9 @@ describe('statelyAsyncEpic', () => {
   let action$out: Observable<Action>
 
   beforeEach(() => {
-    asyncFn = sinon.spy((_1: string, _2: number) => {
+    asyncFn = spy((_1: string, _2: number) => {
       fakeEffectSubject$ = new Subject()
-      sinon.spy(fakeEffectSubject$, 'subscribe')
+      spy(fakeEffectSubject$, 'subscribe')
       return fakeEffectSubject$
     })
     actions = asyncLifecycle(asyncFn)
@@ -108,7 +106,7 @@ describe('statelyAsyncEpic', () => {
 
     describe('a subsequent \'call\' action is dispatched for the same lifecycle', () => {
       it('should stop monitoring the output of the previous call', () => {
-        const subscription = sinon.spy()
+        const subscription = spy()
         action$out.subscribe(subscription)
         action$.next(actions.call(param1, param2))
         const origSubject = fakeEffectSubject$
@@ -118,7 +116,7 @@ describe('statelyAsyncEpic', () => {
       })
 
       it('should call the AsyncOperation again, and begin monitoring the output of the new call', () => {
-        const subscription = sinon.spy()
+        const subscription = spy()
         action$out.subscribe(subscription)
         action$.next(actions.call(param1, param2))
         const origSubject = fakeEffectSubject$
@@ -136,7 +134,7 @@ describe('statelyAsyncEpic', () => {
   describe('monitoring the output of a called AsyncOperation', () => {
     describe('data is emitted', () => {
       it('should emit a `data` action containing the emitted data', () => {
-        const subscription = sinon.spy()
+        const subscription = spy()
         action$out.subscribe(subscription)
         action$.next(actions.call(param1, param2))
         fakeEffectSubject$.next(data)
@@ -146,7 +144,7 @@ describe('statelyAsyncEpic', () => {
 
     describe('an error is encountered', () => {
       it('should emit an `error` action containing the encountered error', () => {
-        const subscription = sinon.spy()
+        const subscription = spy()
         action$out.subscribe(subscription)
         action$.next(actions.call(param1, param2))
         fakeEffectSubject$.error(error)
@@ -156,7 +154,7 @@ describe('statelyAsyncEpic', () => {
 
     describe('the asynchronous task is completed', () => {
       it('should emit an empty `complete` action', () => {
-        const subscription = sinon.spy()
+        const subscription = spy()
         action$out.subscribe(subscription)
         action$.next(actions.call(param1, param2))
         fakeEffectSubject$.complete()
@@ -167,7 +165,7 @@ describe('statelyAsyncEpic', () => {
 
   describe('a \'destroy\' AsyncAction is dispatched', () => {
     it('should stop monitoring the output of the active call', () => {
-      const subscription = sinon.spy()
+      const subscription = spy()
       action$out.subscribe(subscription)
       action$.next(actions.call(param1, param2))
       fakeEffectSubject$.next(data)

@@ -1,14 +1,15 @@
+/**
+ * Defines an internal cache that maps {@link AsyncLifecycle} instances by their uuid.
+ * This is used by the {@link statelyAsyncEpic} to access the {@link AsyncOperation} and lifecycle action creators based on the `id` payload of dispatched {@link AsyncAction}s.
+ * Do not manipulate this cache directly, or you will certainly break things.
+ */
+
 import { AsyncLifecycle } from './AsyncLifecycle'
-import { AsyncOperation } from './AsyncOperation'
 
 // TODO could this be made into a WeakMap cache and get rid of the 'destroy' action?
 
-export interface Entry {
-  actions: AsyncLifecycle<any, any>
-  operation: AsyncOperation<any, any[]>
-}
 interface Cache {
-  [uuid: string]: Entry | undefined
+  [uuid: string]: AsyncLifecycle<any, any> | undefined
 }
 const byUuid: Cache = {}
 
@@ -16,14 +17,9 @@ export const get = (uuid: string) => byUuid[uuid]
 
 export const set = <Data, Params extends any[]>(
   uuid: string,
-  actions: AsyncLifecycle<Data, Params>,
-  operation: AsyncOperation<Data, Params>,
+  lifecycle: AsyncLifecycle<Data, Params>
 ) => {
-  byUuid[uuid] = {
-    actions,
-    // have to widen the accepted parameters type
-    operation: operation as AsyncOperation<any, any[]>,
-  }
+  byUuid[uuid] = lifecycle
 }
 
 export const remove = (uuid: string) => {

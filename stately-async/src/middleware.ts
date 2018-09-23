@@ -1,4 +1,7 @@
-/** Defines {@link statelyAsyncMiddleware} and {@link statelyAsyncEpic}. */
+/**
+ * Defines {@link statelyAsyncMiddleware} and {@link statelyAsyncEpic}.
+ * One of these must be installed into a Store (or otherwise integrated into a dispatch pipeline) for the library to work.
+ */
 
 /** @ignore */
 import { Observable, empty as $empty, Subject } from 'rxjs'
@@ -26,14 +29,12 @@ export const statelyAsyncEpic = (action$: Observable<Action>): Observable<Action
       const uuidEntry = get(action[StatelyAsyncSymbol].id)
       if (uuidEntry) {
         const {
-          actions: {
-            call: { match: matchCall },
-            data,
-            error,
-            complete,
-            destroy: { match: matchDestroy },
-          },
           operation,
+          call: { match: matchCall },
+          destroy: { match: matchDestroy },
+          data,
+          error,
+          complete,
         } = uuidEntry
         return new Observable(subscriber => {
           try {
@@ -59,8 +60,8 @@ export const statelyAsyncEpic = (action$: Observable<Action>): Observable<Action
   )
 
 /**
- * Calls the `statelyAsyncEpic` with the `action$` returned by {@link action$Middleware}.
  * Lightweight integration middleware, intended for projects that are not using `redux-observable`.
+ * Serves as a direct store integration for {@link statelyAsyncEpic}.
  */
 export const statelyAsyncMiddleware: Middleware = store => {
   const action$: Subject<Action> = new Subject()

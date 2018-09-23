@@ -10,7 +10,7 @@ import { remove } from './cache'
 import { StatelyAsyncSymbol } from './AsyncState'
 
 const callReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyncState, action) =>
-  isAsyncAction(action) && action[StatelyAsyncSymbol].lifecycleEvent === 'call'
+  isAsyncAction(action) && action[StatelyAsyncSymbol].phase === 'call'
     ? {
         ...state,
         status: 'active',
@@ -21,7 +21,7 @@ const callReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsync
     : state
 
 const dataReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyncState, action) =>
-  isAsyncAction(action) && action[StatelyAsyncSymbol].lifecycleEvent === 'data'
+  isAsyncAction(action) && action[StatelyAsyncSymbol].phase === 'data'
     ? {
         ...state,
         data: action.payload[0],
@@ -30,7 +30,7 @@ const dataReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsync
     : state
 
 const errorReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyncState, action) =>
-  isAsyncAction(action) && action[StatelyAsyncSymbol].lifecycleEvent === 'error'
+  isAsyncAction(action) && action[StatelyAsyncSymbol].phase === 'error'
     ? {
         ...state,
         status: 'error',
@@ -39,7 +39,7 @@ const errorReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyn
     : state
 
 const completeReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyncState, action) =>
-  isAsyncAction(action) && action[StatelyAsyncSymbol].lifecycleEvent === 'complete'
+  isAsyncAction(action) && action[StatelyAsyncSymbol].phase === 'complete'
     ? {
         ...state,
         status: 'completed',
@@ -63,7 +63,7 @@ export const statelyAsyncReducer: Reducer<AsyncSlice> = (state = { [StatelyAsync
   if (isAsyncAction(action)) {
     const sid = action[StatelyAsyncSymbol].id
     const nextState = { ...state, [StatelyAsyncSymbol]: { ...state[StatelyAsyncSymbol] } }
-    if (action[StatelyAsyncSymbol].lifecycleEvent === 'destroy') {
+    if (action[StatelyAsyncSymbol].phase === 'destroy') {
       delete nextState[StatelyAsyncSymbol][sid]
       remove(sid)
     } else {

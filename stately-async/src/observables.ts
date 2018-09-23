@@ -1,14 +1,14 @@
 /**
- * Defines utilities for dealing with `Observables`.
+ * Defines utilities for creating and transforming `Observable`.
  * Includes:
- * - {@link $fromStore}, which converts `Store<State>` to `Observable<State>`,
- * - {@link $toMiddleware}, which creates a Redux `Middleware` that pipes all dispatched actions into the given `Subject<Action>`,
- * - {@link $toEvents}, which converts `Observable<Event>` into an `EventAPI<Event>`, allowing simple "event-like" listeners to be applied to an Observable.
+ * - {@link $fromStore}: `Store<S> -> Observable<S>`
+ * - {@link $toMiddleware}: `Store<S, A> -> Observable<A>`
+ * - {@link $toEvents}, `Observable<T> -> EventAPI<T>`
  */
 
 /** @ignore */
 import { Observable, Subject, ObservableInput, from as $rxFrom } from 'rxjs'
-import { filter as $filter, first as $first } from 'rxjs/operators'
+import { filter as $filter } from 'rxjs/operators'
 import { Action, Middleware } from 'redux'
 
 const isAsyncIterable = <Data>(obj: AsyncIterable<Data> | any): obj is AsyncIterable<Data> =>
@@ -69,21 +69,21 @@ export const $from = <Item>(observableInput: AsyncIterable<Item> | ObservableInp
  * Subscribers to the Subject are notified after the reducers are called, so can perform side-effects without delaying state updates.
  * This middleware can be used as a lightweight alternative to `redux-observable`.
  */
-export const $toMiddleware = (action$: Subject<Action>) => {
-  const middleware: Middleware = () =>
+export const $toMiddleware = (action$: Subject<Action>): Middleware =>
+  () =>
     next => action => {
       const result = next(action)
       action$.next(action)
       return result
     }
-  return middleware
-}
+
+export type Unsubscribe = () => void
 
 export type RegisterListener<E> = (
   match: (action: E) => boolean,
   handler: (action: E) => void,
   onError?: (err?: any) => void,
-) => void
+) => Unsubscribe
 
 export interface EventAPI<E> {
   on: RegisterListener<E>
@@ -102,13 +102,10 @@ export interface EventAPI<E> {
  * See `observables.spec.ts` for an example.
  */
 export const $toEvents = (action$: Observable<Action>): EventAPI<Action> => {
-  const registerFactory = (first?: boolean): RegisterListener<Action> =>
+  const registerFactory = (once?: boolean): RegisterListener<Action> =>
     (match, handler, onError?) => {
-      action$
-        .pipe(
-          $filter(match),
-          first ? $first() : (x: Observable<Action>) => x,
-        )
+      const unsubscribe = action$
+        .pipe($filter(match))
         .subscribe(action => {
           try {
             handler(action)
@@ -119,7 +116,11 @@ export const $toEvents = (action$: Observable<Action>): EventAPI<Action> => {
               throw e
             }
           }
-        })
+          if (once) {
+            unsubscribe()
+          }
+        }).unsubscribe
+        return unsubscribe
       }
   return {
     on: registerFactory(),

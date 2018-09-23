@@ -1,7 +1,7 @@
-import * as chai from 'chai'
-import { of as $of } from 'rxjs'
 import 'mocha'
-const { expect } = chai
+import { expect } from 'chai'
+
+import { of as $of } from 'rxjs'
 
 import { asyncActionMatcher, AsyncActionCreator, asyncActionCreatorFactory } from './actions'
 import { asyncLifecycle } from './AsyncLifecycle'

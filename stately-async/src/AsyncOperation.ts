@@ -1,4 +1,4 @@
-/** Defines {@link AsyncOperation}, which represents any function that performs an asynchronous operation. */
+/** Defines the {@link AsyncOperation} type. */
 
 /** @ignore */
 import { Observable, ObservableInput } from 'rxjs'
@@ -16,7 +16,7 @@ export type AsyncGenerator<Data, Params extends any[]> = (
 ) => AsyncIterable<Data>
 
 /**
- * A type describing any function that returns a value that can be represented with an Observable.
+ * A type describing any function that returns a value that can be represented with an `Observable` (which is virtually anything).
  * This type is used as the constraint for the sole parameter of {@link asyncLifecycle}.
  */
 export type AsyncOperation<Data, Params extends any[]> =

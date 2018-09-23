@@ -1,4 +1,8 @@
-/** Defines the {@link asyncActionMatcher} and {@link asyncActionCreatorFactory} functions */
+/**
+ * Defines the {@link AsyncAction} type, as well as the {@link asyncActionMatcher} and {@link asyncActionCreatorFactory} functions.
+ * These functions and their implementation details are useful for advanced use cases.
+ * In particular, `asyncActionMatcher` is useful when defining custom handling for `AsyncActions` with e.g. a reducer or middleware.
+ */
 
 /** @ignore */
 import { Action } from 'redux'
@@ -10,23 +14,23 @@ import { AsyncOperation } from './AsyncOperation'
 export const ACTION_PREFIX = 'stately-async'
 
 /** A union type representing all of the possible suffix values for {@link AsyncAction#type}. */
-export type AsyncLifecycleEvent = 'call' | 'data' | 'error' | 'complete' | 'destroy'
+export type AsyncPhase = 'call' | 'data' | 'error' | 'complete' | 'destroy'
 
 /** Metadata appended to an {@link AsyncAction}, used by the reducer and middleware to handle the action. */
-export interface AsyncActionMeta {
+export interface AsyncLifecycleMeta {
+  /** Function name of the {@link AsyncOperation}, e.g. `myFunction` */
+  readonly name: string
   /** uuid for the owning {@link AsyncLifecycle} */
   readonly id: string
-  /** {@link AsyncLifecycleEvent}, e.g. `call` */
-  readonly lifecycleEvent: AsyncLifecycleEvent
-  /** Infix derived from the {@link AsyncOperation} function name, e.g. `myFunction` */
-  readonly infix: string
+  /** {@link AsyncPhase}, e.g. `call` */
+  readonly phase: AsyncPhase
 }
 
 /** A special type of action dispatched by this library, describing a state change in an {@link AsyncLifecycle}. */
 export interface AsyncAction<Payload extends any[]> extends Action {
   readonly type: string
   readonly payload: Payload
-  readonly [StatelyAsyncSymbol]: AsyncActionMeta
+  readonly [StatelyAsyncSymbol]: AsyncLifecycleMeta
 }
 
 /** Type guard to indicate whether a given action is an  {@link AsyncAction}. */
@@ -34,11 +38,11 @@ export const isAsyncAction = (action: Action): action is AsyncAction<any[]> =>
   StatelyAsyncSymbol in action
 
 /**
- * Factory that will create a configurable type guard.
+ * Factory that creates a configurable type guard for filtering and differentiating {@link AsyncAction}s.
  * 
- * This function is useful to anyone who intends to define custom handling for {@link AsyncAction}s, such as:
+ * This function is useful to anyone who intends to define custom handling for `AsyncAction`s, such as:
  * - creating a custom reducer to update other parts of the state tree (keeping a historical record of requests?)
- * - creating a custom Epic, Saga, or other middleware to create side-effect sequences (chain several `AsyncFunctions` serially?)
+ * - creating a custom Epic, Saga, or other middleware to create asynchronous operation sequences (chain several `AsyncFunctions` serially?)
  * 
  * The returned guard will test a given action, returning true iff:
  * - the action is an `AsyncAction`
@@ -47,33 +51,33 @@ export const isAsyncAction = (action: Action): action is AsyncAction<any[]> =>
  * 
  * See {@link createSessionActionCreator} for information about the internal structure of `AsyncAction`s.
  */
-export function asyncActionMatcher<Data, Params extends any[]>(type?: 'call', operation?: AsyncOperation<Data, Params>): (action: Action) => action is AsyncAction<Params>
-export function asyncActionMatcher<Data, Params extends any[]>(type?: 'data', operation?: AsyncOperation<Data, Params>): (action: Action) => action is AsyncAction<[Data]>
-export function asyncActionMatcher<Data, Params extends any[]>(type?: 'error', operation?: AsyncOperation<Data, Params>): (action: Action) => action is AsyncAction<[any]>
-export function asyncActionMatcher<Data, Params extends any[]>(type?: AsyncLifecycleEvent, operation?: AsyncOperation<Data, Params>): (action: Action) => action is AsyncAction<[]>
-export function asyncActionMatcher<Data, Params extends any[]>(type?: AsyncLifecycleEvent, operation?: AsyncOperation<Data, Params>) {
+export function asyncActionMatcher<Data, Params extends any[]>(phase?: 'call', operation?: AsyncOperation<Data, Params>): (action: Action) => action is AsyncAction<Params>
+export function asyncActionMatcher<Data, Params extends any[]>(phase?: 'data', operation?: AsyncOperation<Data, Params>): (action: Action) => action is AsyncAction<[Data]>
+export function asyncActionMatcher<Data, Params extends any[]>(phase?: 'error', operation?: AsyncOperation<Data, Params>): (action: Action) => action is AsyncAction<[any]>
+export function asyncActionMatcher<Data, Params extends any[]>(phase?: AsyncPhase, operation?: AsyncOperation<Data, Params>): (action: Action) => action is AsyncAction<[]>
+export function asyncActionMatcher<Data, Params extends any[]>(phase?: AsyncPhase, operation?: AsyncOperation<Data, Params>) {
   return (action: Action) => 
     isAsyncAction(action) &&
-    !!(!type || action[StatelyAsyncSymbol].lifecycleEvent === type) &&
-    !!(!operation || (operation.name && operation.name === action[StatelyAsyncSymbol].infix))
+    !!(!phase || action[StatelyAsyncSymbol].phase === phase) &&
+    !!(!operation || (operation.name && operation.name === action[StatelyAsyncSymbol].name))
 }
 
-/** Preconfigured factory that creates  {@link AsyncAction}s for a specific opereation and lifecycle event. */
+/** Factory that creates {@link AsyncAction} payload envelopes, preconfigured for a specific {@link AsyncOperation}, {@link AsyncLifecycle} instance, and {@link AsyncPhase}. */
 export interface AsyncActionCreator<Payload extends any[]> {
-  /** The call signature. Returns an  {@link AsyncAction} with this action creator's {@link AsyncSessionMeta}. */
+  /** The call signature. Returns an  {@link AsyncAction} with this action creator's {@link AsyncActionMeta}. */
   (...payload: Payload): AsyncAction<Payload>
   /** Full type constant for actions created by this function, e.g. `stately-asnc/myFunction/call`. */
   readonly type: string
   /** Metadata for the owning {@link AsyncLifecycle}. */
-  readonly meta: AsyncActionMeta
+  readonly meta: AsyncLifecycleMeta
   /**
-   * Function that returns true iff the given action matches all properties of this action creator's {@link AsyncSessionMeta}.
+   * Function that returns true iff the given action matches all properties of this action creator's {@link AsyncActionMeta}.
    * In practice, this can be used to detect actions dispatched for this specific operation and lifecycle event.
    */
   readonly match: (action: Action) => action is AsyncAction<Payload>
 }
 
-const getInfix = <Data, Params extends any[]>(
+const getOperationName = <Data, Params extends any[]>(
   asyncOperation: AsyncOperation<Data, Params>,
   id: string,
 ) => {
@@ -84,7 +88,7 @@ const getInfix = <Data, Params extends any[]>(
     console.warn(
       'stately-async:\n',
       'asyncLifecycle() was called with an anonymous AsyncOperation.\n',
-      'The action type will be derived using the lifecycle\'s uuid, which is ugly and non-descriptive.\n',
+      'The action type infix will fall back to the lifecycle\'s uuid, which is ugly and non-descriptive.\n',
       'This also means it will be impossible to use asyncActionMatchers() to create matchers for the given AsyncOperation.',
       'It is recommended that only non-anonymous AsyncOperations are used.',
     )
@@ -93,7 +97,7 @@ const getInfix = <Data, Params extends any[]>(
 }
 
 /**
- * Internal factory function that creates a redux-like `ActionCreator` with the given lifecycle metadata and {@link AsyncSessionActionType}.
+ * Internal factory function that builds an {@link AsyncActionCreator} with the given lifecycle metadata and {@link AsyncPhase}.
  * 
  * The function defines how {@link AsyncAction}s are created:
  * - how the action "type" strings are generated
@@ -110,17 +114,17 @@ export const asyncActionCreatorFactory = <Data, Params extends any[]>(
   operation: AsyncOperation<Data, Params>,
   id: string,
 ) => <Payload extends any[]>(
-  lifecycleEvent: AsyncLifecycleEvent,
+  phase: AsyncPhase,
 ): AsyncActionCreator<Payload> => {
-  const infix = getInfix(operation, id)
-  const type = `${ACTION_PREFIX}/${infix}/${lifecycleEvent}`
-  const meta = { id, infix, lifecycleEvent }
+  const name = getOperationName(operation, id)
+  const type = `${ACTION_PREFIX}/${name}/${phase}`
+  const meta = { id, name, phase }
   const actionCreator = (...payload: Payload) => ({
     type,
     payload,
     [StatelyAsyncSymbol]: meta,
   })
-  const guard = asyncActionMatcher(lifecycleEvent, operation)
+  const guard = asyncActionMatcher(phase)
   const match = (action: Action): action is AsyncAction<Payload> =>
     guard(action) && action[StatelyAsyncSymbol].id === id
   return Object.freeze(
