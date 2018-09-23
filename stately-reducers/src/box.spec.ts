@@ -1,6 +1,5 @@
-import * as chai from 'chai'
 import 'mocha'
-const { expect } = chai
+import { expect } from 'chai'
 
 import { Reducer, Store, createStore } from 'redux';
 

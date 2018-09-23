@@ -1,6 +1,5 @@
-import * as chai from 'chai'
 import 'mocha'
-const { expect } = chai
+import { expect } from 'chai'
 
 import { Reducer, Store, createStore } from 'redux';
 
@@ -35,7 +34,7 @@ describe('chain', () => {
     store = createStore(composedReducer)
   })
 
-  it('should initialize the state with the first reducer that returns a non-undefined value', () => {
+  it('should allow the first reducer that returns a non-undefined value to initialize state', () => {
     expect(store.getState()).to.have.property('open', false)
   })
 

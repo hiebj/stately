@@ -1,7 +1,6 @@
-import * as chai from 'chai'
-import * as sinon from 'sinon'
 import 'mocha'
-const { expect } = chai
+import { expect } from 'chai'
+import { stub } from 'sinon'
 
 import { Reducer, Store, createStore } from 'redux';
 
@@ -34,9 +33,9 @@ const initialUserState: User = {
   name: ''
 }
 const changeIdReducer: Reducer<User> = (state = initialUserState, action) =>
-  action.type === 'CHANGE_ID' ? { ...state, id: action.id } : state
+  action.type === 'ID_SET' ? { ...state, id: action.id } : state
 const changeNameReducer: Reducer<User> = (state = initialUserState, action) =>
-  action.type === 'CHANGE_NAME' ? { ...state, name: action.name } : state
+  action.type === 'NAME_SET' ? { ...state, name: action.name } : state
 
 const userModelReducer: Reducer<User> = chain(changeIdReducer, changeNameReducer)
 const userSliceReducer = box(userModelReducer, 'user')
@@ -50,14 +49,11 @@ let store: Store<ReturnType<typeof composedReducer>>
 // }>
 
 describe('merge', () => {
-  let warnSpy: sinon.SinonSpy
   beforeEach(() => {
+    const spy = stub(console, 'warn')
     store = createStore(composedReducer)
-    warnSpy = sinon.stub(console, 'warn')
-  })
-
-  afterEach(() => {
-    warnSpy.restore()
+    expect(spy).not.to.have.been.called
+    spy.restore()
   })
 
   it('should allow each of the given reducers to initialize their state independently', () => {
@@ -69,13 +65,12 @@ describe('merge', () => {
   it('should call the first reducer', () => {
     store.dispatch({ type: 'OPEN' })
     expect(store.getState().isOpen).to.have.property('open', true)
-    expect(warnSpy).not.to.have.been.called
   })
 
   it('should call the second reducer', () => {
-    store.dispatch({ type: 'CHANGE_ID', id: 1 })
+    store.dispatch({ type: 'ID_SET', id: 1 })
     expect(store.getState().user).to.have.property('id', 1)
-    store.dispatch({ type: 'CHANGE_NAME', name: 'bob' })
+    store.dispatch({ type: 'NAME_SET', name: 'bob' })
     expect(store.getState().user).to.have.property('name', 'bob')
   })
 
@@ -87,8 +82,10 @@ describe('merge', () => {
       }
     })
     const destructiveMergeReducer = merge(composedReducer, overwriteUserReducer)
+    const spy = stub(console, 'warn')
     store = createStore(destructiveMergeReducer)
-    expect(warnSpy).to.have.been.called
+    expect(spy).to.have.been.called
+    spy.restore()
     store.dispatch({ type: null })
     expect(store.getState().user).to.have.property('id', 5)
   })
