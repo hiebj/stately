@@ -7,7 +7,7 @@ This module contains functional composers for Redux reducers. Used together, the
 - **Atomic reducer**: The simplest possible reducer. Handles a single action and performs a single state mutation.
 - **Model reducer**: A reducer composed from one or more related **Atomic** reducers using `chain`. The composed reducer comprises all actions and state mutations related to a given state shape, or **Model**.
 - **Slice reducer**: A reducer created by `box`. The reducer's state is maintained under a single property or "namespace" of a root object, forming a **slice** of the state tree.
-- **Root reducer**: A reducer composed from many **Slice** reducers using `merge`. This is the final reducer that will be passed to `createStore`, and thus forms the **root** of the state tree.
+- **Root reducer**: A reducer composed from many **Slice** reducers using `merge`, whose shape is the intersection of the given reducer shapes. This is the final reducer that will be passed to `createStore`, and thus forms the **root** of the state tree.
 
 Atomic reducers are succinct, readable, testable, and do not require branching logic such as `switch` statements or nested ternary expressions. By defining all of your state management using atomic reducers, then composing them into more complex state trees, many logic bugs and organizational problems can be prevented. Atomic reducers can also be reused by more than one model, keeping code DRY.
 
@@ -26,7 +26,7 @@ type chain = <S>(...reducers: Reducer<S>[]) => Reducer<S>
 type box = <S, K>(reducer: Reducer<S>, key: K) => Reducer<{ [K]: S }>
 
 // many independent reducers with different shapes become a root reducer
-type merge = <...S>(...reducers: Reducer<...S>[]) => Reducer<Union<...S>>
+type merge = <...S>(...reducers: Reducer<...S>[]) => Reducer<Intersection<...S>>
 ```
 
 The following pseudo-example takes three sets of atomic reducers A, B, and C, composing them into models, slices, and finally a root reducer in a single expression:
