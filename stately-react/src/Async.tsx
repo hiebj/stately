@@ -32,7 +32,7 @@ export { AsyncController }
  * A render-prop component that injects an {@link AsyncLifecycle} for any {@link AsyncOperation} into the component tree.
  * It executes the given `AsyncOperation` on mount, and again whenever the given `params` change.
  * The {@link AsyncState} representing the operation is passed to this component's `children` as the sole parameter.
- * It should be used whenever a component needs asynchronous data to render, such as search results or an entity from a REST service.
+ * It should be used whenever a component needs asynchronously-loaded data to render, such as search results or an entity from a REST service.
  * 
  * Each instance of `Async` will own a unique `AsyncLifecycle`.
  * This way, multiple instances using the same `AsyncOperation` will not conflict.

@@ -3,31 +3,78 @@
 This module contains components that painlessly bind state information and execution hooks for arbitrary asynchronous operations into your React components.
 
 ## Usage
+The APIs for this module are "under construction", and so are the docs. [Eventually]() I will get the entire API posted up to GitHub pages. For now, these examples can help you get started. (I pulled them straight out of the JSDoc for these components).
+
+**Using `<Async>` to make a declarative asynchronous call:**  
+`<Async>` is "declarative", meaning that the `params` are passed in as a prop. It should be used whenever a component needs asynchronously-loaded data to render, such as search results or an entity from a REST service.
+
+The following abbreviated example uses `<Async>` to wrap a `<SearchResults>` component, handling the execution and state management of the asynchronous `doSearch` call:
 ```
-<CallableEffect effect={effect}>
+// type doSearch = (p1: number, p2: string) => Promise<SearchResults>
+
+<Async operation={doSearch} params={[123, 'abc']}>
+  {state =>
+    <div>
+      {
+        // If the Promise is rejected, render the error.
+        state.error ? <ErrorMessage error={state.error} />
+          // If the Promise resolves, render the SearchResults.
+          : state.data ? <SearchResults results={state.data} />
+          // If the operation is active, render a loading indicator.
+          : state.status === 'active' && <LoadingSpinner />
+      }
+    </div>}
+</Async>
+```
+
+**Using `<CallableAsync>` to make an imperative asynchronous call:**  
+`<CallableAsync>` is "imperative", meaning that you can initiate the call programatically, probably as a result of a user interaction, such as saving a form.
+
+The following abbreviated example uses `<CallableAsync>` to invoke `save` when the button is clicked:
+```
+// type save = (entity: Entity) => Promise
+
+<CallableAsync operation={save}>
   {(state, call) =>
     <div>
       {
+        // If the Promise is rejected, render the error.
         state.error ? <span className="error">{state.error}</span>
-          : state.data ? <span className="response">{state.data}</span>
+          // If the Promise resolves, render a success message.
+          : state.status === 'complete' ? <span className="success">Entity saved successfully.</span>
+          // If the operation is active, render a loading indicator.
           : state.status === 'active' && <span className="loading" />
       }
       <button
-        onClick={
-          () => call(123, 'abc')
-        }>
-        Call the effect!
+        onClick={() => save(entity)}>
+        Save
       </button>
     </div>}
-</CallableEffect>
+</CallableAsync>
 ```
 
-The `effect` prop of [`<DeclarativeEffect>`](/stately-react/src/DeclarativeEffect.spec.tsx#L60) and [`<CallableEffect>`](/stately-react/src/CallableEffect.spec.tsx#L43) can handle _any asynchronous function_.
+**Configuring Async components to use a Redux Store:**  
+`<Async>` and `<CallableAsync>` are `Controllable` components, meaning they can operate either with or without a Redux store backing them. To use them without a Redux store, simply use them as they are shown above.
 
-Check out the definition of [`AsyncFunction`](/stately-async/src/AsyncFunction.ts#L22) - it captures any function whose return type can be wrapped in an `Observable`, which is pretty much anything. That means `async function`, async generators (`async function*`), as well as any function that returns a `Promise` or `Observable`. It also works with synchronous functions that return normal values, which can be useful for testing.
+To integrate them with a Redux store, causing their state and actions to be managed by Redux, you need to configure their context with an `<AsyncController>`. An `<AsyncController>` placed anywhere in the component tree will integrate any `Async` descendants beneath it. For example, to cause *all* `Async` components to integrate with the Redux store, you might create a structure like this at the root of your app:
+```
+<StoreConsumer store={store}>
+  {(state, dispatch) =>
+    <AsyncController state={state} dispatch={dispatch}>
+      {/* the rest of your app goes here */}
+    </AsyncController>}
+</StoreConsumer>
+```
 
-The `<Context...Effect>` prefix in the tests just means that the component is pulling the `store` off of React 15 Context, using the [`<StoreConsumer>`](/stately-react/src/DeclarativeEffect.tsx#L140). Instead, you could use a plain `<...Effect>` and pass the store as a prop (probably coming from React 16 Context). In fact, you don't need a store at all - [the `store` prop is optional](/stately-react/src/DeclarativeEffect.tsx#L60). If you don't pass a `store`, the component will manage the side-effect's state using the React component's `setState()`. This module has no runtime dependencies on Redux.
+If you already have a `<Provider>` at the root of your app, this will look very familiar. `<Provider>` uses React 15 Context API; this is a React 16 Context tool.
 
-For more examples, check out the tests. For example, [DeclarativeEffect.spec.tsx](/stately-react/src/DeclarativeEffect.spec.tsx) contains a working example of a `DeclarativeEffect`.
+These APIs will be simplified in the future, it is still a work in progress. It is likely that there will be convenience components merging the layers at the top (`<StoreConsumer>`, `<AsyncController>`) for simplicity.
+
+For more information, check out the tests and the code:
+
+- [Async.tsx](/stately-react/src/Async.tsx)
+- [Async.spec.tsx](/stately-react/src/Async.spec.tsx)
+- [CallableAsync.tsx](/stately-react/src/CallableAsync.tsx)
+- [CallableAsync.spec.tsx](/stately-react/src/CallableAsync.spec.tsx)
 
 For API docs, follow the instructions in [the top-level README](https://github.com/hiebj/stately/).

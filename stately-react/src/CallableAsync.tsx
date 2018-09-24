@@ -5,7 +5,7 @@ import { Omit } from 'stately-async/subtraction'
 
 import { AsyncProps, Async } from './Async';
 
-interface CallableAsyncProps<Data, Params extends any[]> extends Omit<AsyncProps<Data, Params>, 'children' | 'params'> {
+export interface CallableAsyncProps<Data, Params extends any[]> extends Omit<AsyncProps<Data, Params>, 'children' | 'params'> {
   children: (state: AsyncState<Data, Params>, call: (...params: Params) => void) => ReturnType<React.Component['render']>
 }
 
@@ -23,7 +23,6 @@ interface CallableAsyncState<Params> {
  * 
  * The following example invokes `save` when the button is clicked:
  * ```
- * // type Entity = { ... }
  * // type save = (entity: Entity) => Promise
  * 
  * <CallableAsync operation={save}>
