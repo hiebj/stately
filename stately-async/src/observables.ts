@@ -127,10 +127,3 @@ export const $toEvents = (action$: Observable<Action>): EventAPI<Action> => {
     one: registerFactory(true)
   }
 }
-
-export interface RxStore<S, A extends Action> {
-  state$: Observable<S>
-  action$: Subject<A>
-}
-
-

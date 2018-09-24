@@ -84,7 +84,6 @@ const getOperationName = <Data, Params extends any[]>(
   if (asyncOperation.name) {
     return asyncOperation.name
   } else {
-    // tslint:disable-next-line:no-console
     console.warn(
       'stately-async:\n',
       'asyncLifecycle() was called with an anonymous AsyncOperation.\n',
