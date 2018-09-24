@@ -9,9 +9,9 @@ This module contains functional composers for Redux reducers. Used together, the
 - **Slice reducer**: A reducer created by `box`. The reducer's state is maintained under a single property or "namespace" of a root object, forming a **slice** of the state tree.
 - **Root reducer**: A reducer composed from many **Slice** reducers using `merge`. This is the final reducer that will be passed to `createStore`, and thus forms the **root** of the state tree.
 
-Atomic reducers are succinct, readable, and testable, and do not require branching logic such as `switch` statements or nested ternary expressions. By defining all your state management with atomic reducers, then composing them into more complex state trees, many logic bugs and organizational problems can be prevented. Atomic reducers can also be reused by more than one model, keeping code DRY.
+Atomic reducers are succinct, readable, testable, and do not require branching logic such as `switch` statements or nested ternary expressions. By defining all of your state management using atomic reducers, then composing them into more complex state trees, many logic bugs and organizational problems can be prevented. Atomic reducers can also be reused by more than one model, keeping code DRY.
 
-`chain` and `box` are typically used together in a single file to define the Model and Slice reducers. These are then composed using `merge` in the store definition. The advantage to this strategy over `combineReducers` is that the shape of a reducer is defined *where the reducer is defined*, rather than *where the store is defined*. Instead of having to go to the store definition to understand where the data from a reducer will live in the state tree, it is evident in the definition of the reducer itself.
+`chain` and `box` are typically used together in a single file to define a Model reducer and its containing Slice reducer. These are then composed using `merge` in the store definition. The advantage to this strategy over `combineReducers` is that the shape of a reducer is defined *where the reducer is defined*, rather than *where the store is defined*. Instead of having to go to the store definition to understand where the data from a reducer will live in the state tree, it is evident in the definition of the reducer itself.
 
 ## Usage
 
@@ -26,7 +26,7 @@ type chain = <S>(...reducers: Reducer<S>[]) => Reducer<S>
 type box = <S, K>(reducer: Reducer<S>, key: K) => Reducer<{ [K]: S }>
 
 // many independent reducers with different shapes become a root reducer
-type merge = <...S>(...reducers: [Reducer<...S>]) => Reducer<Union<...S>>
+type merge = <...S>(...reducers: Reducer<...S>[]) => Reducer<Union<...S>>
 ```
 
 The following pseudo-example takes three sets of atomic reducers A, B, and C, composing them into models, slices, and finally a root reducer in a single expression:
