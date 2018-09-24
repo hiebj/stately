@@ -9,7 +9,7 @@
 /** @ignore */
 import { Observable, Subject, ObservableInput, from as $rxFrom } from 'rxjs'
 import { filter as $filter } from 'rxjs/operators'
-import { Action, Middleware } from './reduxlike'
+import { Action, Middleware } from 'redux'
 
 const isAsyncIterable = <Data>(obj: AsyncIterable<Data> | any): obj is AsyncIterable<Data> =>
 Symbol.asyncIterator in obj && typeof obj[Symbol.asyncIterator] === 'function'

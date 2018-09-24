@@ -2,9 +2,8 @@ import 'mocha'
 import { expect } from 'chai'
 
 import { Subject } from 'rxjs'
-import { createStore, applyMiddleware } from 'redux'
+import { Store, Action, createStore, applyMiddleware } from 'redux'
 
-import { Store, Action } from './reduxlike'
 import { $toMiddleware, $toEvents, EventAPI } from './observables';
 
 interface State { count: number }

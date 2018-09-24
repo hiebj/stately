@@ -3,9 +3,8 @@ import { expect } from 'chai'
 import { SinonSpy, spy } from 'sinon'
 
 import { Observable, Subject } from 'rxjs'
-import { createStore, applyMiddleware } from 'redux'
+import { Store, Reducer, Action, createStore, applyMiddleware } from 'redux'
 
-import { Store, Reducer, Action } from './reduxlike'
 import { AsyncLifecycle, asyncLifecycle } from './AsyncLifecycle'
 import { AsyncOperation } from './AsyncOperation'
 import { statelyAsyncMiddleware, statelyAsyncEpic } from './middleware'

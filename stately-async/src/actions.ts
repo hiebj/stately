@@ -5,7 +5,7 @@
  */
 
 /** @ignore */
-import { Action } from './reduxlike'
+import { Action } from 'redux'
 
 import { StatelyAsyncSymbol } from './AsyncState'
 import { AsyncOperation } from './AsyncOperation'

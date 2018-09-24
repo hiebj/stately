@@ -6,7 +6,7 @@
 /** @ignore */
 import { Observable, empty as $empty, Subject } from 'rxjs'
 import { filter as $filter, mergeMap as $mergeMap, first as $first } from 'rxjs/operators'
-import { Action, Middleware } from './reduxlike'
+import { Action, Middleware } from 'redux'
 
 import { asyncActionMatcher } from './actions'
 import { get } from './cache'
