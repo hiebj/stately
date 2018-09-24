@@ -104,7 +104,7 @@ export interface EventAPI<E> {
 export const $toEvents = (action$: Observable<Action>): EventAPI<Action> => {
   const registerFactory = (once?: boolean): RegisterListener<Action> =>
     (match, handler, onError?) => {
-      const unsubscribe = action$
+      const subscription = action$
         .pipe($filter(match))
         .subscribe(action => {
           try {
@@ -117,10 +117,10 @@ export const $toEvents = (action$: Observable<Action>): EventAPI<Action> => {
             }
           }
           if (once) {
-            unsubscribe()
+            subscription.unsubscribe()
           }
-        }).unsubscribe
-        return unsubscribe
+        })
+        return () => subscription.unsubscribe()
       }
   return {
     on: registerFactory(),
