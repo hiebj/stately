@@ -1,7 +1,7 @@
 /** Defines {@link statelyAsyncReducer}. */
 
 /** @ignore */
-import { Reducer, Action } from 'redux'
+import { Reducer, Action } from './reduxlike'
 import { chain } from 'stately-reducers'
 
 import { AsyncState, initialAsyncState, AsyncSlice } from './AsyncState'

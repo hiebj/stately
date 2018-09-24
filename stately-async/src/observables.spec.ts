@@ -2,8 +2,9 @@ import 'mocha'
 import { expect } from 'chai'
 
 import { Subject } from 'rxjs'
-import { Store, Action, createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware } from 'redux'
 
+import { Store, Action } from './reduxlike'
 import { $toMiddleware, $toEvents, EventAPI } from './observables';
 
 interface State { count: number }
@@ -14,7 +15,7 @@ describe('eventsFromActions', () => {
 
   let action$: Subject<Action>
   let eventAPI: EventAPI<Action>
-  let store: Store
+  let store: Store<State>
 
   beforeEach(() => {
     action$ = new Subject()

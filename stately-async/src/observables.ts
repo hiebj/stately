@@ -9,7 +9,7 @@
 /** @ignore */
 import { Observable, Subject, ObservableInput, from as $rxFrom } from 'rxjs'
 import { filter as $filter } from 'rxjs/operators'
-import { Action, Middleware } from 'redux'
+import { Action, Middleware } from './reduxlike'
 
 const isAsyncIterable = <Data>(obj: AsyncIterable<Data> | any): obj is AsyncIterable<Data> =>
 Symbol.asyncIterator in obj && typeof obj[Symbol.asyncIterator] === 'function'
@@ -127,4 +127,10 @@ export const $toEvents = (action$: Observable<Action>): EventAPI<Action> => {
     one: registerFactory(true)
   }
 }
-  
+
+export interface RxStore<S, A extends Action> {
+  state$: Observable<S>
+  action$: Subject<A>
+}
+
+
