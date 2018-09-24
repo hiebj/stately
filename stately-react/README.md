@@ -3,7 +3,7 @@
 This module contains components that painlessly bind state information and execution hooks for arbitrary asynchronous operations into your React components.
 
 ## Usage
-The APIs for this module are "under construction", and so are the docs. [Eventually]() I will get the entire API posted up to GitHub pages. For now, these examples can help you get started. (I pulled them straight out of the JSDoc for these components).
+The APIs for this module are "under construction", and so are the docs. [Eventually](https://en.wikipedia.org/wiki/Heat_death_of_the_universe) I will get the entire API posted up to GitHub pages. For now, these examples can help you get started. (I pulled them straight out of the JSDoc for these components).
 
 **Using `<Async>` to make a declarative asynchronous call:**  
 `<Async>` is "declarative", meaning that the `params` are passed in as a prop. It should be used whenever a component needs asynchronously-loaded data to render, such as search results or an entity from a REST service.

@@ -1,9 +1,9 @@
 # stately
 
-**[stately-react](/stately-react)** `v0.0.6`  
+**[stately-react](/stately-react)** `v0.1.1`  
 Components for simplifying the integration of state into React apps
 
-**[stately-async](/stately-async)** `v0.2.1`  
+**[stately-async](/stately-async)** `v0.2.4`  
 Functional tools for managing the state of asynchronous operations
 
 **[stately-reducers](/stately-reducers)** `v0.0.2`  
