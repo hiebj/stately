@@ -1,63 +1,64 @@
-import * as React from 'react'
-import { createStore, applyMiddleware, compose, Store } from 'redux'
-import { Provider } from 'react-redux'
-
-import { asyncActionMatcher, statelyAsyncReducer, statelyAsyncMiddleware, AsyncSessionSlice } from 'stately-async'
-import { StatelyAsyncSymbol } from 'stately-async/AsyncSession'
-import { AddTestActionListener, action$Middleware, onNext as $onNext } from 'stately-async/middleware'
-
-import * as chai from 'chai'
+import 'mocha'
+import { expect } from 'chai'
 import { SinonFakeTimers, useFakeTimers } from 'sinon'
 import { mount } from 'enzyme'
-import 'mocha'
-const { expect } = chai
 
-import { ContextDeclarativeEffect } from './DeclarativeEffect'
+import * as React from 'react'
+import { createStore, applyMiddleware, compose, Store, Action } from 'redux'
+import { Subject } from 'rxjs';
+
+import { asyncActionMatcher, statelyAsyncReducer, statelyAsyncMiddleware, AsyncSlice } from 'stately-async'
+import { StatelyAsyncSymbol } from 'stately-async/AsyncState'
+import { EventAPI, $toMiddleware, $toEvents } from 'stately-async/observables'
+
+import { Async, AsyncController } from './Async'
+import { StoreConsumer } from './StoreConsumer';
 
 let clock: SinonFakeTimers
-let testStore: Store<AsyncSessionSlice>
-let onNext: AddTestActionListener
+let testStore: Store<AsyncSlice>
+let eventAPI: EventAPI<Action>
 
-const effect = (p1: number, p2: string) =>
+const operation = (p1: number, p2: string) => 
   new Promise<{ r1: number; r2: string }>(resolve => {
     setTimeout(() => resolve({ r1: p1 + 1, r2: p2.toLowerCase() }), 10)
   })
 
-// TODO with literal tuple type inference, you would not need to cast params.
-// https://github.com/Microsoft/TypeScript/issues/24350
-const TestApp: React.SFC<{ params: [number, string] }> = ({ params }) => (
-  <Provider store={testStore}>
-    <ContextDeclarativeEffect effect={effect} params={params}>
-      {state => (
-        <div>
-          {state.data
-            ? [
-                <span className="r1" key="r1">
-                  {state.data.r1}
-                </span>,
-                <span className="r2" key="r2">
-                  {state.data.r2}
-                </span>,
-              ]
-            : state.status === 'active' && <span className="loading" />}
-        </div>
-      )}
-    </ContextDeclarativeEffect>
-  </Provider>
+const TestComponent: React.SFC<{ p1: number, p2: string }> = ({ p1, p2 }) => (
+  <StoreConsumer store={testStore}>
+    {(state, dispatch) =>
+      <AsyncController state={state} dispatch={dispatch}>
+        <Async operation={operation} params={[p1, p2]}>
+          {state => (
+            <div>
+              {state.data
+                ? [
+                    <span className="r1" key="r1">
+                      {state.data.r1}
+                    </span>,
+                    <span className="r2" key="r2">
+                      {state.data.r2}
+                    </span>,
+                  ]
+                : state.status === 'active' && <span className="loading" />}
+            </div>
+          )}
+        </Async>
+      </AsyncController>}
+  </StoreConsumer>
 )
 
 const isCompleteAction = asyncActionMatcher('complete')
 
-describe('<DeclarativeEffect>', () => {
+describe('<Async>', () => {
   beforeEach(() => {
     clock = useFakeTimers()
-    const { action$, middleware } = action$Middleware()
-    onNext = $onNext(action$)
+    const action$ = new Subject<Action>()
+    eventAPI = $toEvents(action$)
     testStore = createStore(
       statelyAsyncReducer,
       compose(
         applyMiddleware(statelyAsyncMiddleware),
-        applyMiddleware(middleware),
+        applyMiddleware($toMiddleware(action$)),
       ),
     )
   })
@@ -68,15 +69,15 @@ describe('<DeclarativeEffect>', () => {
 
   describe('mount', () => {
     it('should immediately trigger the `effect` with the given `params`, and pass "active" effect state', () => {
-      const wrapper = mount(<TestApp params={[1, 'PARAM']} />)
+      const wrapper = mount(<TestComponent p1={1} p2="PARAM" />)
       expect(wrapper).to.have.descendants('.loading')
     })
   })
 
   describe('`effect` yields data', () => {
     it('should pass the new data in the effect state', done => {
-      const wrapper = mount(<TestApp params={[1, 'PARAM']} />)
-      onNext(
+      const wrapper = mount(<TestComponent p1={1} p2="PARAM" />)
+      eventAPI.one(
         isCompleteAction,
         () => {
           wrapper.update()
@@ -92,18 +93,18 @@ describe('<DeclarativeEffect>', () => {
 
   describe('`params` prop changed', () => {
     it('should trigger the `effect`, and pass "active" effect state', done => {
-      const wrapper = mount(<TestApp params={[1, 'PARAM']} />)
+      const wrapper = mount(<TestComponent p1={1} p2="PARAM" />)
       expect(wrapper).to.have.descendants('.loading')
-      onNext(
+      eventAPI.one(
         isCompleteAction,
         () => {
           wrapper.update()
           expect(wrapper.find('.r1')).to.have.text('2')
           expect(wrapper.find('.r2')).to.have.text('param')
-          wrapper.setProps({ params: [2, 'OTHER'] })
+          wrapper.setProps({ p1: 2, p2: 'OTHER' })
           wrapper.update()
           expect(wrapper).to.have.descendants('.loading')
-          onNext(
+          eventAPI.one(
             isCompleteAction,
             () => {
               wrapper.update()
@@ -123,7 +124,7 @@ describe('<DeclarativeEffect>', () => {
 
   describe('unmount', () => {
     it('should remove the state from the state tree', () => {
-      const wrapper = mount(<TestApp params={[1, 'PARAM']} />)
+      const wrapper = mount(<TestComponent p1={1} p2="PARAM" />)
       wrapper.unmount()
       expect(Object.keys(testStore.getState()[StatelyAsyncSymbol])).to.have.property('length', 0)
     })

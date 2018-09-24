@@ -1,48 +1,82 @@
 import * as React from 'react'
-import { Dispatch, Reducer, Action } from 'redux'
+import { Dispatch, Reducer, Middleware, Action } from 'redux';
 
-interface ControlledProps<State extends {}> {
+import { Omit } from 'stately-async/subtraction';
+
+export interface StateDispatchProps<State> {
   state: State
   dispatch: Dispatch
 }
 
-export type ControllableProps<State extends {}> = {
-  reducer: Reducer<State>
-  children: (state: State, dispatch: Dispatch) => false | JSX.Element | null
-} & (ControlledProps<State> | {})
+export type StateDispatchChildren<State> = (state: State, dispatch: Dispatch) => ReturnType<React.Component['render']>
 
-export default class Controllable<State> extends React.Component<ControllableProps<State>, State> {
-  currentState: State = {} as State
+export interface StateDispatchConsumerProps<State> {
+  children: StateDispatchChildren<State>
+}
 
-  constructor(props: ControllableProps<State>) {
-    super(props)
-    if ('dispatch' in this.props) {
-      this.dispatch = this.props.dispatch
-    }
-    this.currentState = this.props.reducer(undefined as any, { type: '@@INIT' })
-  }
+export interface ControllableContext<State> {
+  Controller: React.ComponentType<StateDispatchProps<State>>
+  Controllable: React.ComponentType<StateDispatchConsumerProps<State>>
+}
 
-  dispatch<A extends Action>(action: A) {
-    this.setState(this.props.reducer(this.currentState, action))
-    return action
-  }
+export const createControllableContext = <State,>(
+  reducer: Reducer<State>,
+  middleware?: Middleware
+): ControllableContext<State> => {
+  const { Provider, Consumer } = React.createContext<StateDispatchProps<State> | null>(null)
 
-  render() {
-    if ('dispatch' in this.props) {
-      return this.props.children(this.props.state, this.props.dispatch)
-    } else {
-      return this.props.children(this.currentState, this.dispatch)
-    }
-  }
-
-  componentDidUpdate() {
-    if ('dispatch' in this.props && this.props.dispatch !== this.dispatch) {
-      // tslint:disable-next-line:no-console
-      console.error(
-        'Controllable: Components should not switch from uncontrolled to controlled after initial construction. The `dispatch` prop passed to Controllable should never change.',
-        this.props,
+  class Controller extends React.Component<StateDispatchProps<State>> {
+    render() {
+      return (
+        <Provider value={this.props}>
+          {this.props.children}
+        </Provider>
       )
-      this.dispatch = this.props.dispatch
     }
+  }
+
+  class Controllable extends React.Component<StateDispatchConsumerProps<State>, State> {
+    constructor(props: StateDispatchConsumerProps<State>) {
+      super(props)
+      this.state = reducer(undefined, { type: '@@CONTROLLABLE' })
+      if (middleware) {
+        this.dispatch = middleware({
+          dispatch: this.dispatch,
+          getState: () => this.state
+        })(this.dispatch)
+      }
+    }
+
+    dispatch = <A extends Action>(action: A) => {
+      this.setState(reducer(this.state, action))
+      return action
+    }
+  
+    render() {
+      return (
+        <Consumer>
+          {(controller?) =>
+            controller ? this.props.children(controller.state, controller.dispatch)
+              : this.props.children(this.state, this.dispatch)}
+        </Consumer>
+      )
+    }
+  }
+  return {
+    Controller,
+    Controllable
   }
 }
+
+export const composeController = <State, ParentProps extends StateDispatchConsumerProps<State>>(
+  Parent: React.ComponentType<ParentProps>,
+  Controller: React.ComponentType<StateDispatchProps<State>>
+): React.ComponentType<Omit<ParentProps, 'children'>> =>
+  (props) => (
+    <Parent {...props}>
+      {(state, dispatch) =>
+        <Controller state={state} dispatch={dispatch}>
+          {props.children}
+        </Controller>}
+    </Parent>
+  )

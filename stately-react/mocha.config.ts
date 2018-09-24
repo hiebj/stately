@@ -1,12 +1,13 @@
-import * as chai from 'chai'
-import * as sinon from 'sinon-chai'
+import { should, use } from 'chai'
+import { configure } from 'enzyme'
+
 import chaiEnzyme = require('chai-enzyme')
 import Adapter = require('enzyme-adapter-react-16')
-import { configure } from 'enzyme'
+import sinon = require('sinon-chai')
 
 configure({ adapter: new Adapter() })
 
-chai.use(sinon)
-chai.use(chaiEnzyme())
+use(sinon)
+use(chaiEnzyme())
 
-chai.should()
+should()

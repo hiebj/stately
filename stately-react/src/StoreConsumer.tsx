@@ -1,42 +1,51 @@
 import * as React from 'react'
-import { Store } from 'redux'
-import * as PropTypes from 'prop-types'
-
-import { Renderable } from './types'
+import { Dispatch, Unsubscribe, Store } from 'redux'
 
 export interface StoreConsumerProps<State> {
-  children: (store: Store<State>) => Renderable
+  store: Store<State>
+  children: (state: State, dispatch: Dispatch) => ReturnType<React.Component['render']>
 }
 
-export class StoreConsumer<State> extends React.Component<StoreConsumerProps<State>> {
-  static contextTypes = {
-    store: PropTypes.object,
-  }
-  store: Store<State> | null
+interface ReplaceableState<State> {
+  state: State
+}
 
-  constructor(props: StoreConsumerProps<State>, context: { store?: Store<State> }) {
+export class StoreConsumer<State> extends React.Component<
+  StoreConsumerProps<State>,
+  ReplaceableState<State>
+> {
+  unsubscribe: Unsubscribe
+  store: Store<State>
+
+  constructor(props: StoreConsumerProps<State>) {
     super(props)
-    this.store = context.store || null
-    if (!this.store) {
-      console.error(
-        'StoreConsumer: Could not find `store` on `context`.',
-        'Make sure that a Provider is used above StoreConsumer in the component tree to pass the store down on context.',
-        'This component will not render.',
-      )
-    }
+    this.store = props.store
+    this.state = { state: props.store.getState() }
+    this.unsubscribe = props.store.subscribe(this.onStoreUpdate)
+  }
+
+  onStoreUpdate = () => {
+    this.setState({ state: this.props.store.getState() })
   }
 
   render() {
-    return this.store ? this.props.children(this.store) : null
+    return this.props.children(this.state.state, this.props.store.dispatch)
+  }
+
+  componentDidMount() {
+    this.onStoreUpdate()
   }
 
   componentDidUpdate() {
-    if (this.store !== this.context.store) {
-      // tslint:disable-next-line:no-console
+    if (this.props.store !== this.store) {
       console.error(
-        'StoreConsumer: The Store reference passed to StoreConsumer via `context` has changed.',
+        'StoreConsumer: The `store` prop passed to StoreConsumer has changed.',
         "The Store cannot be changed after a StoreConsumer's creation, as this is likely to cause undefined behavior or errors.",
       )
     }
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe()
   }
 }

@@ -21,9 +21,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "stately-async": "^0.1.0",
     "react": "^16.4.1",
-    "redux": "^4.0.0"
+    "redux": "^4.0.0",
+    "stately-async": "^0.2.4"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",
