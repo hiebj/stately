@@ -9,7 +9,7 @@
 /** @ignore */
 import { Observable, Subject, ObservableInput, from as $rxFrom } from 'rxjs'
 import { filter as $filter } from 'rxjs/operators'
-import { Action, Middleware } from 'redux'
+import { Action, Middleware, Store, AnyAction } from 'redux'
 
 const isAsyncIterable = <Data>(obj: AsyncIterable<Data> | any): obj is AsyncIterable<Data> =>
 Symbol.asyncIterator in obj && typeof obj[Symbol.asyncIterator] === 'function'
@@ -32,25 +32,28 @@ new Observable(
     })(),
 )
 
-export interface StoreLike<S> {
-  subscribe: (onStateChange: () => void) => void
-  getState: () => S
-  dispatch: (action: Action) => void
+export interface SubjectLike<S, A = S> {
+  subscribe: Subject<S>['subscribe']
+  next: Subject<A>['next']
 }
 
+export type StoreLike<S, A extends Action = AnyAction> = Pick<Store<S, A>, 'subscribe' | 'getState' | 'dispatch'>
+
 /** Type guard that indicates whether an object has the crucial methods to behave like a Redux Store. */
-export const isStoreLike = (maybeStoreLike: StoreLike<any> | {}): maybeStoreLike is StoreLike<any> =>
+export const isStoreLike = (maybeStoreLike: StoreLike<any, any> | {}): maybeStoreLike is StoreLike<any, any> =>
   'subscribe' in maybeStoreLike && typeof maybeStoreLike.subscribe === 'function' &&
   'getState' in maybeStoreLike && typeof maybeStoreLike.getState === 'function' &&
   'dispatch' in maybeStoreLike && typeof maybeStoreLike.dispatch === 'function'
 
-/** Function that converts `Store<S>` -> `Observable<S>`. */
-export const $fromStore = <S>(store: StoreLike<S>): Observable<S> =>
-  new Observable((subscriber) => {
-    store.subscribe(() => {
-      subscriber.next(store.getState())
-    })
-  })
+/** Function that converts `Store<S, A>` -> `SubjectLike<S, A>`. */
+export const $fromStore = <S, A extends Action>(store: StoreLike<S, A>): SubjectLike<S, A> => ({
+  subscribe: new Observable<S>((subscriber) => {
+      store.subscribe(() => {
+        subscriber.next(store.getState())
+      })
+    }).subscribe,
+  next: (action: A) => { store.dispatch(action) }
+})
 
 /**
  * Function extending `Observable.from()` defined by RxJS.
