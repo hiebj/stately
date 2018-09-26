@@ -1,5 +1,6 @@
 export { AsyncProps, Async, AsyncController } from './Async'
 export { CallableAsyncProps, CallableAsync } from './CallableAsync'
-export { createControllableContext, composeController } from './Controllable'
+export { StateDispatchProps, StateDispatchConsumerProps, ControllableContext, createControllableContext } from './Controllable'
+export { SubscriberProps, SubscriptionProps, Subscription, Subscriber, SubscriberDecorator, SubscriptionContext, createSubjectContext, createStoreContext } from './Subscribable'
 export { StoreConsumerProps, StoreConsumer } from './StoreConsumer'
 export { LegacyStoreConsumer } from './LegacyStoreConsumer'

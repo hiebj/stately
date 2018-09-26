@@ -58,17 +58,31 @@ The following abbreviated example uses `<CallableAsync>` to invoke `save` when t
 
 To integrate them with a Redux store, causing their state and actions to be managed by Redux, you need to configure their context with an `<AsyncController>`. An `<AsyncController>` placed anywhere in the component tree will integrate any `Async` descendants beneath it. For example, to cause *all* `Async` components to integrate with the Redux store, you might create a structure like this at the root of your app:
 ```
-<StoreConsumer store={store}>
+const { Subscription } = createStoreContext(myStore)
+
+<Subscription>
   {(state, dispatch) =>
     <AsyncController state={state} dispatch={dispatch}>
       {/* the rest of your app goes here */}
     </AsyncController>}
-</StoreConsumer>
+</Subscription>
 ```
 
-If you already have a `<Provider>` at the root of your app, this will look very familiar. `<Provider>` uses React 15 Context API; this is a React 16 Context tool.
+Another approach using the `subscriber()` decorator:
+```
+const { Subscription, subscriber } = createStoreContext(myStore)
+const StoreAsyncController = subscriber((state, dispatch) => ({ state, dispatch }))(AsyncController)
 
-These APIs will be simplified in the future, it is still a work in progress. It is likely that there will be convenience components merging the layers at the top (`<StoreConsumer>`, `<AsyncController>`) for simplicity.
+<Subscription>
+  <StoreAsyncController>
+    {/* the rest of your app goes here */}
+  </StoreAsyncController>
+</Subscription>
+```
+
+If you already have a `<Provider>` at the root of your app, this will look very familiar. `<Provider>` uses React 15 Context API; `<Subscription>` is a React 16 Context tool.
+
+`<Subscription>`, `<Subscriber>`, and the `subscriber()` decorator are still a work in progress, but are nearing completion. Documentation for `Controllable` and `Subscribable` will be coming soon.
 
 For more information, check out the tests and the code:
 
