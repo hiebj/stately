@@ -10,9 +10,9 @@ import { Subject } from 'rxjs';
 import { asyncActionMatcher, statelyAsyncReducer, statelyAsyncMiddleware, AsyncSlice } from 'stately-async'
 import { EventAPI, $toMiddleware, $toEvents } from 'stately-async/observables'
 
-import { CallableAsync } from './CallableAsync'
-import { AsyncController } from './Async';
 import { createStoreContext, Subscription } from './Subscribable';
+import { AsyncController } from './Async';
+import { CallableAsync } from './CallableAsync'
 
 let StoreSubscription: Subscription<AsyncSlice, Action>
 let StoreAsyncController: React.ComponentType

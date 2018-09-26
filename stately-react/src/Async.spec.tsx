@@ -11,8 +11,8 @@ import { asyncActionMatcher, statelyAsyncReducer, statelyAsyncMiddleware, AsyncS
 import { StatelyAsyncSymbol } from 'stately-async/AsyncState'
 import { EventAPI, $toMiddleware, $toEvents } from 'stately-async/observables'
 
-import { Async, AsyncController } from './Async'
 import { Subscription, createStoreContext } from './Subscribable';
+import { Async, AsyncController } from './Async'
 
 let StoreSubscription: Subscription<AsyncSlice, Action>
 let StoreAsyncController: React.ComponentType

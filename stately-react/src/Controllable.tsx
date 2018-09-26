@@ -1,8 +1,6 @@
 import * as React from 'react'
 import { Reducer, Middleware, Action } from 'redux';
 
-import { Omit } from 'stately-async/subtraction';
-
 export interface StateDispatchProps<State> {
   state: State
   dispatch: <A extends Action>(action: A) => void
@@ -68,16 +66,3 @@ export const createControllableContext = <State,>(
     Controllable
   }
 }
-
-export const composeController = <State, ParentProps extends StateDispatchConsumerProps<State>>(
-  Parent: React.ComponentType<ParentProps>,
-  Controller: React.ComponentType<StateDispatchProps<State>>
-): React.ComponentType<Omit<ParentProps, 'children'>> =>
-  (props) => (
-    <Parent {...props}>
-      {(state, dispatch) =>
-        <Controller state={state} dispatch={dispatch}>
-          {props.children}
-        </Controller>}
-    </Parent>
-  )

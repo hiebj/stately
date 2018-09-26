@@ -9,8 +9,8 @@ import { Subject } from 'rxjs';
 
 import { $toMiddleware, $toEvents, EventAPI } from 'stately-async/observables'
 
-import { createControllableContext, ControllableContext, composeController } from './Controllable'
-import { StoreConsumer } from './StoreConsumer';
+import { createStoreContext, Subscription, SubscriberDecorator } from './Subscribable';
+import { createControllableContext, ControllableContext } from './Controllable'
 
 interface ClassNameState { className: string }
 
@@ -64,19 +64,23 @@ describe('<Controllable>', () => {
 
   describe('with a providing <Controller>', () => {
     let testStore: Store<ClassNameState>
+    let Subscription: Subscription<ClassNameState, Action>
+    let subscriber: SubscriberDecorator<ClassNameState, Action>
 
     const WithController: React.SFC = () =>
-      <StoreConsumer store={testStore}>
+      <Subscription>
         {(state, dispatch) =>
           <context.Controller state={state} dispatch={dispatch}>
             <div>
               <TestControllable />
             </div>
           </context.Controller>}
-      </StoreConsumer>
+      </Subscription>
 
     beforeEach(() => {
       testStore = createStore(classNameReducer, { className: 'store' }, applyMiddleware($toMiddleware(action$)))
+      const context = createStoreContext(testStore)
+      ;({ Subscription, subscriber } = context)
     })
 
     it('should take the initial state provided by the <Controller>', () => {
@@ -91,13 +95,17 @@ describe('<Controllable>', () => {
       expect(testStore.getState()).to.have.property('className', 'test')
     })
 
-    describe('composeController(Parent, Controller)', () => {
+    describe('with a providing <SubscriberController> created with subscriber(Controller)', () => {
       it('should use the dispatcher provided by the <Controller>', () => {
-        const StoreController = composeController(StoreConsumer, context.Controller)
+        const SubscriberController = subscriber(
+          (state, dispatch) => ({ state, dispatch })
+        )(context.Controller)
         const wrapper = mount(
-          <StoreController store={testStore}>
-            <TestControllable />
-          </StoreController>
+          <Subscription>
+            <SubscriberController>
+              <TestControllable />
+            </SubscriberController>
+          </Subscription>
         )
         wrapper.find('button').simulate('click')
         expect(wrapper).to.have.descendants('.test')
