@@ -1,33 +1,45 @@
 import 'mocha'
 import { expect } from 'chai'
+import { spy } from 'sinon'
 
 import { Subject } from 'rxjs'
 import { Store, Action, createStore, applyMiddleware } from 'redux'
 
-import { $toMiddleware, $toEvents, EventAPI } from './observables';
+import { EventAPI, SubjectLike, $toMiddleware, $toEvents, $fromStore } from './observables';
 
 interface State { count: number }
 
-describe('eventsFromActions', () => {
-  const reducer = (state: State = { count: 0 }, action: Action) =>
-    action.type === 'INCREMENT' ? { count: state.count + 1 } : state
+const reducer = (state: State = { count: 0 }, action: Action) =>
+  action.type === 'INCREMENT' ? { count: state.count + 1 } : state
 
-  let action$: Subject<Action>
-  let eventAPI: EventAPI<Action>
-  let store: Store<State>
+let action$: Subject<Action>
+let eventAPI: EventAPI<Action>
+let store: Store<State>
 
-  beforeEach(() => {
-    action$ = new Subject()
-    eventAPI = $toEvents(action$)
-    store = createStore(
-      reducer,
-      applyMiddleware($toMiddleware(action$))
-    )
+beforeEach(() => {
+  action$ = new Subject()
+  eventAPI = $toEvents(action$)
+  store = createStore(
+    reducer,
+    applyMiddleware($toMiddleware(action$))
+  )
+})
+
+describe('$toMiddleware', () => {
+  it('should pipe all dispatched actions into the given Subject', () => {
+    const subscriberSpy = spy()
+    const actions = [{ type: 'INCREMENT' }, { type: 'INCREMENT' }, { type: 'INCREMENT' }]
+    action$.subscribe(subscriberSpy)
+    actions.forEach(store.dispatch)
+    expect(subscriberSpy).to.have.been.calledThrice
+    expect(subscriberSpy).to.have.been.calledWithMatch({ type: 'INCREMENT' })
   })
-  
+})
+
+describe('$toEvents', () => {
   it('should call the handler when a matching action is dispatched', (done) => {
     let expectedCount: number
-    let actions = [{ type: 'INCREMENT' }, { type: 'INCREMENT' }, { type: 'INCREMENT' }]
+    const actions = [{ type: 'INCREMENT' }, { type: 'INCREMENT' }, { type: 'INCREMENT' }]
     eventAPI.on(
       action => action.type === 'INCREMENT',
       () => {
@@ -54,5 +66,35 @@ describe('eventsFromActions', () => {
       }
     )
     store.dispatch({ type: 'INCREMENT' })
+  })
+})
+
+describe('$fromStore', () => {
+  let subject$: SubjectLike<State, Action>
+
+  beforeEach(() => {
+    subject$ = $fromStore(store)
+  })
+
+  it('should notify all subscribers when the Store\'s state changes', () => {
+    const subscriberSpy1 = spy()
+    const subscriberSpy2 = spy()
+    const actions = [{ type: 'INCREMENT' }, { type: 'INCREMENT' }, { type: 'INCREMENT' }]
+    subject$.subscribe(subscriberSpy1)
+    subject$.subscribe(subscriberSpy2)
+    actions.forEach(store.dispatch)
+    expect(subscriberSpy1).to.have.been.calledThrice
+    expect(subscriberSpy1).to.have.been.calledWithMatch(store.getState())
+    expect(subscriberSpy2).to.have.been.calledThrice
+    expect(subscriberSpy2).to.have.been.calledWithMatch(store.getState())
+  })
+
+  it('should dispatch actions on the Store when next() is called', () => {
+    const subscriberSpy = spy()
+    const actions = [{ type: 'INCREMENT' }, { type: 'INCREMENT' }, { type: 'INCREMENT' }]
+    store.subscribe(subscriberSpy)
+    actions.forEach(action => subject$.next(action))
+    expect(subscriberSpy).to.have.been.calledThrice
+    expect(store.getState()).to.have.property('count', 3)
   })
 })

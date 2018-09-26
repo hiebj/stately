@@ -32,29 +32,6 @@ new Observable(
     })(),
 )
 
-export interface SubjectLike<S, A = S> {
-  subscribe: Subject<S>['subscribe']
-  next: Subject<A>['next']
-}
-
-export type StoreLike<S, A extends Action = AnyAction> = Pick<Store<S, A>, 'subscribe' | 'getState' | 'dispatch'>
-
-/** Type guard that indicates whether an object has the crucial methods to behave like a Redux Store. */
-export const isStoreLike = (maybeStoreLike: StoreLike<any, any> | {}): maybeStoreLike is StoreLike<any, any> =>
-  'subscribe' in maybeStoreLike && typeof maybeStoreLike.subscribe === 'function' &&
-  'getState' in maybeStoreLike && typeof maybeStoreLike.getState === 'function' &&
-  'dispatch' in maybeStoreLike && typeof maybeStoreLike.dispatch === 'function'
-
-/** Function that converts `Store<S, A>` -> `SubjectLike<S, A>`. */
-export const $fromStore = <S, A extends Action>(store: StoreLike<S, A>): SubjectLike<S, A> => ({
-  subscribe: new Observable<S>((subscriber) => {
-      store.subscribe(() => {
-        subscriber.next(store.getState())
-      })
-    }).subscribe,
-  next: (action: A) => { store.dispatch(action) }
-})
-
 /**
  * Function extending `Observable.from()` defined by RxJS.
  * Adds support for conversion from `Store<S>` and `AsyncIterable<S>` (the type returned by TC39 "Async Generators").
@@ -128,5 +105,36 @@ export const $toEvents = (action$: Observable<Action>): EventAPI<Action> => {
   return {
     on: registerFactory(),
     one: registerFactory(true)
+  }
+}
+
+/** Type representing an object with the crucial methods to behave like an RxJS Subject. */
+export interface SubjectLike<S, A = S> {
+  subscribe: Subject<S>['subscribe']
+  next: Subject<A>['next']
+}
+
+/** Type representing an object with the crucial methods to behave like a Redux Store. */
+export interface StoreLike<S, A extends Action = AnyAction> {
+  subscribe: Store<S, A>['subscribe']
+  getState: Store<S, A>['getState']
+  dispatch: Store<S, A>['dispatch']
+}
+
+/** Type guard that indicates whether an object has the crucial methods to behave like a Redux Store. */
+export const isStoreLike = (maybeStoreLike: StoreLike<any, any> | any): maybeStoreLike is StoreLike<any, any> =>
+  'subscribe' in maybeStoreLike && typeof maybeStoreLike.subscribe === 'function' &&
+  'getState' in maybeStoreLike && typeof maybeStoreLike.getState === 'function' &&
+  'dispatch' in maybeStoreLike && typeof maybeStoreLike.dispatch === 'function'
+
+/** Function that converts `Store<S, A>` -> `SubjectLike<S, A>`. */
+export const $fromStore = <S, A extends Action>(store: StoreLike<S, A>): SubjectLike<S, A> => {
+  const state$ = new Subject<S>()
+  store.subscribe(() => {
+    state$.next(store.getState())
+  })
+  return {
+    subscribe: state$.subscribe.bind(state$),
+    next: (action: A) => { store.dispatch(action) }
   }
 }
