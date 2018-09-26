@@ -14,7 +14,7 @@ import { createControllableContext } from './Controllable'
 export interface AsyncProps<Data, Params extends any[]> {
   operation: AsyncOperation<Data, Params>
   params?: Params
-  children: (state: AsyncState<Data, Params>) => ReturnType<React.Component['render']>
+  children: (state: AsyncState<Data, Params>) => React.ReactNode
 }
 
 const {

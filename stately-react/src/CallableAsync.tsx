@@ -6,7 +6,7 @@ import { Omit } from 'stately-async/subtraction'
 import { AsyncProps, Async } from './Async';
 
 export interface CallableAsyncProps<Data, Params extends any[]> extends Omit<AsyncProps<Data, Params>, 'children' | 'params'> {
-  children: (state: AsyncState<Data, Params>, call: (...params: Params) => void) => ReturnType<React.Component['render']>
+  children: (state: AsyncState<Data, Params>, call: (...params: Params) => void) => React.ReactNode
 }
 
 interface CallableAsyncState<Params> {

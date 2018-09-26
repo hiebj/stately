@@ -1,85 +1,117 @@
 import * as React from 'react'
-import { Dispatch, Unsubscribe, Store } from 'redux'
+import { Action } from 'redux'
+import { Subscription as RxSubscription } from 'rxjs'
 
-export interface StoreSubscriberProps<State> {
-  //deriveState: (state: State) => Derived
-  children: (derivedState: State, dispatch: Dispatch) => ReturnType<React.Component['render']>
+import { SubjectLike, StoreLike, $fromStore } from 'stately-async/observables'
+import { Subtract } from 'stately-async/subtraction';
+
+export interface SubscriberProps<S, A = S> {
+  children: (state: S, next: (next: A) => void) => React.ReactNode
 }
 
-export interface StoreContext<State> {
-  StoreSubscription: React.ComponentType
-  StoreSubscriber: React.ComponentType<StoreSubscriberProps<State>>
+export interface SubscriptionProps<S, A = S> {
+  children: SubscriberProps<S, A>['children'] | React.ReactNode
 }
 
-interface ReplaceableState<State> {
-  state: State
+export type Subscription<S, A = S> = React.ComponentType<SubscriptionProps<S, A>>
+export type Subscriber<S, A = S> = React.ComponentType<SubscriberProps<S, A>>
+export type SubscriberDecorator<S, A = S> = <D>(
+    deriveProps: (state: S, next: (next: A) => void) => D
+  ) => <P>(
+    Component: React.ComponentType<P extends D ? P : D>
+  ) => React.ComponentType<Subtract<P, D>>
+
+export interface SubscriptionContext<S, A> {
+  Subscription: Subscription<S, A>
+  Subscriber: Subscriber<S, A>
+  subscriber: SubscriberDecorator<S, A>
 }
 
-export const createStoreContext = <State,>(store: Store<State>): StoreContext<State> => {
-  const { Provider, Consumer } = React.createContext<State | null>(null)
+interface ReplaceableState<S> {
+  state: S
+}
 
-  class StoreSubscription extends React.Component {
-    state: ReplaceableState<State>
-    unsubscribe: Unsubscribe
+const warnNoProvider = () => {
+  console.warn(
+    'stately-react:\n',
+    '<Subscriber> was used with no ancestral <Subscription>.',
+    'Without a Subscription, a Subscriber will never receive data, and will therefore never render.\n',
+    'Make sure that there is a Subscription component in the component tree above the Subscriber.'
+  )
+  return null;
+}
 
-    constructor(props: {}) {
+export const createStoreContext = <S, A extends Action>(store: StoreLike<S, A>) =>
+  createSubscriptionContext($fromStore(store), store.getState())
+
+export const createSubscriptionContext = <S, A = S>(subject: SubjectLike<S, A>, initial: S): SubscriptionContext<S, A> => {
+  const { Provider, Consumer } = React.createContext<S | undefined>(undefined)
+
+  class Subscription extends React.Component<SubscriptionProps<S, A>> {
+    state: ReplaceableState<S>
+    subscription: RxSubscription
+
+    constructor(props: SubscriptionProps<S, A>) {
       super(props)
-      this.state = { state: store.getState() }
-      this.unsubscribe = store.subscribe(this.onStoreUpdate)
+      this.state = { state: initial }
+      this.subscription = subject.subscribe(this.onNext)
     }
 
     render() {
+      const { state } = this.state
       return (
-        <Provider value={this.state.state}>
-          {this.props.children}
+        <Provider value={state}>
+          {typeof this.props.children === 'function' ?
+            this.props.children(state, subject.next)
+            : this.props.children}
         </Provider>
       )
     }
 
-    onStoreUpdate = () => {
-      this.setState({ state: store.getState() })
-    }
-
-    componentDidMount() {
-      this.onStoreUpdate()
+    onNext = (value: S) => {
+      this.setState({ state: value })
     }
 
     componentWillUnmount() {
-      this.unsubscribe()
+      this.subscription.unsubscribe()
     }
   }
 
-  class StoreSubscriber extends React.Component<
-    StoreSubscriberProps<State>,
-    ReplaceableState<State>
-  > {
-    // static defaultProps = {
-    //   deriveState: <S,>(state: S) => state
-    // }
-
+  class Subscriber extends React.Component<SubscriberProps<S, A>> {
     render() {
       return (
         <Consumer>
-          {state => state ?
-            this.props.children(state, store.dispatch)
-            : null}
+          {state =>
+            typeof state === 'undefined' ? warnNoProvider()
+            : this.props.children(state, subject.next)}
         </Consumer>
-      )
-    }
-
-    warnNoProvider() {
-      console.warn(
-        'stately-react:\n',
-        '<StoreSubscriber> was used with no ancestral <StoreSubscription>.\n',
-        'StoreSubscribers all share a single subscription to the Redux store for performance reasons,',
-        'so they cannot function independently of a StoreSubscription.\n',
-        'Make sure that there is a StoreSubscription component in the component tree (likely near the root).'
       )
     }
   }
 
+  const subscriber = <D,>(
+    deriveProps: (state: S, next: (next: A) => void) => D
+  ) => <P,>(
+    Component: React.ComponentType<P extends D ? P : D>
+  ): React.ComponentType<Subtract<P, D>> => {
+    class SubscriberComponent extends React.Component<Subtract<P, D>> {
+      render() {
+        return (
+          <Consumer>
+            {state =>
+              typeof state === 'undefined' ? warnNoProvider()
+              : <Component {...this.props} {...deriveProps(state, subject.next)} />}
+          </Consumer>
+        )
+      }
+    }
+    (SubscriberComponent as React.ComponentClass<Subtract<P, D>>).displayName = `subscriber(${Component.name || Component.displayName})`
+    return SubscriberComponent
+  }
+
   return {
-    StoreSubscription,
-    StoreSubscriber
+    Subscription,
+    Subscriber,
+    subscriber
   }  
 }

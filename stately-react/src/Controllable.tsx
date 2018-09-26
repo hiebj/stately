@@ -1,14 +1,14 @@
 import * as React from 'react'
-import { Dispatch, Reducer, Middleware, Action } from 'redux';
+import { Reducer, Middleware, Action } from 'redux';
 
 import { Omit } from 'stately-async/subtraction';
 
 export interface StateDispatchProps<State> {
   state: State
-  dispatch: Dispatch
+  dispatch: <A extends Action>(action: A) => void
 }
 
-export type StateDispatchChildren<State> = (state: State, dispatch: Dispatch) => ReturnType<React.Component['render']>
+export type StateDispatchChildren<State> = (state: State, dispatch: <A extends Action>(action: A) => void) => React.ReactNode
 
 export interface StateDispatchConsumerProps<State> {
   children: StateDispatchChildren<State>
@@ -55,13 +55,14 @@ export const createControllableContext = <State,>(
     render() {
       return (
         <Consumer>
-          {(controller?) =>
+          {(controller) =>
             controller ? this.props.children(controller.state, controller.dispatch)
               : this.props.children(this.state, this.dispatch)}
         </Consumer>
       )
     }
   }
+
   return {
     Controller,
     Controllable

@@ -12,11 +12,14 @@ import { StatelyAsyncSymbol } from 'stately-async/AsyncState'
 import { EventAPI, $toMiddleware, $toEvents } from 'stately-async/observables'
 
 import { Async, AsyncController } from './Async'
-import { StoreConsumer } from './StoreConsumer';
+import { Subscription, createStoreContext } from './Subscribable';
+
+let StoreSubscription: Subscription<AsyncSlice, Action>
+let StoreAsyncController: React.ComponentType
 
 let clock: SinonFakeTimers
-let testStore: Store<AsyncSlice>
 let eventAPI: EventAPI<Action>
+let testStore: Store<AsyncSlice>
 
 const operation = (p1: number, p2: string) => 
   new Promise<{ r1: number; r2: string }>(resolve => {
@@ -24,27 +27,26 @@ const operation = (p1: number, p2: string) =>
   })
 
 const TestComponent: React.SFC<{ p1: number, p2: string }> = ({ p1, p2 }) => (
-  <StoreConsumer store={testStore}>
-    {(state, dispatch) =>
-      <AsyncController state={state} dispatch={dispatch}>
-        <Async operation={operation} params={[p1, p2]}>
-          {state => (
-            <div>
-              {state.data
-                ? [
-                    <span className="r1" key="r1">
-                      {state.data.r1}
-                    </span>,
-                    <span className="r2" key="r2">
-                      {state.data.r2}
-                    </span>,
-                  ]
-                : state.status === 'active' && <span className="loading" />}
-            </div>
-          )}
-        </Async>
-      </AsyncController>}
-  </StoreConsumer>
+  <StoreSubscription>
+    <StoreAsyncController>
+      <Async operation={operation} params={[p1, p2]}>
+        {state => (
+          <div>
+            {state.data
+              ? [
+                  <span className="r1" key="r1">
+                    {state.data.r1}
+                  </span>,
+                  <span className="r2" key="r2">
+                    {state.data.r2}
+                  </span>,
+                ]
+              : state.status === 'active' && <span className="loading" />}
+          </div>
+        )}
+      </Async>
+    </StoreAsyncController>
+  </StoreSubscription>
 )
 
 const isCompleteAction = asyncActionMatcher('complete')
@@ -61,6 +63,11 @@ describe('<Async>', () => {
         applyMiddleware($toMiddleware(action$)),
       ),
     )
+    const { Subscription, subscriber } = createStoreContext(testStore)
+    StoreSubscription = Subscription
+    StoreAsyncController = subscriber(
+      (state, dispatch) => ({ state, dispatch })
+    )(AsyncController)
   })
 
   afterEach(() => {
