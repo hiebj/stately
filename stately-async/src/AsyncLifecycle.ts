@@ -10,15 +10,22 @@ import { set } from "./cache";
 
 
 /**
- * An object containing action creators allowing the management of {@link AsyncState} for an {@link AsyncOperation}.
- * 
- * Actions dispatched from this object will only affect the state of the owned `AsyncState`.
- * The `selector` on this instance will retrieve the managed `AsyncState` from the given root state.
- * 
- * Most consumers will only need to use `selector`, `call`, and `destroy`.
+ * An object that provides a consistent, automated means to track loading, error, success, and data states for any {@link AsyncOperation}.
+ * This allows consumers - typically view components - to avoid duplicating ugly, error-prone side-effect branching logic and focus on rendering their declarative views.
+ *
+ * This is the primary member of this module.
+ *
+ * Each `AsyncLifecycle` is related to a unique {@link AsyncState}, where the current execution state of the `AsyncOperation` is maintained.
+ * Dispatching the {@link AsyncLifecycle#call} action on a properly configured Store invokes the given `AsyncOperation` and begins a lifecycle.
+ * Any component subscribing to state changes can use the {@link AsyncLifecycle#selector} to access the `AsyncState`.
+ *
+ * Actions dispatched from this object only affect the state of the owned `AsyncState`.
+ * The `selector` on this instance retrieves the managed `AsyncState` from the given root state.
+ *
+ * Most consumers only need to use `selector`, `call`, and `destroy`.
  * Advanced use cases may leverage the additional action creators.
  * **Do not forget to dispatch {@link AsyncLifecycle#destroy}** when the lifecycle is no longer needed.
- * Failure to do so will cause a memory leak.
+ * Failure to do so cause a memory leak.
  */
 export interface AsyncLifecycle<Data, Params extends any[]> {
   /** The uuid of the `AsyncState` owned by this manager. */
@@ -30,31 +37,23 @@ export interface AsyncLifecycle<Data, Params extends any[]> {
     /** A state tree containing an {@link AsyncSessionSlice}. */
     state: AsyncSlice
   ) => AsyncState<Data, Params>
-  /** Action creator that will trigger the associated `AsyncOperation` when dispatched, passing any parameters directly through. */
+  /** Action creator that triggers the associated `AsyncOperation` when dispatched, passing any parameters directly through. */
   readonly call: AsyncActionCreator<Params>
   /**
    * Removes the `AsyncState` instance owned by this `AsyncLifecycle` from the state tree.
-   * Failure to dispatch `destroy` will result in a memory leak, as `AsyncState` objects will remain in the state tree until they are destroyed, even if they are no longer being used.
-   * For React components that own an `AsyncLifecycle`, a good practice is to dispatch the `destroy` action in the component's `componentWillUnmount` hook.
+   * Failure to dispatch `destroy` results in a memory leak, as `AsyncState` objects remain in the state tree until they are destroyed, even if they are no longer being used.
+   * For React components, a good practice is to dispatch the `destroy` action in the component's `componentWillUnmount` hook.
    */
   readonly destroy: AsyncActionCreator<[]>
   /** Action dispatched internally when the associated `AsyncOperation` emits data. */
   readonly data: AsyncActionCreator<[Data]>
   /** Action dispatched internally when the associated `AsyncOperation` emits an error (rejects) or throws an exception. */
   readonly error: AsyncActionCreator<[any]>
-  /** Action dispatched internally when the associated `AsyncOperation` completes (resolves, or emits all data in the case of an Observable or AsyncIterable). */
+  /** Action dispatched internally when the associated `AsyncOperation` completes (resolves, or emits all data in the case of an `Observable` or `AsyncIterable`). */
   readonly complete: AsyncActionCreator<[]>
 }
 
-/**
- * A factory function that creates a new, unique {@link AsyncLifecycle} for a given {@link AsyncOperation}.
- * `AsyncLifecycle` provides a consistent, automated means to track loading, error, success, and data states for asynchronous operations.
- * This allows consumers to avoid duplicating ugly, error-prone side-effect branching logic and focus on rendering their declarative views.
- * This is the primary function of this module.
- * 
- * Dispatching the {@link AsyncLifecycle#call} action on a properly configured Store will invoke the given `AsyncOperation` and begin tracking its output in an {@link AsyncState}.
- * Any component subscribing to state changes can use the {@link AsyncLifecycle#selector} to access the `AsyncState` and render its view appropriately.
- */
+/** A factory function that creates an {@link AsyncLifecycle} for a given {@link AsyncOperation}. */
 export const asyncLifecycle = <Data, Params extends any[]>(
   operation: AsyncOperation<Data, Params>
 ): AsyncLifecycle<Data, Params> => {
@@ -72,4 +71,11 @@ export const asyncLifecycle = <Data, Params extends any[]>(
   })
   set(id, actions)
   return actions
+}
+
+/** `Class` implementation of {@link AsyncLifecycle}. Basically just allows `new AsyncLifecycle(operation)`, if you like that sort of thing. */
+export class AsyncLifecycle<Data, Params extends any[]> implements AsyncLifecycle<Data, Params> {
+  constructor(operation: AsyncOperation<Data, Params>) {
+    return asyncLifecycle(operation)
+  }
 }

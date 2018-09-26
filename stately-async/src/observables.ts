@@ -14,6 +14,7 @@ import { Action, Middleware, Store, AnyAction } from 'redux'
 const isAsyncIterable = <Data>(obj: AsyncIterable<Data> | any): obj is AsyncIterable<Data> =>
 Symbol.asyncIterator in obj && typeof obj[Symbol.asyncIterator] === 'function'
 
+/** Internal. Converts an `AsyncIterable` to an `Observable` by piping its yield into the subscriber until the `AsyncIterable` is exhausted. */
 const $fromAsyncIterable = <Data>(asyncIterable: AsyncIterable<Data>): Observable<Data> =>
 new Observable(
   subscriber =>
@@ -59,12 +60,17 @@ export const $toMiddleware = (action$: Subject<Action>): Middleware =>
 
 export type Unsubscribe = () => void
 
+/** Signature of an event-like API for subscribing to Redux `Action`s. Used internally as a testing utility. */
 export type RegisterListener<E> = (
   match: (action: E) => boolean,
   handler: (action: E) => void,
   onError?: (err?: any) => void,
 ) => Unsubscribe
 
+/**
+ * API exposing {@link RegisterListener} methods that will listen for all matching `Action`s, or only the next matching `Action`.
+ * Created by {@link $toEvents}.
+ */
 export interface EventAPI<E> {
   on: RegisterListener<E>
   one: RegisterListener<E>
@@ -108,13 +114,17 @@ export const $toEvents = (action$: Observable<Action>): EventAPI<Action> => {
   }
 }
 
-/** Type representing an object with the crucial methods to behave like an RxJS Subject. */
+/**
+ * Object type containing the crucial methods to behave like an RxJS `Subject`.
+ * Unlike traditional `Subject`s, this interface allows for a different type to be passed to `next()` than the type that is given by `subscribe()`.
+ * This is so that a Redux `Store` can masquerade as something resembling a `Subject`, to simplify modules wishing to support both.
+ */
 export interface SubjectLike<S, A = S> {
   subscribe: Subject<S>['subscribe']
   next: Subject<A>['next']
 }
 
-/** Type representing an object with the crucial methods to behave like a Redux Store. */
+/** Object type containing the crucial methods to behave like a Redux `Store`. */
 export interface StoreLike<S, A extends Action = AnyAction> {
   subscribe: Store<S, A>['subscribe']
   getState: Store<S, A>['getState']
