@@ -76,13 +76,21 @@ describe('$fromStore', () => {
     subject$ = $fromStore(store)
   })
 
+  it('should immediately notify new subscribers with the Store\'s current state', () => {
+    subject$ = $fromStore(store)
+    const subscriberSpy = spy()
+    subject$.subscribe(subscriberSpy)
+    expect(subscriberSpy).to.have.been.calledWithMatch(store.getState())
+  })
+
   it('should notify all subscribers when the Store\'s state changes', () => {
     const subscriberSpy1 = spy()
     const subscriberSpy2 = spy()
-    const actions = [{ type: 'INCREMENT' }, { type: 'INCREMENT' }, { type: 'INCREMENT' }]
+    const actions = [{ type: 'INCREMENT' }, { type: 'INCREMENT' }]
     subject$.subscribe(subscriberSpy1)
     subject$.subscribe(subscriberSpy2)
     actions.forEach(store.dispatch)
+    // thrice because they get called once when they initially subscribe
     expect(subscriberSpy1).to.have.been.calledThrice
     expect(subscriberSpy1).to.have.been.calledWithMatch(store.getState())
     expect(subscriberSpy2).to.have.been.calledThrice

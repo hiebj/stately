@@ -7,7 +7,7 @@
  */
 
 /** @ignore */
-import { Observable, Subject, ObservableInput, from as $rxFrom } from 'rxjs'
+import { Observable, Subject, ObservableInput, from as $rxFrom, BehaviorSubject } from 'rxjs'
 import { filter as $filter } from 'rxjs/operators'
 import { Action, Middleware, Store, AnyAction } from 'redux'
 
@@ -129,7 +129,7 @@ export const isStoreLike = (maybeStoreLike: StoreLike<any, any> | any): maybeSto
 
 /** Function that converts `Store<S, A>` -> `SubjectLike<S, A>`. */
 export const $fromStore = <S, A extends Action>(store: StoreLike<S, A>): SubjectLike<S, A> => {
-  const state$ = new Subject<S>()
+  const state$ = new BehaviorSubject<S>(store.getState())
   store.subscribe(() => {
     state$.next(store.getState())
   })
