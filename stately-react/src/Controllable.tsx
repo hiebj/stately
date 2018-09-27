@@ -1,29 +1,29 @@
 import * as React from 'react'
 import { Reducer, Middleware, Action } from 'redux';
 
-export interface StateDispatchProps<State> {
+export interface ControllerProps<State> {
   state: State
   dispatch: <A extends Action>(action: A) => void
 }
 
-export type StateDispatchChildren<State> = (state: State, dispatch: <A extends Action>(action: A) => void) => React.ReactNode
+export type ControllableChildren<State> = (state: State, dispatch: <A extends Action>(action: A) => void) => React.ReactNode
 
-export interface StateDispatchConsumerProps<State> {
-  children: StateDispatchChildren<State>
+export interface ControllableProps<State> {
+  children: ControllableChildren<State>
 }
 
 export interface ControllableContext<State> {
-  Controller: React.ComponentType<StateDispatchProps<State>>
-  Controllable: React.ComponentType<StateDispatchConsumerProps<State>>
+  Controller: React.ComponentType<ControllerProps<State>>
+  Controllable: React.ComponentType<ControllableProps<State>>
 }
 
 export const createControllableContext = <State,>(
   reducer: Reducer<State>,
   middleware?: Middleware
 ): ControllableContext<State> => {
-  const { Provider, Consumer } = React.createContext<StateDispatchProps<State> | null>(null)
+  const { Provider, Consumer } = React.createContext<ControllerProps<State> | null>(null)
 
-  class Controller extends React.Component<StateDispatchProps<State>> {
+  class Controller extends React.Component<ControllerProps<State>> {
     render() {
       return (
         <Provider value={this.props}>
@@ -33,8 +33,8 @@ export const createControllableContext = <State,>(
     }
   }
 
-  class Controllable extends React.Component<StateDispatchConsumerProps<State>, State> {
-    constructor(props: StateDispatchConsumerProps<State>) {
+  class Controllable extends React.Component<ControllableProps<State>, State> {
+    constructor(props: ControllableProps<State>) {
       super(props)
       this.state = reducer(undefined, { type: '@@CONTROLLABLE' })
       if (middleware) {
