@@ -154,7 +154,9 @@ The following abbreviated example uses `<CallableAsync>` to invoke `save` when t
 ```
 
 ### `Controllable` components
-`Controllable` components are either "uncontrolled", meaning that they are left to manage their own state internally, or "controlled", meaning that they dispatch their actions and receive their current state from an outside source. Generally, components should be left "uncontrolled" unless there is a reason to do otherwise, such as to implement custom action handling.
+`Controllable` components are components with two distinct modes for state management. They are either "uncontrolled", meaning that they are left to manage their own state internally, or "controlled", meaning that they dispatch their actions and receive their current state from an outside source. Generally, components should be left "uncontrolled" unless there is a reason to do otherwise, such as to implement custom action handling.
+
+By using `Controllable` components, module developers can write components that are capable of managing their own state, while remaining flexible to any consumer who may wish to augment or modify their internal state workflows. [`Async` components](#async-components) are a good example: they maintain the state of their asynchronous operations internally by default, but can instead dispatch their actions to another action handler (e.g. a Redux `Store`), allowing the consumer to define special handling for their actions (such as `data`, `complete` or `error`).
 
 #### Taking control
 To put a `Controllable` component into "controlled" mode, an ancestral `<Controller>` of the right type must be provided. For example, `<Async>` exposes an `<AsyncController>` component:
