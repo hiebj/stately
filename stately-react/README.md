@@ -1,6 +1,6 @@
 # stately-react
 
-This module contains components that make state management and integration in React easier, thereby making your life easier.
+This module contains components for simplifying the integration of state into React apps.
 
 - [`Subscribable`](#subscribable-like-react-redux-but-better): Components that subscribe to things
 - [`Async` Components](#async-components): Components that perform asynchronous operations and tell you how it's going (active, completed, error)
