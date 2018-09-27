@@ -2,7 +2,7 @@
 
 This module contains components for simplifying the integration of state into React apps.
 
-- [`Subscribable`](#subscribable-like-react-redux-but-better): Components that subscribe to things
+- [`Subscribable`](#subscribable-like-react-redux-but-better): Components that subscribe to things (like a Redux store, for instance)
 - [`Async` Components](#async-components): Components that perform asynchronous operations and tell you how it's going (active, completed, error)
 - [`Controllable` Components](#controllable-components): Components that manage their own state internally, unless you want to control it yourself
 
