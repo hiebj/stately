@@ -146,7 +146,7 @@ The following abbreviated example uses `<CallableAsync>` to invoke `save` when t
           : state.status === 'active' && <span className="loading" />
       }
       <button
-        onClick={() => save(entity)}>
+        onClick={() => call(entity)}>
         Save
       </button>
     </div>}
