@@ -1,6 +1,6 @@
 {
   "name": "stately-async",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Functional tools for managing the state of asynchronous operations",
   "author": {
     "name": "Jon Hieb",
@@ -23,7 +23,7 @@
   "dependencies": {
     "redux": "^4.0.0",
     "rxjs": "^6.2.1",
-    "stately-reducers": "^0.0.2",
+    "stately-reducers": "^0.0.3",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
@@ -39,7 +39,7 @@
     "sinon": "^6.0.0",
     "sinon-chai": "^3.2.0",
     "ts-node": "^6.1.1",
-    "typedoc": "^0.12.0",
-    "typescript": "^3.0.1"
+    "typedoc": "^0.13.0",
+    "typescript": "^3.1.3"
   }
 }
