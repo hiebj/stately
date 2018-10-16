@@ -2,7 +2,7 @@
 
 This module contains components for simplifying the integration of state into React apps.
 
-- [`Subscribable`](#subscribable-like-react-redux-but-better): Components that subscribe to things (like a Redux store, for instance)
+- [`Subscribable` Components](#subscribable-like-react-redux-but-better): Components that subscribe to things (like a Redux store, for instance)
 - [`Async` Components](#async-components): Components that perform asynchronous operations and tell you how it's going (active, completed, error)
 - [`Controllable` Components](#controllable-components): Components that manage their own state internally, unless you want to control it yourself
 
@@ -146,7 +146,7 @@ The following abbreviated example uses `<CallableAsync>` to invoke `save` when t
           : state.status === 'active' && <span className="loading" />
       }
       <button
-        onClick={() => save(entity)}>
+        onClick={() => call(entity)}>
         Save
       </button>
     </div>}
@@ -215,7 +215,7 @@ Presumably, you wanted to do something more, or else you'd have let `Async` mana
 
 #### Implementing a `Controllable` component
 
-> "Wow! These `Controllable` components are great! That pattern would work perfectly for my module!"
+> "Wow! These `Controllable` components are great! That pattern would work perfectly for my module!"  
  -you, probably
 
 It's pretty easy. `Controllable` components, just like `Subscribable`, use React 16 Context. To start with, you need to have a definition of the state you're trying to manage - specifically, you need a `reducer` and `Action`s to go with it. Once you have that done, you create a `Controllable`/`Controller` pair based around your `reducer`. If you have `middleware` for performing side effects, you'll want to include that too:
