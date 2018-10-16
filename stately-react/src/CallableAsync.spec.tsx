@@ -5,13 +5,18 @@ import { mount } from 'enzyme'
 
 import * as React from 'react'
 import { createStore, applyMiddleware, compose, Store, Action } from 'redux'
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs'
 
-import { asyncActionMatcher, statelyAsyncReducer, statelyAsyncMiddleware, AsyncSlice } from 'stately-async'
+import {
+  asyncActionMatcher,
+  statelyAsyncReducer,
+  statelyAsyncMiddleware,
+  AsyncSlice,
+} from 'stately-async'
 import { EventAPI, $toMiddleware, $toEvents } from 'stately-async/observables'
 
-import { createStoreContext, Subscription } from './Subscribable';
-import { AsyncController } from './Async';
+import { createStoreContext, Subscription } from './Subscribable'
+import { AsyncController } from './Async'
 import { CallableAsync } from './CallableAsync'
 
 let StoreSubscription: Subscription<AsyncSlice, Action>
@@ -43,7 +48,9 @@ const TestComponent: React.SFC = () => (
                 ]
               : state.status === 'active' && <span className="loading" />}
             <button
-              onClick={() => {call(1, 'PARAM')}}
+              onClick={() => {
+                call(1, 'PARAM')
+              }}
             />
           </div>
         )}
@@ -68,9 +75,7 @@ describe('<CallableAsync>', () => {
     )
     const { Subscription, subscriber } = createStoreContext(testStore)
     StoreSubscription = Subscription
-    StoreAsyncController = subscriber(
-      (state, dispatch) => ({ state, dispatch })
-    )(AsyncController)
+    StoreAsyncController = subscriber((state, dispatch) => ({ state, dispatch }))(AsyncController)
   })
 
   afterEach(() => {

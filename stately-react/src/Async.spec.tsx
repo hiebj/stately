@@ -5,13 +5,18 @@ import { mount } from 'enzyme'
 
 import * as React from 'react'
 import { createStore, applyMiddleware, compose, Store, Action } from 'redux'
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs'
 
-import { asyncActionMatcher, statelyAsyncReducer, statelyAsyncMiddleware, AsyncSlice } from 'stately-async'
+import {
+  asyncActionMatcher,
+  statelyAsyncReducer,
+  statelyAsyncMiddleware,
+  AsyncSlice,
+} from 'stately-async'
 import { StatelyAsyncSymbol } from 'stately-async/AsyncState'
 import { EventAPI, $toMiddleware, $toEvents } from 'stately-async/observables'
 
-import { Subscription, createStoreContext } from './Subscribable';
+import { Subscription, createStoreContext } from './Subscribable'
 import { Async, AsyncController } from './Async'
 
 let StoreSubscription: Subscription<AsyncSlice, Action>
@@ -21,12 +26,12 @@ let clock: SinonFakeTimers
 let eventAPI: EventAPI<Action>
 let testStore: Store<AsyncSlice>
 
-const operation = (p1: number, p2: string) => 
+const operation = (p1: number, p2: string) =>
   new Promise<{ r1: number; r2: string }>(resolve => {
     setTimeout(() => resolve({ r1: p1 + 1, r2: p2.toLowerCase() }), 10)
   })
 
-const TestComponent: React.SFC<{ p1: number, p2: string }> = ({ p1, p2 }) => (
+const TestComponent: React.SFC<{ p1: number; p2: string }> = ({ p1, p2 }) => (
   <StoreSubscription>
     <StoreAsyncController>
       <Async operation={operation} params={[p1, p2]}>
@@ -65,9 +70,7 @@ describe('<Async>', () => {
     )
     const { Subscription, subscriber } = createStoreContext(testStore)
     StoreSubscription = Subscription
-    StoreAsyncController = subscriber(
-      (state, dispatch) => ({ state, dispatch })
-    )(AsyncController)
+    StoreAsyncController = subscriber((state, dispatch) => ({ state, dispatch }))(AsyncController)
   })
 
   afterEach(() => {

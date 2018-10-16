@@ -5,14 +5,16 @@ import { mount } from 'enzyme'
 
 import * as React from 'react'
 import { Reducer, Action, Store, createStore, applyMiddleware } from 'redux'
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs'
 
 import { $toMiddleware, $toEvents, EventAPI } from 'stately-async/observables'
 
-import { createStoreContext, Subscription, SubscriberDecorator } from './Subscribable';
+import { createStoreContext, Subscription, SubscriberDecorator } from './Subscribable'
 import { createControllableContext, ControllableContext } from './Controllable'
 
-interface ClassNameState { className: string }
+interface ClassNameState {
+  className: string
+}
 
 const classNameReducer: Reducer<ClassNameState> = (state = { className: 'initial' }, action) =>
   action.type === 'CLASSNAME_SET' ? { className: action.className } : state
@@ -22,17 +24,15 @@ describe('<Controllable>', () => {
   let eventAPI: EventAPI<Action>
   let context: ControllableContext<ClassNameState>
 
-  const TestControllable: React.SFC = () =>
+  const TestControllable: React.SFC = () => (
     <context.Controllable>
-      {({ className }, dispatch) =>
+      {({ className }, dispatch) => (
         <div className={className}>
-          <button
-            onClick={
-              () => dispatch({ type: 'CLASSNAME_SET', className: 'test' })
-            }>
-          </button>
-        </div>}
+          <button onClick={() => dispatch({ type: 'CLASSNAME_SET', className: 'test' })} />
+        </div>
+      )}
     </context.Controllable>
+  )
 
   beforeEach(() => {
     action$ = new Subject<Action>()
@@ -45,14 +45,14 @@ describe('<Controllable>', () => {
       const wrapper = mount(<TestControllable />)
       expect(wrapper).to.have.descendants('.initial')
     })
-  
+
     it('should use the reducer to manage state internally when actions are dispatched', () => {
       const wrapper = mount(<TestControllable />)
       expect(wrapper).to.have.descendants('.initial')
       wrapper.find('button').simulate('click')
       expect(wrapper).to.have.descendants('.test')
     })
-  
+
     it('should integrate any given middleware into the dispatch pipeline', () => {
       const wrapper = mount(<TestControllable />)
       const actionSpy = spy()
@@ -67,18 +67,24 @@ describe('<Controllable>', () => {
     let Subscription: Subscription<ClassNameState, Action>
     let subscriber: SubscriberDecorator<ClassNameState, Action>
 
-    const WithController: React.SFC = () =>
+    const WithController: React.SFC = () => (
       <Subscription>
-        {(state, dispatch) =>
+        {(state, dispatch) => (
           <context.Controller state={state} dispatch={dispatch}>
             <div>
               <TestControllable />
             </div>
-          </context.Controller>}
+          </context.Controller>
+        )}
       </Subscription>
+    )
 
     beforeEach(() => {
-      testStore = createStore(classNameReducer, { className: 'store' }, applyMiddleware($toMiddleware(action$)))
+      testStore = createStore(
+        classNameReducer,
+        { className: 'store' },
+        applyMiddleware($toMiddleware(action$)),
+      )
       const context = createStoreContext(testStore)
       ;({ Subscription, subscriber } = context)
     })
@@ -87,7 +93,7 @@ describe('<Controllable>', () => {
       const wrapper = mount(<WithController />)
       expect(wrapper).to.have.descendants('.store')
     })
-  
+
     it('should use the dispatcher provided by the <Controller>', () => {
       const wrapper = mount(<WithController />)
       wrapper.find('button').simulate('click')
@@ -97,15 +103,15 @@ describe('<Controllable>', () => {
 
     describe('with a providing <SubscriberController> created with subscriber(Controller)', () => {
       it('should use the dispatcher provided by the <Controller>', () => {
-        const SubscriberController = subscriber(
-          (state, dispatch) => ({ state, dispatch })
-        )(context.Controller)
+        const SubscriberController = subscriber((state, dispatch) => ({ state, dispatch }))(
+          context.Controller,
+        )
         const wrapper = mount(
           <Subscription>
             <SubscriberController>
               <TestControllable />
             </SubscriberController>
-          </Subscription>
+          </Subscription>,
         )
         wrapper.find('button').simulate('click')
         expect(wrapper).to.have.descendants('.test')

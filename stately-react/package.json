@@ -17,7 +17,8 @@
     "test": "mocha --opts ./mocha.opts",
     "build": "../build.sh",
     "release": "../release.sh",
-    "docs": "static dist/docs -a 0.0.0.0"
+    "docs": "static dist/docs -a 0.0.0.0",
+    "precommit": "../precommit.sh"
   },
   "license": "MIT",
   "dependencies": {
@@ -33,7 +34,7 @@
     "@types/jsdom": "^11.0.5",
     "@types/mocha": "^5.2.2",
     "@types/prop-types": "^15.5.2",
-    "@types/react": "^16.4.1",
+    "@types/react": "^16.4.18",
     "@types/react-redux": "^6.0.2",
     "@types/sinon": "^5.0.1",
     "@types/sinon-chai": "^3.2.0",
@@ -53,6 +54,6 @@
     "sinon-chai": "^3.2.0",
     "ts-node": "^6.1.1",
     "typedoc": "^0.12.0",
-    "typescript": "^3.0.1"
+    "typescript": "^3.1.3"
   }
 }

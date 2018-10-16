@@ -1,12 +1,15 @@
 import * as React from 'react'
-import { Reducer, Middleware, Action } from 'redux';
+import { Reducer, Middleware, Action } from 'redux'
 
 export interface ControllerProps<State> {
   state: State
   dispatch: <A extends Action>(action: A) => void
 }
 
-export type ControllableChildren<State> = (state: State, dispatch: <A extends Action>(action: A) => void) => React.ReactNode
+export type ControllableChildren<State> = (
+  state: State,
+  dispatch: <A extends Action>(action: A) => void,
+) => React.ReactNode
 
 export interface ControllableProps<State> {
   children: ControllableChildren<State>
@@ -17,19 +20,15 @@ export interface ControllableContext<State> {
   Controllable: React.ComponentType<ControllableProps<State>>
 }
 
-export const createControllableContext = <State,>(
+export function createControllableContext<State>(
   reducer: Reducer<State>,
-  middleware?: Middleware
-): ControllableContext<State> => {
+  middleware?: Middleware,
+): ControllableContext<State> {
   const { Provider, Consumer } = React.createContext<ControllerProps<State> | null>(null)
 
   class Controller extends React.Component<ControllerProps<State>> {
     render() {
-      return (
-        <Provider value={this.props}>
-          {this.props.children}
-        </Provider>
-      )
+      return <Provider value={this.props}>{this.props.children}</Provider>
     }
   }
 
@@ -40,7 +39,7 @@ export const createControllableContext = <State,>(
       if (middleware) {
         this.dispatch = middleware({
           dispatch: this.dispatch,
-          getState: () => this.state
+          getState: () => this.state,
         })(this.dispatch)
       }
     }
@@ -49,13 +48,15 @@ export const createControllableContext = <State,>(
       this.setState(reducer(this.state, action))
       return action
     }
-  
+
     render() {
       return (
         <Consumer>
-          {(controller) =>
-            controller ? this.props.children(controller.state, controller.dispatch)
-              : this.props.children(this.state, this.dispatch)}
+          {controller =>
+            controller
+              ? this.props.children(controller.state, controller.dispatch)
+              : this.props.children(this.state, this.dispatch)
+          }
         </Consumer>
       )
     }
@@ -63,6 +64,6 @@ export const createControllableContext = <State,>(
 
   return {
     Controller,
-    Controllable
+    Controllable,
   }
 }

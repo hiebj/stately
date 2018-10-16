@@ -5,21 +5,26 @@ import { mount, ReactWrapper } from 'enzyme'
 
 import * as React from 'react'
 import { Reducer, AnyAction, Store, createStore, applyMiddleware } from 'redux'
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs'
 
 import { $toMiddleware } from 'stately-async/observables'
 
-import { Subscription, Subscriber, SubscriberDecorator, createSubjectContext, createStoreContext } from './Subscribable'
+import {
+  Subscription,
+  Subscriber,
+  SubscriberDecorator,
+  createSubjectContext,
+  createStoreContext,
+} from './Subscribable'
 
 const TestComponent: React.SFC<{
-  className: string,
+  className: string
   onClick: () => void
-}> = ({ className, onClick }) =>
+}> = ({ className, onClick }) => (
   <div className={className}>
-    <button
-      onClick={onClick}>
-    </button>
+    <button onClick={onClick} />
   </div>
+)
 
 describe('createSubjectContext', () => {
   let nextClassName: string
@@ -39,9 +44,15 @@ describe('createSubjectContext', () => {
     it('should act as a standalone Subscriber', () => {
       const wrapper = mount(
         <Subscription>
-          {(className, next) =>
-            <TestComponent className={className} onClick={() => { next(nextClassName) }} />}
-        </Subscription>
+          {(className, next) => (
+            <TestComponent
+              className={className}
+              onClick={() => {
+                next(nextClassName)
+              }}
+            />
+          )}
+        </Subscription>,
       )
       expect(wrapper).to.have.descendants('.initial')
       wrapper.find('button').simulate('click')
@@ -61,10 +72,16 @@ describe('createSubjectContext', () => {
       wrapper = mount(
         <Subscription>
           <Subscriber>
-            {(className, next) =>
-              <TestComponent className={className} onClick={() => { next(nextClassName) }} />}
+            {(className, next) => (
+              <TestComponent
+                className={className}
+                onClick={() => {
+                  next(nextClassName)
+                }}
+              />
+            )}
           </Subscriber>
-        </Subscription>
+        </Subscription>,
       )
     })
 
@@ -112,21 +129,25 @@ describe('createSubjectContext', () => {
 
       const DecoratedTestComponent = subscriber((className, next) => ({
         className,
-        onClick: () => { next(nextClassName) }
-      }))(class extends React.Component<{
-        className: string,
-        onClick: () => void
-      }> {
-        render() {
-          const { className, onClick } = this.props
-          return <TestComponent className={className} onClick={onClick} />
-        }
-      })
-      
+        onClick: () => {
+          next(nextClassName)
+        },
+      }))(
+        class extends React.Component<{
+          className: string
+          onClick: () => void
+        }> {
+          render() {
+            const { className, onClick } = this.props
+            return <TestComponent className={className} onClick={onClick} />
+          }
+        },
+      )
+
       const wrapper = mount(
         <Subscription>
           <DecoratedTestComponent />
-        </Subscription>
+        </Subscription>,
       )
       expect(wrapper).to.have.descendants('.initial')
       wrapper.find('button').simulate('click')
@@ -140,8 +161,10 @@ describe('createSubjectContext', () => {
   })
 })
 
-interface ClassNameState { className: string }
-  
+interface ClassNameState {
+  className: string
+}
+
 const classNameReducer: Reducer<ClassNameState> = (state = { className: 'initial' }, action) =>
   action.type === 'CLASSNAME_SET' ? { className: action.className } : state
 
@@ -161,18 +184,18 @@ describe('createStoreContext', () => {
   it('should create a SubscriptionContext that dispatches actions to, and receives state updates from, the given Store', () => {
     const wrapper = mount(
       <Subscription>
-        {({ className }, next) =>
+        {({ className }, next) => (
           <TestComponent
             className={className}
-            onClick={
-              () => {
-                next({
-                  type: 'CLASSNAME_SET',
-                  className: nextClassName
-                })
-              }}
-            />}
-      </Subscription>
+            onClick={() => {
+              next({
+                type: 'CLASSNAME_SET',
+                className: nextClassName,
+              })
+            }}
+          />
+        )}
+      </Subscription>,
     )
     const subscriberSpy = spy()
     action$.subscribe(subscriberSpy)

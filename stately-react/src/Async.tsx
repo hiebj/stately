@@ -6,7 +6,7 @@ import {
   asyncLifecycle,
   AsyncLifecycle,
   statelyAsyncReducer,
-  statelyAsyncMiddleware
+  statelyAsyncMiddleware,
 } from 'stately-async'
 
 import { createControllableContext } from './Controllable'
@@ -17,31 +17,31 @@ export interface AsyncProps<Data, Params extends any[]> {
   children: (state: AsyncState<Data, Params>) => React.ReactNode
 }
 
-const {
-  Controller: AsyncController,
-  Controllable: AsyncControllable
-} = createControllableContext(statelyAsyncReducer, statelyAsyncMiddleware)
+const { Controller: AsyncController, Controllable: AsyncControllable } = createControllableContext(
+  statelyAsyncReducer,
+  statelyAsyncMiddleware,
+)
 
 export { AsyncController }
 
 /**
  * Props: {@link AsyncProps}
- * 
+ *
  * Context Providers: [Controller]{@link createControllableContext}<{@link AsyncState}>
- * 
+ *
  * A render-prop component that injects an {@link AsyncLifecycle} for any {@link AsyncOperation} into the component tree.
  * It executes the given `AsyncOperation` on mount, and again whenever the given `params` change.
  * The {@link AsyncState} representing the operation is passed to this component's `children` as the sole parameter.
  * It should be used whenever a component needs asynchronously-loaded data to render, such as search results or an entity from a REST service.
- * 
+ *
  * Each instance of `Async` will own a unique `AsyncLifecycle`.
  * This way, multiple instances using the same `AsyncOperation` will not conflict.
  * The component cleans up after itself by destroying the `AsyncLifecycle` on unmount.
- * 
+ *
  * The following example wraps a `<SearchResults>` component, handling the execution and state management of the asynchronous search call:
  * ```
  * // type doSearch = (p1: number, p2: string) => Promise<SearchResults>
- * 
+ *
  * <Async operation={doSearch} params={[123, 'abc']}>
  *   {state =>
  *     <div>
@@ -57,9 +57,7 @@ export { AsyncController }
  * </Async>
  * ```
  */
-export class Async<Data, Params extends any[]> extends React.Component<
-  AsyncProps<Data, Params>
-> {
+export class Async<Data, Params extends any[]> extends React.Component<AsyncProps<Data, Params>> {
   asyncLifecycle: AsyncLifecycle<Data, Params>
 
   constructor(props: AsyncProps<Data, Params>) {
@@ -72,7 +70,7 @@ export class Async<Data, Params extends any[]> extends React.Component<
     const { params } = this.props
     return (
       <AsyncControllable>
-        {(state, dispatch) =>
+        {(state, dispatch) => (
           <LifecycleAsync
             params={params}
             state={selector(state)}
@@ -84,7 +82,8 @@ export class Async<Data, Params extends any[]> extends React.Component<
             }}
           >
             {this.props.children}
-        </LifecycleAsync>}
+          </LifecycleAsync>
+        )}
       </AsyncControllable>
     )
   }
@@ -100,9 +99,10 @@ interface LifecycleAsyncProps<Data, Params extends any[]> {
 
 const paramsChanged = (prev?: any[], next?: any[]) =>
   prev !== next &&
-  ((!prev || !next) ||
-  prev.length !== next.length ||
-  !prev.every((value, index) => value === next[index]))
+  (!prev ||
+    !next ||
+    prev.length !== next.length ||
+    !prev.every((value, index) => value === next[index]))
 
 class LifecycleAsync<Data, Params extends any[]> extends React.Component<
   LifecycleAsyncProps<Data, Params>
