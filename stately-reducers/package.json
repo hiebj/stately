@@ -1,6 +1,6 @@
 {
   "name": "stately-reducers",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Functional composers allowing complex state trees to be constructed from atomic reducers",
   "author": {
     "name": "Jon Hieb",
@@ -35,7 +35,7 @@
     "sinon": "^6.0.0",
     "sinon-chai": "^3.2.0",
     "ts-node": "^6.1.1",
-    "typedoc": "^0.12.0",
-    "typescript": "^3.0.1"
+    "typedoc": "^0.13.0",
+    "typescript": "^3.1.3"
   }
 }
