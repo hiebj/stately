@@ -1,6 +1,6 @@
 {
   "name": "stately-react",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Components for simplifying the integration of state into React apps",
   "author": {
     "name": "Jon Hieb",
@@ -24,7 +24,7 @@
   "dependencies": {
     "react": "^16.4.1",
     "redux": "^4.0.0",
-    "stately-async": "^0.2.7"
+    "stately-async": "^0.2.8"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",
@@ -53,7 +53,7 @@
     "sinon": "^6.0.0",
     "sinon-chai": "^3.2.0",
     "ts-node": "^6.1.1",
-    "typedoc": "^0.12.0",
+    "typedoc": "^0.13.0",
     "typescript": "^3.1.3"
   }
 }
