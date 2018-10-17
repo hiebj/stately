@@ -24,7 +24,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "husky": "^0.14.3",
+    "husky": "^1.0.0",
     "node-static": "^0.7.11",
     "prettier": "^1.13.5",
     "typedoc": "^0.13.0",
