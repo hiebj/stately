@@ -2,6 +2,8 @@
 
 This module contains functional composers for Redux reducers. Used together, they allow atomic reducers to be composed into a state tree with any degree of nesting and complexity.
 
+**[API Reference](https://hiebj.github.io/stately/modules/stately_reducers.html)**
+
 ## Definitions
 
 - **Atomic reducer**: The simplest possible reducer. Handles a single action and performs a single state mutation.
@@ -45,5 +47,3 @@ const rootReducer = merge(
 ```
 
 For a working example of `chain`, `box`, and `merge` used together, see [`merge.spec.ts`](/stately-reducers/src/merge.spec.ts).
-
-For API docs, follow the instructions in [the top-level README](https://github.com/hiebj/stately/).

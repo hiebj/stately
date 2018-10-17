@@ -2,22 +2,12 @@
 
 This module contains components for simplifying the integration of state into React apps.
 
+**[API Reference](https://hiebj.github.io/stately/modules/stately_react.html)**
+
+**Usage Guides**
 - [`Subscribable` Components](#subscribable-like-react-redux-but-better): Components that subscribe to things (like a Redux store, for instance)
 - [`Async` Components](#async-components): Components that perform asynchronous operations and tell you how it's going (active, completed, error)
 - [`Controllable` Components](#controllable-components): Components that manage their own state internally, unless you want to control it yourself
-
-[Eventually](https://en.wikipedia.org/wiki/Heat_death_of_the_universe) I'll provide complete API documentation for each of these components. Until then, these usage guides can help you get started. Or, if that's not enough, read the tests and the source code:
-
-- [Subscribable.tsx](/stately-react/src/Subscribable.tsx)
-- [Subscribable.spec.tsx](/stately-react/src/Subscribable.spec.tsx)
-- [Async.tsx](/stately-react/src/Async.tsx)
-- [Async.spec.tsx](/stately-react/src/Async.spec.tsx)
-- [CallableAsync.tsx](/stately-react/src/CallableAsync.tsx)
-- [CallableAsync.spec.tsx](/stately-react/src/CallableAsync.spec.tsx)
-- [Controllable.tsx](/stately-react/src/Controllable.tsx)
-- [Controllable.spec.tsx](/stately-react/src/Controllable.spec.tsx)
-
-Finally, for (incomplete) API docs generated using TypeDoc, follow the instructions in [the top-level README](https://github.com/hiebj/stately/).
 
 ### `Subscribable`: like `react-redux`, but better
 `Subscribable` comprises a set of components using React 16 Context that make the injection of subscription-based state management into your component tree much simpler. Unlike `react-redux` and `connect()`, these tools preserve the type of your `Store`. Additionally, they are designed using the [Render Prop](https://reactjs.org/docs/render-props.html) design pattern. There is plenty of information available about Render Props and their advantages, so I'll not spend time on that here.
