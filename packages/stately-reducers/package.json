@@ -15,9 +15,8 @@
     "tsc": "tsc",
     "prettier": "prettier --write src/**/*.ts*",
     "test": "mocha --opts ./mocha.opts",
-    "build": "../build.sh",
-    "release": "../release.sh",
-    "docs": "static dist/docs -a 0.0.0.0"
+    "build": "../scripts/build.sh",
+    "release": "../scripts/release.sh"
   },
   "license": "MIT",
   "dependencies": {

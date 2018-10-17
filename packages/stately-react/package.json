@@ -15,10 +15,8 @@
     "tsc": "tsc",
     "prettier": "prettier --write src/**/*.ts*",
     "test": "mocha --opts ./mocha.opts",
-    "build": "../build.sh",
-    "release": "../release.sh",
-    "docs": "static dist/docs -a 0.0.0.0",
-    "precommit": "../precommit.sh"
+    "build": "../scripts/build.sh",
+    "release": "../scripts/release.sh"
   },
   "license": "MIT",
   "dependencies": {
@@ -53,7 +51,6 @@
     "sinon": "^6.0.0",
     "sinon-chai": "^3.2.0",
     "ts-node": "^6.1.1",
-    "typedoc": "^0.13.0",
     "typescript": "^3.1.3"
   }
 }
