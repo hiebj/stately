@@ -1,4 +1,4 @@
-/** Defines {@link AsyncState}, which represents the current state of an asynchronous operation. */
+/** @module stately-async */
 
 /** Symbol used as a namespace for stately-async data on public objects. */
 export const StatelyAsyncSymbol = Symbol('stately-async')

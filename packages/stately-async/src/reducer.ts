@@ -1,6 +1,4 @@
-/** Defines {@link statelyAsyncReducer}. */
-
-/** @ignore */
+/** @module stately-async */
 import { Reducer, Action } from 'redux'
 import { chain } from 'stately-reducers'
 

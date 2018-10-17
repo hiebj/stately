@@ -1,6 +1,4 @@
-/** Defines the {@link AsyncLifecycle} type and the {@link asyncLifecycle} factory. */
-
-/** @ignore */
+/** @module stately-async */
 import { v4 as uuid } from 'uuid'
 
 import { AsyncOperation } from "./AsyncOperation";
@@ -13,7 +11,7 @@ import { set } from "./cache";
  * An object that provides a consistent, automated means to track loading, error, success, and data states for any {@link AsyncOperation}.
  * This allows consumers - typically view components - to avoid duplicating ugly, error-prone side-effect branching logic and focus on rendering their declarative views.
  *
- * This is the primary member of this module.
+ * This is the primary export of `stately-async`.
  *
  * Each `AsyncLifecycle` is related to a unique {@link AsyncState}, where the current execution state of the `AsyncOperation` is maintained.
  * Dispatching the {@link AsyncLifecycle#call} action on a properly configured Store invokes the given `AsyncOperation` and begins a lifecycle.

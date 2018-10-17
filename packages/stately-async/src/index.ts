@@ -1,17 +1,7 @@
 /**
- * Defines the public API of the library.
- * 
- * From `AsyncState`: {@link AsyncSlice}, {@link AsyncState}, {@link AsyncStateStatus}
- * 
- * From `AsyncOperation`: {@link AsyncOperation}
- * 
- * From `AsyncLifecycle`: {@link AsyncLifecycle}, {@link asyncLifecycle}
- * 
- * From `actions`: {@link asyncActionMatcher}
- * 
- * From `reducer`: {@link statelyAsyncReducer}
- * 
- * From `middleware`: {@link statelyAsyncEpic}, {@link statelyAsyncMiddleware}
+ * Functional tools for managing the state of asynchronous operations.
+ * @module stately-async
+ * @preferred
  */
 
 /** @ignore */

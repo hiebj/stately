@@ -1,9 +1,4 @@
-/**
- * Defines {@link statelyAsyncMiddleware} and {@link statelyAsyncEpic}.
- * One of these must be installed into a Store (or otherwise integrated into a dispatch pipeline) for the library to work.
- */
-
-/** @ignore */
+/** @module stately-async */
 import { Observable, empty as $empty, Subject } from 'rxjs'
 import { filter as $filter, mergeMap as $mergeMap, first as $first } from 'rxjs/operators'
 import { Action, Middleware } from 'redux'

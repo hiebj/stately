@@ -1,3 +1,4 @@
+/** @module stately-reducers */
 import { Reducer, Action } from 'redux'
 
 /**
@@ -44,27 +45,27 @@ import { Reducer, Action } from 'redux'
  *
  * For a working example of {@link chain}, {@link box}, and {@link merge} used together, see `merge.spec.ts`.
  */
-export default function sliceReducers<S>(r1: Reducer<S>): Reducer<S>
-export default function sliceReducers<S1, S2>(r1: Reducer<S1>, r2: Reducer<S2>): Reducer<S1 & S2>
-export default function sliceReducers<S1, S2, S3>(
+export default function merge<S>(r1: Reducer<S>): Reducer<S>
+export default function merge<S1, S2>(r1: Reducer<S1>, r2: Reducer<S2>): Reducer<S1 & S2>
+export default function merge<S1, S2, S3>(
   r1: Reducer<S1>,
   r2: Reducer<S2>,
   r3: Reducer<S3>,
 ): Reducer<S1 & S2 & S3>
-export default function sliceReducers<S1, S2, S3, S4>(
+export default function merge<S1, S2, S3, S4>(
   r1: Reducer<S1>,
   r2: Reducer<S2>,
   r3: Reducer<S3>,
   r4: Reducer<S4>,
 ): Reducer<S1 & S2 & S3 & S4>
-export default function sliceReducers<S1, S2, S3, S4, S5>(
+export default function merge<S1, S2, S3, S4, S5>(
   r1: Reducer<S1>,
   r2: Reducer<S2>,
   r3: Reducer<S3>,
   r4: Reducer<S4>,
   r5: Reducer<S5>,
 ): Reducer<S1 & S2 & S3 & S4 & S5>
-export default function sliceReducers<S1, S2, S3, S4, S5, S6>(
+export default function merge<S1, S2, S3, S4, S5, S6>(
   r1: Reducer<S1>,
   r2: Reducer<S2>,
   r3: Reducer<S3>,
@@ -72,7 +73,7 @@ export default function sliceReducers<S1, S2, S3, S4, S5, S6>(
   r5: Reducer<S5>,
   r6: Reducer<S6>,
 ): Reducer<S1 & S2 & S3 & S4 & S5 & S6>
-export default function sliceReducers<S1, S2, S3, S4, S5, S6, S7>(
+export default function merge<S1, S2, S3, S4, S5, S6, S7>(
   r1: Reducer<S1>,
   r2: Reducer<S2>,
   r3: Reducer<S3>,
@@ -81,7 +82,7 @@ export default function sliceReducers<S1, S2, S3, S4, S5, S6, S7>(
   r6: Reducer<S6>,
   r7: Reducer<S7>,
 ): Reducer<S1 & S2 & S3 & S4 & S5 & S6 & S7>
-export default function sliceReducers<S1, S2, S3, S4, S5, S6, S7, S8>(
+export default function merge<S1, S2, S3, S4, S5, S6, S7, S8>(
   r1: Reducer<S1>,
   r2: Reducer<S2>,
   r3: Reducer<S3>,
@@ -91,7 +92,7 @@ export default function sliceReducers<S1, S2, S3, S4, S5, S6, S7, S8>(
   r7: Reducer<S7>,
   r8: Reducer<S8>,
 ): Reducer<S1 & S2 & S3 & S4 & S5 & S6 & S7 & S8>
-export default function sliceReducers(...reducers: Array<Reducer<{}>>): Reducer<{}> {
+export default function merge(...reducers: Array<Reducer<{}>>): Reducer<{}> {
   return (state, action) =>
     state === undefined
       ? // initialize state for each slice reducer with "undefined"

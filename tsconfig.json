@@ -9,6 +9,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "module": "commonjs",
-    "target": "es5"
-  }
+    "target": "es5",
+    "jsx": "react",
+    "lib": ["dom", "es2017", "esnext.asynciterable"]
+  },
+  "exclude": ["**/*.spec.*"]
 }

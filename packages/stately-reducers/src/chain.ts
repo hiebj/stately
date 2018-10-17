@@ -1,3 +1,4 @@
+/** @module stately-reducers */
 import { Reducer } from 'redux'
 
 /**

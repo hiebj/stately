@@ -1,0 +1,16 @@
+{
+  "name": "stately",
+  "readme": "./README.md",
+  "out": "docs",
+  "theme": "default",
+  "includeDeclarations": "false",
+  "excludeExternals": "true",
+  "exclude": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/mocha.config.ts",
+    "**/*.spec.*"
+  ],
+  "__includes": "documents that can be injected into the generated docs; use [[include:FILENAME]] in comments",
+  "__media": "media files that will be copied to the output directory; use media://FILENAME in comments"
+}

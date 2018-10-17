@@ -13,10 +13,9 @@
   },
   "scripts": {
     "tsc": "tsc",
-    "prettier": "prettier --write src/**/*.ts*",
     "test": "mocha --opts ./mocha.opts",
-    "build": "../scripts/build.sh",
-    "release": "../scripts/release.sh"
+    "build": "../../scripts/build.sh",
+    "release": "../../scripts/release.sh"
   },
   "license": "MIT",
   "dependencies": {
@@ -43,8 +42,6 @@
     "jsdom": "^11.11.0",
     "jsdom-global": "^3.0.2",
     "mocha": "^5.2.0",
-    "node-static": "^0.7.10",
-    "prettier": "1.13.5",
     "react-dom": "16.4.1",
     "react-redux": "^5.0.7",
     "react-test-renderer": "^16.4.1",

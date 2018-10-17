@@ -1,6 +1,4 @@
-/** Defines the {@link AsyncOperation} type. */
-
-/** @ignore */
+/** @module stately-async */
 import { Observable, ObservableInput } from 'rxjs'
 
 /** A function that returns an Observable. */

@@ -1,3 +1,4 @@
+/** @module stately-react */
 import * as React from 'react'
 import { Action } from 'redux'
 import { Subscription as RxSubscription } from 'rxjs'

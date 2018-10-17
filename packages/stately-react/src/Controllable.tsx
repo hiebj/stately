@@ -1,3 +1,4 @@
+/** @module stately-react */
 import * as React from 'react'
 import { Reducer, Middleware, Action } from 'redux'
 

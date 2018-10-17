@@ -13,14 +13,22 @@
     "url": "https://github.com/hiebj/stately"
   },
   "scripts": {
-    "prettier": "prettier",
-    "precommit": "./precommit.sh"
+    "prettier": "prettier --write packages/**/*.ts*",
+    "docs": "rm -rf docs/ && typedoc --options typedoc.json ./packages/",
+    "start": "static docs/ -a 0.0.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "./scripts/precommit.sh"
+    }
   },
   "license": "MIT",
   "devDependencies": {
     "husky": "^0.14.3",
+    "node-static": "^0.7.11",
     "prettier": "^1.13.5",
-    "typedoc": "^0.13.0"
+    "typedoc": "^0.13.0",
+    "typedoc-plugin-external-module-name": "^1.1.3"
   },
   "prettier": {
     "semi": false,

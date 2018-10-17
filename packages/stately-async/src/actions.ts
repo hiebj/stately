@@ -1,10 +1,4 @@
-/**
- * Defines the {@link AsyncAction} type, as well as the {@link asyncActionMatcher} and {@link asyncActionCreatorFactory} functions.
- * These functions and their implementation details are useful for advanced use cases.
- * In particular, `asyncActionMatcher` is useful when defining custom handling for `AsyncActions` with e.g. a reducer or middleware.
- */
-
-/** @ignore */
+/** @module stately-async */
 import { Action } from 'redux'
 
 import { StatelyAsyncSymbol } from './AsyncState'

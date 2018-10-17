@@ -1,12 +1,4 @@
-/**
- * Defines utilities for creating and transforming `Observable`.
- * Includes:
- * - {@link $fromStore}: `Store<S> -> Observable<S>`
- * - {@link $toMiddleware}: `Store<S, A> -> Observable<A>`
- * - {@link $toEvents}, `Observable<T> -> EventAPI<T>`
- */
-
-/** @ignore */
+/** @module stately-async */
 import { Observable, Subject, ObservableInput, from as $rxFrom, BehaviorSubject } from 'rxjs'
 import { filter as $filter } from 'rxjs/operators'
 import { Action, Middleware, Store, AnyAction } from 'redux'
