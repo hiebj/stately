@@ -1,6 +1,6 @@
 {
   "name": "stately-async",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Functional tools for managing the state of asynchronous operations",
   "author": {
     "name": "Jon Hieb",
@@ -21,7 +21,7 @@
   "dependencies": {
     "redux": "^4.0.0",
     "rxjs": "^6.2.1",
-    "stately-reducers": "^0.0.3",
+    "stately-reducers": "^0.0.4",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
