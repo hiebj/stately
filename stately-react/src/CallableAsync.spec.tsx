@@ -1,4 +1,5 @@
 import 'mocha'
+import 'chai-enzyme'
 import { expect } from 'chai'
 import { SinonFakeTimers, useFakeTimers } from 'sinon'
 import { mount } from 'enzyme'

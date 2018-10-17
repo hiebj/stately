@@ -1,4 +1,5 @@
 import 'mocha'
+import 'sinon-chai'
 import { expect } from 'chai'
 import { spy } from 'sinon'
 import { mount } from 'enzyme'

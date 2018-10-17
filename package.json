@@ -14,7 +14,7 @@
   },
   "scripts": {
     "prettier": "prettier --write packages/**/*.ts*",
-    "docs": "rm -rf docs/ && typedoc --options typedoc.json ./packages/",
+    "docs": "rm -rf docs/ && typedoc --options typedoc.json ./",
     "start": "static docs/ -a 0.0.0.0"
   },
   "husky": {
