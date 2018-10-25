@@ -6,20 +6,20 @@ import { Action, Middleware } from 'redux'
 import { asyncActionMatcher } from './actions'
 import { get } from './cache'
 import { StatelyAsyncSymbol } from './AsyncState'
-import { $from, $toMiddleware } from './observables';
+import { $from, $toMiddleware } from './observables'
 
 /**
  * Accepts an `Observable<Action>` and subscribes to it.
  * When an {@link AsyncAction} of type `call` is received, the epic triggers the corresponding {@link AsyncOperation}.
- * 
+ *
  * When the `AsyncOperation` emits data, encounters an error, or is completed, the `'data'`, `'error'`, and `'complete'` actions are dispatched, respectively.
- * 
+ *
  * The function signature matches the `Epic` type from `redux-observable`, and is meant to be used with `combineEpics` if you are using `redux-observable` in your project.
  * If you are not using `redux-observable`, use {@link statelyAsyncMiddleware} instead.
  */
 export const statelyAsyncEpic = (action$: Observable<Action>): Observable<Action> =>
   action$.pipe(
-    $filter(asyncActionMatcher('call')),
+    $filter(asyncActionMatcher(undefined, 'call')),
     $mergeMap(action => {
       const uuidEntry = get(action[StatelyAsyncSymbol].id)
       if (uuidEntry) {
@@ -64,4 +64,3 @@ export const statelyAsyncMiddleware: Middleware = store => {
   statelyAsyncEpic(action$).subscribe(store.dispatch)
   return middleware(store)
 }
-

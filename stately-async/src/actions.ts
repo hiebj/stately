@@ -33,24 +33,39 @@ export const isAsyncAction = (action: Action): action is AsyncAction<any[]> =>
 
 /**
  * Factory that creates a configurable type guard for filtering and differentiating {@link AsyncAction}s.
- * 
+ *
  * This function is useful to anyone who intends to define custom handling for `AsyncAction`s, such as:
  * - creating a custom reducer to update other parts of the state tree (keeping a historical record of requests?)
  * - creating a custom Epic, Saga, or other middleware to create asynchronous operation sequences (chain several `AsyncFunctions` serially?)
- * 
+ *
  * The returned guard will test a given action, returning true iff:
  * - the action is an `AsyncAction`
  * - no `type` is given, or the action's `saction` matches the given `type`
  * - no `operation` is given, or the action's `infix` matches the `name` of the given `operation`
- * 
+ *
  * See {@link createSessionActionCreator} for information about the internal structure of `AsyncAction`s.
  */
-export function asyncActionMatcher<Data, Params extends any[]>(phase?: 'call', operation?: AsyncOperation<Data, Params>): (action: Action) => action is AsyncAction<Params>
-export function asyncActionMatcher<Data, Params extends any[]>(phase?: 'data', operation?: AsyncOperation<Data, Params>): (action: Action) => action is AsyncAction<[Data]>
-export function asyncActionMatcher<Data, Params extends any[]>(phase?: 'error', operation?: AsyncOperation<Data, Params>): (action: Action) => action is AsyncAction<[any]>
-export function asyncActionMatcher<Data, Params extends any[]>(phase?: AsyncPhase, operation?: AsyncOperation<Data, Params>): (action: Action) => action is AsyncAction<[]>
-export function asyncActionMatcher<Data, Params extends any[]>(phase?: AsyncPhase, operation?: AsyncOperation<Data, Params>) {
-  return (action: Action) => 
+export function asyncActionMatcher<Data, Params extends any[]>(
+  operation: AsyncOperation<Data, Params> | undefined,
+  phase: 'call',
+): (action: Action) => action is AsyncAction<Params>
+export function asyncActionMatcher<Data, Params extends any[]>(
+  operation: AsyncOperation<Data, Params> | undefined,
+  phase: 'data',
+): (action: Action) => action is AsyncAction<[Data]>
+export function asyncActionMatcher<Data, Params extends any[]>(
+  operation: AsyncOperation<Data, Params> | undefined,
+  phase: 'error',
+): (action: Action) => action is AsyncAction<[any]>
+export function asyncActionMatcher<Data, Params extends any[]>(
+  operation?: AsyncOperation<Data, Params>,
+  phase?: AsyncPhase,
+): (action: Action) => action is AsyncAction<[]>
+export function asyncActionMatcher<Data, Params extends any[]>(
+  operation?: AsyncOperation<Data, Params>,
+  phase?: AsyncPhase,
+) {
+  return (action: Action) =>
     isAsyncAction(action) &&
     !!(!phase || action[StatelyAsyncSymbol].phase === phase) &&
     !!(!operation || (operation.name && operation.name === action[StatelyAsyncSymbol].name))
@@ -81,7 +96,7 @@ const getOperationName = <Data, Params extends any[]>(
     console.warn(
       'stately-async:\n',
       'asyncLifecycle() was called with an anonymous AsyncOperation.\n',
-      'The action type infix will fall back to the lifecycle\'s uuid, which is ugly and non-descriptive.\n',
+      "The action type infix will fall back to the lifecycle's uuid, which is ugly and non-descriptive.\n",
       'This also means it will be impossible to use asyncActionMatchers() to create matchers for the given AsyncOperation.',
       'It is recommended that only non-anonymous AsyncOperations are used.',
     )
@@ -91,24 +106,22 @@ const getOperationName = <Data, Params extends any[]>(
 
 /**
  * Internal factory function that builds an {@link AsyncActionCreator} with the given lifecycle metadata and {@link AsyncPhase}.
- * 
+ *
  * The function defines how {@link AsyncAction}s are created:
  * - how the action "type" strings are generated
  * - how an action payload is packaged
  * - how the lifecycle metadata is packaged
- * 
+ *
  * This information is useful to anyone who intends to define custom handling for `AsyncAction`s, such as:
  * - creating a custom reducer to update other parts of the state tree (keeping a historical record of requests?)
  * - creating a custom Epic, Saga, or other middleware to create side-effect sequences (chain several `AsyncFunctions` serially?)
- * 
+ *
  * The public function {@link asyncActionMatcher} can be used by reducers or middleware to recognize and filter `AsyncAction`s.
  */
 export const asyncActionCreatorFactory = <Data, Params extends any[]>(
   operation: AsyncOperation<Data, Params>,
   id: string,
-) => <Payload extends any[]>(
-  phase: AsyncPhase,
-): AsyncActionCreator<Payload> => {
+) => <Payload extends any[]>(phase: AsyncPhase): AsyncActionCreator<Payload> => {
   const name = getOperationName(operation, id)
   const type = `${ACTION_PREFIX}/${name}/${phase}`
   const meta = { id, name, phase }
@@ -117,14 +130,14 @@ export const asyncActionCreatorFactory = <Data, Params extends any[]>(
     payload,
     [StatelyAsyncSymbol]: meta,
   })
-  const guard = asyncActionMatcher(phase)
+  const guard = asyncActionMatcher(undefined, phase)
   const match = (action: Action): action is AsyncAction<Payload> =>
     guard(action) && action[StatelyAsyncSymbol].id === id
   return Object.freeze(
     Object.assign(actionCreator, {
       type,
       meta,
-      match
+      match,
     }),
   )
 }

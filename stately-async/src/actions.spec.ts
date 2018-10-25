@@ -5,7 +5,7 @@ import { of as $of } from 'rxjs'
 
 import { asyncActionMatcher, AsyncActionCreator, asyncActionCreatorFactory } from './actions'
 import { asyncLifecycle } from './AsyncLifecycle'
-import { StatelyAsyncSymbol } from './AsyncState';
+import { StatelyAsyncSymbol } from './AsyncState'
 
 interface Params {
   param1: string
@@ -34,9 +34,9 @@ beforeEach(() => {
   dataActionCreator = asyncActionCreatorFactory(withParamsAsync$, 'testuuid')<[Data]>('data')
 })
 
-describe('asyncActionMatcher(type, asyncOperation)', () => {
-  it ('should return a type guard that returns true iff the given action matches the given `type` and `asyncOperation`', () => {
-    const matcher = asyncActionMatcher('call', withParamsAsync$)
+describe('asyncActionMatcher(asyncOperation, phase)', () => {
+  it('should return a type guard that returns true iff the given action matches the given `type` and `asyncOperation`', () => {
+    const matcher = asyncActionMatcher(withParamsAsync$, 'call')
     expect(matcher(callActionCreator(params))).to.be.true
     expect(matcher(asyncLifecycle(withParamsAsync$).call(params))).to.be.true
     expect(matcher(dataActionCreator(data))).to.be.false
