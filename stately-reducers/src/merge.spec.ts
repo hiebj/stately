@@ -2,7 +2,7 @@ import 'mocha'
 import { expect } from 'chai'
 import { stub } from 'sinon'
 
-import { Reducer, Store, createStore } from 'redux';
+import { Reducer, Store, createStore } from 'redux'
 
 import chain from './chain'
 import box from './box'
@@ -21,7 +21,7 @@ const closeReducer: Reducer<IsOpen> = (state = initialIsOpenState, action) =>
   action.type === 'OPEN' ? { open: true } : state
 
 const isOpenModelReducer: Reducer<IsOpen> = chain(openReducer, closeReducer)
-const isOpenSliceReducer = box(isOpenModelReducer, 'isOpen')
+const isOpenSliceReducer = box('isOpen', isOpenModelReducer)
 
 // ---- File: User.ts ----
 interface User {
@@ -30,7 +30,7 @@ interface User {
 }
 const initialUserState: User = {
   id: 0,
-  name: ''
+  name: '',
 }
 const changeIdReducer: Reducer<User> = (state = initialUserState, action) =>
   action.type === 'ID_SET' ? { ...state, id: action.id } : state
@@ -38,7 +38,7 @@ const changeNameReducer: Reducer<User> = (state = initialUserState, action) =>
   action.type === 'NAME_SET' ? { ...state, name: action.name } : state
 
 const userModelReducer: Reducer<User> = chain(changeIdReducer, changeNameReducer)
-const userSliceReducer = box(userModelReducer, 'user')
+const userSliceReducer = box('user', userModelReducer)
 
 // ---- File: store.ts ----
 const composedReducer = merge(isOpenSliceReducer, userSliceReducer)
@@ -78,8 +78,8 @@ describe('merge', () => {
     const overwriteUserReducer: Reducer<{ user: User }> = () => ({
       user: {
         id: 5,
-        name: 'other'
-      }
+        name: 'other',
+      },
     })
     const destructiveMergeReducer = merge(composedReducer, overwriteUserReducer)
     const spy = stub(console, 'warn')

@@ -25,7 +25,7 @@ TypeScript itself does not have sufficient syntax sugar to express the types suc
 type chain = <S>(...reducers: Reducer<S>[]) => Reducer<S>
 
 // Reducer<S> becomes Reducer<{ key: S }>, forming a slice reducer
-type box = <S, K>(reducer: Reducer<S>, key: K) => Reducer<{ [K]: S }>
+type box = <K, S>(key: K, reducer: Reducer<S>) => Reducer<{ [K]: S }>
 
 // many independent reducers with different shapes become a root reducer
 type merge = <...S>(...reducers: Reducer<...S>[]) => Reducer<Intersection<...S>>
@@ -38,9 +38,9 @@ const bReducers: Reducer<B>[]
 const cReducers: Reducer<C>[]
 
 const rootReducer = merge(
-  box(chain(...aReducers), 'a'),
-  box(chain(...bReducers), 'b'),
-  box(chain(...cReducers), 'c'),
+  box('a', chain(...aReducers)),
+  box('b', chain(...bReducers)),
+  box('c', chain(...cReducers)),
 )
 
 // typeof rootReducer: Reducer<{ a: A, b: B, c: C }>

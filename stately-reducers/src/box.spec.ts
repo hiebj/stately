@@ -1,7 +1,7 @@
 import 'mocha'
 import { expect } from 'chai'
 
-import { Reducer, Store, createStore } from 'redux';
+import { Reducer, Store, createStore } from 'redux'
 
 import box from './box'
 
@@ -12,7 +12,7 @@ interface IsOpen {
 const toggleReducer: Reducer<IsOpen> = (state = { open: false }, action) =>
   action.type === 'TOGGLE' ? { open: !state.open } : state
 
-const boxedReducer = box(toggleReducer, 'isOpen')
+const boxedReducer = box('isOpen', toggleReducer)
 
 describe('box', () => {
   let store: Store<ReturnType<typeof boxedReducer>>
