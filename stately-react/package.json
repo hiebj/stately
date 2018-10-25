@@ -1,6 +1,6 @@
 {
   "name": "stately-react",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Components for simplifying the integration of state into React apps",
   "author": {
     "name": "Jon Hieb",
