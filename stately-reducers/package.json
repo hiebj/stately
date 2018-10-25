@@ -14,8 +14,8 @@
   "scripts": {
     "tsc": "tsc",
     "test": "mocha --opts ./mocha.opts",
-    "build": "../../scripts/build.sh",
-    "release": "../../scripts/release.sh"
+    "build": "../scripts/build.sh",
+    "release": "../scripts/release.sh"
   },
   "license": "MIT",
   "dependencies": {
