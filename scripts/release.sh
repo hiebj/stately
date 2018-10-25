@@ -9,7 +9,7 @@ noformat=$'\033[0m'
 newversion=$(npm version $@ | cut -c 2-)
 npm run build
 read -rsp "About to publish ${blue}${underline}${npm_package_name}@${newversion}${noformat}"$'.\nPress Enter to continue or Ctrl+C to cancel.'
-git add package.json
+git add package*.json
 git commit -m "${npm_package_name}@${newversion}"
 cd dist
 npm publish
