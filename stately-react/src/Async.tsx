@@ -124,7 +124,7 @@ class LifecycleAsync<Data, Params extends any[]> extends React.Component<
   }
 
   maybeCall() {
-    // people are likely to pass params as an array literal, which is always a new instance
+    // people are likely to pass params as an array literal, which is always a new reference
     if (paramsChanged(this.params, this.props.params)) {
       this.params = this.props.params
       if (this.params) {
