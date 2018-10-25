@@ -60,7 +60,7 @@ const TestComponent: React.SFC = () => (
   </StoreSubscription>
 )
 
-const isCompleteAction = asyncActionMatcher('complete')
+const isCompleteAction = asyncActionMatcher(undefined, 'complete')
 
 describe('<CallableAsync>', () => {
   beforeEach(() => {
