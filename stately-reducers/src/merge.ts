@@ -1,9 +1,10 @@
 /** @module stately-reducers */
-import { Reducer, Action } from 'redux'
+import { Reducer } from 'redux'
 
 /**
  * The `merge` composer is similar to {@link chain}, but each given reducer
- * is called as though it is completely unaware of, and separate from, every other.
+ * is called in isolation - it is not given the returned states of the other reducers, and collision-checked
+ * to ensure that shapes returned by one reducer do not overlap with shapes returned by any other.
  *
  * The intended use case is to compose reducers which each assume complete ownership of their part of
  * a state tree, which are then merged into the same root state to create the final store.
@@ -30,18 +31,22 @@ import { Reducer, Action } from 'redux'
  * to define reducers that can be integrated into your store without requiring you to
  * be aware of their desired "slice name(s)".
  *
- * This means that when a series of reducers are composed using this function, each is
- * given the same "current state" object, regardless whether one of the other reducers
- * so far in the order has returned a modified state.
+ * When an action is dispatched, each of the reducers composed using this function is called
+ * with the last state object that it returned. In practice, this means that every reducer is
+ * treated as if it is the only reducer in the store - it will never receive state values returned
+ * by any other reducer.
  *
- * States returned by each sub-reducer are then merged together in-order, destructively.
- * For that reason, reducers passed to `merge` should **not** modify the same
- * slice as any other; rather, each reducer should **completely own** its slice (or slices).
+ * The final state tree is composed by merging the returned states of each sub-reducer. The
+ * merge is done in-order, and destructively. For that reason, reducers passed to `merge` should
+ * **not** return any properties that are also returned by any other. This function will log an
+ * error to the console if any overwrite is detected.
  *
- * This function will log a warning to the console if any overwrite is detected (e.g.
- * if the second reducer modifies the subset of the state tree as the first). If you
- * want to have several reducers manage the same subset of a state tree, you should use
- * the {@link chain} composer instead.
+ * If you find that you must compose reducers with overlapping state shapes and you cannot change them,
+ * consider isolating one of them using ${@link box}. This will mean that components accessing
+ * the state of the boxed reducer will need to unbox its state before using it.
+ *
+ * If you are defining a set of reducers that is intended to manage a shared subset of the state
+ * tree, use the {@link chain} composer instead.
  *
  * For a working example of {@link chain}, {@link box}, and {@link merge} used together, see `merge.spec.ts`.
  */
@@ -93,51 +98,61 @@ export default function merge<S1, S2, S3, S4, S5, S6, S7, S8>(
   r8: Reducer<S8>,
 ): Reducer<S1 & S2 & S3 & S4 & S5 & S6 & S7 & S8>
 export default function merge(...reducers: Array<Reducer<{}>>): Reducer<{}> {
-  return (state, action) =>
-    state === undefined
-      ? // initialize state for each slice reducer with "undefined"
-        reducers.reduce(
-          (accumulatedInitialState, nextReducer) =>
-            reduceAndMergeAfterChecking(nextReducer, undefined, action, accumulatedInitialState),
-          {},
-        )
-      : // give each slice reducer the same "current state"
-        reducers.reduce(
-          (accumulatedNextState, nextReducer) => ({
-            ...accumulatedNextState,
-            ...nextReducer(state, action)
-          }),
-          state,
-        )
+  const prevStates = new Map<Reducer, {} | undefined>(
+    reducers.map(reducer => [reducer, undefined] as [Reducer, undefined]),
+  )
+  const checkCollisions = collisionChecker(prevStates)
+  return (_state, action) => {
+    let shouldCheckCollisions: boolean = false
+    const nextRootState = reducers.reduce((nextRootState, nextReducer) => {
+      // call each reducer with the previous state it returned and merge the states
+      const prevSliceState = prevStates.get(nextReducer)
+      const nextSliceState = nextReducer(prevSliceState, action)
+      shouldCheckCollisions = !prevSliceState || checkShapeChanged(prevSliceState, nextSliceState)
+      prevStates.set(nextReducer, nextSliceState)
+      return Object.assign(nextRootState, nextSliceState)
+    }, {})
+    if (shouldCheckCollisions) {
+      setTimeout(checkCollisions)
+    }
+    return nextRootState
+  }
 }
 
-function reduceAndMergeAfterChecking<S extends {}>(
-  nextReducer: Reducer<Partial<S>>,
-  currentState: S | undefined,
-  action: Action,
-  accumulatedState: Partial<S>,
-) {
-  const nextStateToMerge = nextReducer(currentState, action)
-  for (const key of Object.keys(nextStateToMerge)) {
-    if (
-      key in accumulatedState &&
-      accumulatedState[key as keyof S] !== nextStateToMerge[key as keyof S]
-    ) {
-      // tslint:disable-next-line:no-console
-      console.warn(
-        'stately-reducers:\n',
-        `merge() conflict on key '${key}':\n`,
-        'Two reducers were given to merge() that both modify the same property of the state tree.',
-        'This is not recommended, as the states are merged destructively.',
-        'This means that the last reducer to modify a given property will always take precedence.\n',
-        'If you have multiple reducers that are intended to share management of the same slice',
-        'of a state tree, consider using chain() instead.',
-      )
-      break
+const checkShapeChanged = (shape1: {}, shape2: {}): boolean => {
+  const keys1 = Object.keys(shape1)
+  const keys2 = Object.keys(shape2)
+  return keys1.length !== keys2.length || !!keys1.filter(key => !keys2.includes(key)).length
+}
+
+const collisionChecker = (statesMap: Map<Reducer, {} | undefined>) => () => {
+  const keysToReducerNames = new Map<string, string>()
+  let index = 0
+  statesMap.forEach((sliceState, reducer) => {
+    if (sliceState) {
+      Object.keys(sliceState).forEach(key => {
+        const reducerName = getReducerName(reducer, index)
+        if (keysToReducerNames.has(key)) {
+          consoleError(keysToReducerNames.get(key)!, reducerName, key)
+        }
+        keysToReducerNames.set(key, reducerName)
+      })
     }
-  }
-  return {
-    ...(accumulatedState as {}),
-    ...(nextStateToMerge as {}),
-  }
+    index++
+  })
+}
+
+const getReducerName = (reducer: Reducer, reducerIndex: number) =>
+  reducer.name || `<reducer ${reducerIndex} (anonymous)>`
+
+const consoleError = (reducerName1: string, reducerName2: string, key: string) => {
+  // tslint:disable-next-line:no-console
+  console.error(
+    'stately-reducers:\n',
+    `merge() conflict on key '${key}':\n`,
+    `Two reducers were given to merge() that both return a value for ${key}.`,
+    'This is not recommended, as the reducers are called in the order they are given and their states are merged destructively.',
+    `${reducerName2} will overwrite the ${key} value returned by ${reducerName1}, because ${reducerName2} is later in the execution sequence.\n`,
+    'Isolate the colliding reducers using box(), or use chain() for reducers that are intended to modify a shared state slice.',
+  )
 }

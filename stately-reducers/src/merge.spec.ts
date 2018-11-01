@@ -1,6 +1,6 @@
 import 'mocha'
 import { expect } from 'chai'
-import { stub } from 'sinon'
+import { stub, useFakeTimers } from 'sinon'
 
 import { Reducer, Store, createStore } from 'redux'
 
@@ -82,8 +82,10 @@ describe('merge', () => {
       },
     })
     const destructiveMergeReducer = merge(composedReducer, overwriteUserReducer)
-    const spy = stub(console, 'warn')
+    const spy = stub(console, 'error')
+    const clock = useFakeTimers()
     store = createStore(destructiveMergeReducer)
+    clock.tick(1)
     expect(spy).to.have.been.called
     spy.restore()
     store.dispatch({ type: null })
