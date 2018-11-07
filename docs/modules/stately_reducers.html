@@ -80,8 +80,11 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="stately_reducers.html#box" class="tsd-kind-icon">box</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="stately_reducers.html#chain" class="tsd-kind-icon">chain</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="stately_reducers.html#checkshapechanged" class="tsd-kind-icon">check<wbr>Shape<wbr>Changed</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="stately_reducers.html#collisionchecker" class="tsd-kind-icon">collision<wbr>Checker</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="stately_reducers.html#consoleerror" class="tsd-kind-icon">console<wbr>Error</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="stately_reducers.html#getreducername" class="tsd-kind-icon">get<wbr>Reducer<wbr>Name</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="stately_reducers.html#merge" class="tsd-kind-icon">merge</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported"><a href="stately_reducers.html#reduceandmergeafterchecking" class="tsd-kind-icon">reduce<wbr>And<wbr>Merge<wbr>After<wbr>Checking</a></li>
 							</ul>
 						</section>
 					</div>
@@ -93,13 +96,13 @@
 					<a name="box" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> box</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">box&lt;S, K, A&gt;<span class="tsd-signature-symbol">(</span>reducer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Reducer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">&gt;</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Reducer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">box&lt;K, S, A&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span>, reducer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Reducer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Reducer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/hiebj/stately/blob/d13e327/stately-reducers/src/box.ts#L14">stately-reducers/src/box.ts:14</a></li>
+									<li>Defined in <a href="https://github.com/hiebj/stately/blob/aabd24b/stately-reducers/src/box.ts#L14">stately-reducers/src/box.ts:14</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -112,10 +115,10 @@
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>S<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span></h4>
+									<h4>K<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h4>
 								</li>
 								<li>
-									<h4>K<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h4>
+									<h4>S<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span></h4>
 								</li>
 								<li>
 									<h4>A<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span></h4>
@@ -124,10 +127,10 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>reducer: <span class="tsd-signature-type">Reducer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>key: <span class="tsd-signature-type">K</span></h5>
 								</li>
 								<li>
-									<h5>key: <span class="tsd-signature-type">K</span></h5>
+									<h5>reducer: <span class="tsd-signature-type">Reducer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Reducer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -144,7 +147,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/hiebj/stately/blob/d13e327/stately-reducers/src/chain.ts#L19">stately-reducers/src/chain.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/hiebj/stately/blob/aabd24b/stately-reducers/src/chain.ts#L19">stately-reducers/src/chain.ts:19</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -179,6 +182,110 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="checkshapechanged" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> check<wbr>Shape<wbr>Changed</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">check<wbr>Shape<wbr>Changed<span class="tsd-signature-symbol">(</span>shape1<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span>, shape2<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/hiebj/stately/blob/aabd24b/stately-reducers/src/merge.ts#L123">stately-reducers/src/merge.ts:123</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>shape1: <span class="tsd-signature-type">__type</span></h5>
+								</li>
+								<li>
+									<h5>shape2: <span class="tsd-signature-type">__type</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="collisionchecker" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> collision<wbr>Checker</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">collision<wbr>Checker<span class="tsd-signature-symbol">(</span>statesMap<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Reducer</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/hiebj/stately/blob/aabd24b/stately-reducers/src/merge.ts#L129">stately-reducers/src/merge.ts:129</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>statesMap: <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Reducer</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">(Anonymous function)</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="consoleerror" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> console<wbr>Error</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">console<wbr>Error<span class="tsd-signature-symbol">(</span>reducerName1<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, reducerName2<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/hiebj/stately/blob/aabd24b/stately-reducers/src/merge.ts#L149">stately-reducers/src/merge.ts:149</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>reducerName1: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>reducerName2: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>key: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="getreducername" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> get<wbr>Reducer<wbr>Name</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Reducer<wbr>Name<span class="tsd-signature-symbol">(</span>reducer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Reducer</span>, reducerIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/hiebj/stately/blob/aabd24b/stately-reducers/src/merge.ts#L146">stately-reducers/src/merge.ts:146</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>reducer: <span class="tsd-signature-type">Reducer</span></h5>
+								</li>
+								<li>
+									<h5>reducerIndex: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 					<a name="merge" class="tsd-anchor"></a>
 					<h3>merge</h3>
@@ -196,16 +303,18 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/hiebj/stately/blob/d13e327/stately-reducers/src/merge.ts#L48">stately-reducers/src/merge.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/hiebj/stately/blob/aabd24b/stately-reducers/src/merge.ts#L54">stately-reducers/src/merge.ts:54</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>The <code>merge</code> composer is similar to <a href="stately_reducers.html#chain">chain</a>, but each given reducer
-									is called as though it is completely unaware of, and separate from, every other.</p>
+										is called in isolation - it is not given the returned states of the other reducers, and the final
+										state tree is collision-checked to ensure that shapes returned by one reducer do not overlap
+									with shapes returned by any other.</p>
 								</div>
 								<p>The intended use case is to compose reducers which each assume complete ownership of their part of
-								a state tree, which are then merged into the same root state to create the final store.</p>
+								a state tree, together creating a root state shape.</p>
 								<p>For example:</p>
 								<pre><code><span class="hljs-keyword">type</span> <span class="hljs-type">A</span> = { a: {} }
 <span class="hljs-keyword">type</span> <span class="hljs-type">B</span> = { b: {} }
@@ -223,16 +332,19 @@
 									reducer instead determines the slice(s) that it owns. This allows external libraries
 									to define reducers that can be integrated into your store without requiring you to
 								be aware of their desired &quot;slice name(s)&quot;.</p>
-								<p>This means that when a series of reducers are composed using this function, each is
-									given the same &quot;current state&quot; object, regardless whether one of the other reducers
-								so far in the order has returned a modified state.</p>
-								<p>States returned by each sub-reducer are then merged together in-order, destructively.
-									For that reason, reducers passed to <code>merge</code> should <strong>not</strong> modify the same
-								slice as any other; rather, each reducer should <strong>completely own</strong> its slice (or slices).</p>
-								<p>This function will log a warning to the console if any overwrite is detected (e.g.
-									if the second reducer modifies the subset of the state tree as the first). If you
-									want to have several reducers manage the same subset of a state tree, you should use
-								the <a href="stately_reducers.html#chain">chain</a> composer instead.</p>
+								<p>When an action is dispatched, each of the reducers composed using this function is called
+									with the last state object that it returned. In practice, this means that every reducer is
+									treated as if it is the only reducer in the store - it will never receive state values returned
+								by any other reducer.</p>
+								<p>The final state tree is composed by merging the returned states of each sub-reducer. The
+									merge is done in-order, and destructively. For that reason, reducers passed to <code>merge</code> should
+									<strong>not</strong> return any properties that are also returned by any other. This function will log an
+								error to the console if any overwrite is detected.</p>
+								<p>If you find that you must compose reducers with overlapping state shapes and you cannot change them,
+									consider isolating one of them using $<a href="stately_reducers.html#box">box</a>. This will mean that components accessing
+								the state of the boxed reducer will need to unbox its state before using it.</p>
+								<p>If you are defining a set of reducers that is intended to manage a shared subset of the state
+								tree, use the <a href="stately_reducers.html#chain">chain</a> composer instead.</p>
 								<p>For a working example of <a href="stately_reducers.html#chain">chain</a>, <a href="stately_reducers.html#box">box</a>, and <a href="stately_reducers.html#merge">merge</a> used together, see <code>merge.spec.ts</code>.</p>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -252,7 +364,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/hiebj/stately/blob/d13e327/stately-reducers/src/merge.ts#L49">stately-reducers/src/merge.ts:49</a></li>
+									<li>Defined in <a href="https://github.com/hiebj/stately/blob/aabd24b/stately-reducers/src/merge.ts#L55">stately-reducers/src/merge.ts:55</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -278,7 +390,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/hiebj/stately/blob/d13e327/stately-reducers/src/merge.ts#L50">stately-reducers/src/merge.ts:50</a></li>
+									<li>Defined in <a href="https://github.com/hiebj/stately/blob/aabd24b/stately-reducers/src/merge.ts#L56">stately-reducers/src/merge.ts:56</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -310,7 +422,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/hiebj/stately/blob/d13e327/stately-reducers/src/merge.ts#L55">stately-reducers/src/merge.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/hiebj/stately/blob/aabd24b/stately-reducers/src/merge.ts#L61">stately-reducers/src/merge.ts:61</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -348,7 +460,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/hiebj/stately/blob/d13e327/stately-reducers/src/merge.ts#L61">stately-reducers/src/merge.ts:61</a></li>
+									<li>Defined in <a href="https://github.com/hiebj/stately/blob/aabd24b/stately-reducers/src/merge.ts#L67">stately-reducers/src/merge.ts:67</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -392,7 +504,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/hiebj/stately/blob/d13e327/stately-reducers/src/merge.ts#L68">stately-reducers/src/merge.ts:68</a></li>
+									<li>Defined in <a href="https://github.com/hiebj/stately/blob/aabd24b/stately-reducers/src/merge.ts#L74">stately-reducers/src/merge.ts:74</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -442,7 +554,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/hiebj/stately/blob/d13e327/stately-reducers/src/merge.ts#L76">stately-reducers/src/merge.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/hiebj/stately/blob/aabd24b/stately-reducers/src/merge.ts#L82">stately-reducers/src/merge.ts:82</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -498,7 +610,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/hiebj/stately/blob/d13e327/stately-reducers/src/merge.ts#L85">stately-reducers/src/merge.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/hiebj/stately/blob/aabd24b/stately-reducers/src/merge.ts#L91">stately-reducers/src/merge.ts:91</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -559,46 +671,6 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
-					<a name="reduceandmergeafterchecking" class="tsd-anchor"></a>
-					<h3>reduce<wbr>And<wbr>Merge<wbr>After<wbr>Checking</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">reduce<wbr>And<wbr>Merge<wbr>After<wbr>Checking&lt;S&gt;<span class="tsd-signature-symbol">(</span>nextReducer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Reducer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, currentState<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span>, accumulatedState<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/hiebj/stately/blob/d13e327/stately-reducers/src/merge.ts#L114">stately-reducers/src/merge.ts:114</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-type-parameters-title">Type parameters</h4>
-							<ul class="tsd-type-parameters">
-								<li>
-									<h4>S<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">__type</span></h4>
-								</li>
-							</ul>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>nextReducer: <span class="tsd-signature-type">Reducer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
-								</li>
-								<li>
-									<h5>currentState: <span class="tsd-signature-type">S</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
-								</li>
-								<li>
-									<h5>action: <span class="tsd-signature-type">Action</span></h5>
-								</li>
-								<li>
-									<h5>accumulatedState: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">&gt;</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
-							<ul class="tsd-parameters">
-							</ul>
-						</li>
-					</ul>
-				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -626,11 +698,20 @@
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="stately_reducers.html#chain" class="tsd-kind-icon">chain</a>
 					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="stately_reducers.html#checkshapechanged" class="tsd-kind-icon">check<wbr>Shape<wbr>Changed</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="stately_reducers.html#collisionchecker" class="tsd-kind-icon">collision<wbr>Checker</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="stately_reducers.html#consoleerror" class="tsd-kind-icon">console<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="stately_reducers.html#getreducername" class="tsd-kind-icon">get<wbr>Reducer<wbr>Name</a>
+					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="stately_reducers.html#merge" class="tsd-kind-icon">merge</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
-						<a href="stately_reducers.html#reduceandmergeafterchecking" class="tsd-kind-icon">reduce<wbr>And<wbr>Merge<wbr>After<wbr>Checking</a>
 					</li>
 				</ul>
 			</nav>
