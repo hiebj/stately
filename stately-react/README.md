@@ -1,7 +1,7 @@
 # stately-react
 [![npm](https://img.shields.io/npm/v/stately-react.svg?style=flat-square)](https://www.npmjs.com/package/stately-reducers)
 
-This module contains type-safe components components for simplifying React state management.
+This module contains type-safe components for simplifying React state management.
 
 **[API Reference](https://hiebj.github.io/stately/modules/stately_react.html)**
 
