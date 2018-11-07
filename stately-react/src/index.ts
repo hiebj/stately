@@ -1,5 +1,5 @@
 /**
- * Components for simplifying the integration of state into React apps.
+ * [[include:./stately-react/README.md]]
  * @module stately-react
  * @preferred
  */

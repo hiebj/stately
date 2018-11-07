@@ -1,5 +1,5 @@
 /**
- * Functional tools for managing the state of asynchronous operations.
+ * [[include:./stately-async/README.md]]
  * @module stately-async
  * @preferred
  */

@@ -1,55 +1,44 @@
 # stately-async
 [![npm](https://img.shields.io/npm/v/stately-async.svg?style=flat-square)](https://www.npmjs.com/package/stately-reducers)
 
+This module contains types and functions for representing and managing the state of asynchronous operations. It is the underlying data API behind the [`<Async>` component](https://hiebj.github.io/stately/modules/stately_react.html#async-components) in `stately-react`.
+
 **[API Reference](https://hiebj.github.io/stately/modules/stately_async.html)**
 
-One of the most common tasks in client-side applications is the execution and rendering of asynchronous operations. A client may request or update data via a REST endpoint, query an aggregation or search service, subscribe to a data stream, execute a remote task, or render a complex visualization.
+All asynchronous tasks have a similar lifecycle: they are called, data is emitted once or multiple times, and either the task is completed or an error is encountered. Typically, the code to manage this lifecycle is duplicated for every asynchronous action, whether it is done with epics, sagas, or component lifecycle.
 
-All of these asynchronous tasks have a very similar lifecycle: they are called, data is emitted once or multiple times, and either the task is completed or an error is encountered. Typically, the code to manage this lifecycle is duplicated for every consumer.
+This module provides functions and types that allow a consumer to use self-managing stateful "lifecycles" for arbitrary asynchronous tasks. A lifecycle can be created for any asynchronous function, regardless of its parameter arity, output type, or underlying implementation.
 
-How many times have you written `setState({ loading: true })`, or defined a `loadingReducer`?
-
-This module provides functions and types that allow a consumer to create self-managing stateful "lifecycles" for arbitrary asynchronous tasks. A lifecycle can be created for any asynchronous function, regardless of its parameter arity, output type, or underlying implementation.
-
-It is implemented following the action/reducer pattern popularized by Redux, and is intended to work with Redux. Usage of Redux is not strictly necessary, and this module has no runtime dependencies on Redux.
+It is implemented following the action/reducer pattern, and is intended to work with Redux or any other state managment system that uses actions and reducers (such as [`<Controllable>` components](https://hiebj.github.io/stately/modules/stately_react.html#controllable-components).)
 
 ## Usage
-The following naïve React example would render a set of tweets for `'@myTwitterHandle'` and `'@yourTwitterHandle'`. The store configuration, `getTweets` definition, and store subscription code is omitted for clarity:
+Most asynchronous operations can be expressed declaratively using the [`<Async>` component](https://hiebj.github.io/stately/modules/stately_react.html#async-components), which is preferable to using this library directly. However, unusual or custom use cases may arise where it is ideal to create and use an `AsyncLifecycle` directly:
 
 ```
 import store from './myStore'
 import getTweets from './getTweets'
 import { asyncLifecycle } from 'stately-async'
 
-const lifecycle1 = asyncLifecycle(getTweets)
-store.dispatch(lifecycle1.call('@myTwitterHandle'))
+class TweetsComponent extends React.Component {
+  constructor(props) {
+    super(props)
+    this.tweetsLifecycle = asyncLifecycle(getTweets)
+  }
+  
+  render() {
+    const { state } = this.props
+    return state.data ? <TweetsView tweets={state.data} />
+      : state.error ? <ErrorMessage error={state.error}>
+      : state.status === 'active' ? <LoadingSpinner />
+      : null
+  }
 
-const lifecycle2 = asyncLifecycle(getTweets)
-store.dispatch(lifecycle2.call('@yourTwitterHandle'))
+  componentDidMount() {
+    store.dispatch(this.tweetsLifecycle.call('@myTwitterHandle'))
+  }
 
-const TweetsComponent = ({ state }) =>
-  state.data ?
-    <div className="tweets">
-      {state.data.map(
-        tweet =>
-          <Tweet tweet={tweet} />
-      )}
-    </div> :
-  state.error ?
-    <div className="error">
-      {String(state.error)}
-    </div> :
-  state.status === 'active' ?
-    <div className="loading-spinner" /> :
-    null
-
-const AppComponent = () =>
-  <main>
-    <TweetsComponent state={lifecycle1.selector(store.getState())} />
-    <TweetsComponent state={lifecycle2.selector(store.getState())} />
-  </main>
+  componentDidUnmount() {
+    store.dispatch(this.tweetsLifecylce.destroy())
+  }
+}
 ```
-
-For working examples, check out the tests. In particular, [`middleware.spec.ts`](/stately-async/src/middleware.spec.ts) contains integration tests, configuring and dispatching actions to a real Store.
-
-For API docs, follow the instructions in [the top-level README](https://github.com/hiebj/stately/).

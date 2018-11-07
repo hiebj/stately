@@ -1,7 +1,7 @@
 # stately-reducers
 [![npm](https://img.shields.io/npm/v/stately-reducers.svg?style=flat-square)](https://www.npmjs.com/package/stately-reducers)
 
-This module contains functional composers for Redux reducers. Used together, they allow atomic reducers to be composed into a state tree with any degree of nesting and complexity.
+This module contains functional composers for Redux reducers. Used together, they allow a complex state model to be expressed by composing simple, atomic reducers.
 
 **[API Reference](https://hiebj.github.io/stately/modules/stately_reducers.html)**
 

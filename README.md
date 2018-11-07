@@ -1,16 +1,16 @@
 # stately: Elegant, type-safe state management
 
-## Usage Guides
-**[stately-react](https://github.com/hiebj/stately/tree/master/stately-react)**  
-[![npm](https://img.shields.io/npm/v/stately-react.svg?style=flat-square)](https://www.npmjs.com/package/stately-reducers)  
-Components for simplifying the integration of state into React apps
+#### stately-react
+[[api]](https://hiebj.github.io/stately/modules/stately_react.html) [[github]](https://github.com/hiebj/stately/tree/master/stately-react)  
+[![npm](https://img.shields.io/npm/v/stately-react.svg?style=flat-square)](https://www.npmjs.com/package/stately-react)  
+Type-safe components for simplifying React state management
 
-**[stately-async](https://github.com/hiebj/stately/tree/master/stately-async)**  
-[![npm](https://img.shields.io/npm/v/stately-async.svg?style=flat-square)](https://www.npmjs.com/package/stately-reducers)  
-Functional tools for managing the state of asynchronous operations
-
-**[stately-reducers](https://github.com/hiebj/stately/tree/master/stately-reducers)**  
+#### stately-reducers
+[[api]](https://hiebj.github.io/stately/modules/stately_reducers.html) [[github]](https://github.com/hiebj/stately/tree/master/stately-reducers)  
 [![npm](https://img.shields.io/npm/v/stately-reducers.svg?style=flat-square)](https://www.npmjs.com/package/stately-reducers)  
-Functional composers allowing complex state trees to be constructed from atomic reducers
+Type-safe functional composers for building simple state trees from complex data
 
-## [API Reference](https://hiebj.github.io/stately/)
+#### stately-async
+[[api]](https://hiebj.github.io/stately/modules/stately_async.html) [[github]](https://github.com/hiebj/stately/tree/master/stately-async)  
+[![npm](https://img.shields.io/npm/v/stately-async.svg?style=flat-square)](https://www.npmjs.com/package/stately-async)  
+Types and functions for representing and managing the state of asynchronous operations

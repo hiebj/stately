@@ -1,5 +1,5 @@
 /**
- * Functional composers allowing complex state trees to be constructed from atomic reducers.
+ * [[include:./stately-reducers/README.md]]
  * @module stately-reducers
  * @preferred
  */
