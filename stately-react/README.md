@@ -1,9 +1,8 @@
 # stately-react
-[![npm](https://img.shields.io/npm/v/stately-react.svg?style=flat-square)](https://www.npmjs.com/package/stately-reducers)
+[[api]](https://hiebj.github.io/stately/modules/stately_react.html) [[github]](https://github.com/hiebj/stately/tree/master/stately-react)  
+[![npm](https://img.shields.io/npm/v/stately-react.svg?style=flat-square)](https://www.npmjs.com/package/stately-react)
 
 This module contains type-safe components for simplifying React state management.
-
-**[API Reference](https://hiebj.github.io/stately/modules/stately_react.html)**
 
 **Usage Guides**
 - [`Subscribable` Components](#subscribable-like-react-redux-but-better): Components that create type-safe subscriptions (e.g. to a Redux store)

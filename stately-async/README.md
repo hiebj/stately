@@ -1,9 +1,8 @@
 # stately-async
-[![npm](https://img.shields.io/npm/v/stately-async.svg?style=flat-square)](https://www.npmjs.com/package/stately-reducers)
+[[api]](https://hiebj.github.io/stately/modules/stately_async.html) [[github]](https://github.com/hiebj/stately/tree/master/stately-async)  
+[![npm](https://img.shields.io/npm/v/stately-async.svg?style=flat-square)](https://www.npmjs.com/package/stately-async)
 
 This module contains types and functions for representing and managing the state of asynchronous operations. It is the underlying data API behind the [`<Async>` component](https://hiebj.github.io/stately/modules/stately_react.html#async-components) in `stately-react`.
-
-**[API Reference](https://hiebj.github.io/stately/modules/stately_async.html)**
 
 All asynchronous tasks have a similar lifecycle: they are called, data is emitted once or multiple times, and either the task is completed or an error is encountered. Typically, the code to manage this lifecycle is duplicated for every asynchronous action, whether it is done with epics, sagas, or component lifecycle.
 
