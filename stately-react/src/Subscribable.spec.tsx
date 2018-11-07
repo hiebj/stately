@@ -63,6 +63,17 @@ describe('createSubjectContext', () => {
       expect(wrapper).not.to.have.descendants('.test')
       expect(wrapper).to.have.descendants('.next')
     })
+
+    // https://github.com/hiebj/stately/issues/6
+    it('should not trigger a console warning', () => {
+      spy(console, 'error')
+      mount(
+        <Subscription>
+          <div />
+        </Subscription>,
+      )
+      expect(console.error).not.to.have.been.called
+    })
   })
 
   describe('<Subscriber>', () => {

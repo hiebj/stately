@@ -8,9 +8,6 @@ import { Subtract } from 'stately-async/subtraction'
 
 type SubscriberChildren<S, A> = (state: S, next: (next: A) => void) => React.ReactNode
 
-const isSubscriberChildren = (children: any): children is SubscriberChildren<any, any> =>
-  typeof children === 'function' && children.length === 2
-
 export interface SubscriberProps<S, A = S> {
   children: SubscriberChildren<S, A>
 }
@@ -45,24 +42,23 @@ export function createSubjectContext<S, A = S>(
   const subjectNext = subject.next.bind(subject)
 
   class Subscription extends React.Component<SubscriptionProps<S, A>> {
-    state: { value: S }
-    subscription: RxSubscription
-
-    constructor(props: SubscriptionProps<S, A>) {
-      super(props)
-      this.state = { value: initial }
-      this.subscription = subject.subscribe(this.onNext)
-    }
+    state: { value: S } = { value: initial }
+    subscription: RxSubscription | null = null
 
     render() {
       const { value } = this.state
+      const { children } = this.props
       return (
         <Provider value={value}>
-          {isSubscriberChildren(this.props.children)
-            ? this.props.children(value, subjectNext)
-            : this.props.children}
+          {typeof children === 'function'
+            ? (children as SubscriberChildren<S, A>)(value, subjectNext)
+            : children}
         </Provider>
       )
+    }
+
+    componentDidMount() {
+      this.subscription = subject.subscribe(this.onNext)
     }
 
     onNext = (value: S) => {
@@ -70,7 +66,7 @@ export function createSubjectContext<S, A = S>(
     }
 
     componentWillUnmount() {
-      this.subscription.unsubscribe()
+      this.subscription!.unsubscribe()
     }
   }
 
