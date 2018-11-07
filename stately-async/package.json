@@ -1,6 +1,6 @@
 {
   "name": "stately-async",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "Functional tools for managing the state of asynchronous operations",
   "author": {
     "name": "Jon Hieb",
