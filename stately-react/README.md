@@ -25,7 +25,7 @@ This module contains type-safe components for simplifying React state management
 The best way to show how `Subscribable` can be used is by example.
 
 ### Standalone `<Subscription>`
-Using a `Subscription` component as a direct injection of state from a Redux store:
+Using a [`<Subscription>`](https://hiebj.github.io/stately/modules/stately_react.html#subscription) component as a direct injection of state from a Redux store:
 ```
 // store definition
 import { createStoreContext } from 'stately-react'
@@ -42,7 +42,7 @@ export const { Subscription } = createStoreContext(store)
 ```
 
 ### `<Subscription>` with `<Subscriber>`s
-Typically, you'll use the state of a Redux store or other subscription in many places throughout your application. For that, you'll want to incorporate the use of `<Subscriber>` descendants of the `<Subscription>` component:
+Typically, you'll use the state of a Redux store or other subscription in many places throughout your application. For that, you'll want to incorporate the use of [`<Subscriber>`](https://hiebj.github.io/stately/modules/stately_react.html#subscriber) descendants of the `<Subscription>` component:
 ```
 // store definition
 import { createStoreContext } from 'stately-react'
@@ -70,7 +70,7 @@ const MyStateful: React.SFC = () => (
 ```
 
 ### The `subscriber()` decorator
-You probably already have components whose props come directly from a subscription to a Redux store. The module `react-redux` uses the `connect()` high-order component to inject store state into components via props. The `subscriber()` decorator is similar to `connect()`; however, since it was defined in the scope of your `Store` using `createStoreContext(myStore)`, it is capable of preserving type information, granting you confidence that you've mapped your state to props correctly:
+You probably already have components whose props come directly from a subscription to a Redux store. The module `react-redux` uses the `connect()` high-order component to inject store state into components via props. The [`subscriber()`](https://hiebj.github.io/stately/modules/stately_react.html#subscriberdecorator) decorator is similar to `connect()`; however, since it was defined in the scope of your `Store` using [`createStoreContext(myStore)`](https://hiebj.github.io/stately/modules/stately_react.html#createstorecontext), it is capable of preserving type information, granting you confidence that you've mapped your state to props correctly:
 ```
 // store definition
 import { createStoreContext } from 'stately-react'
@@ -105,7 +105,7 @@ const UsingMyComponent: React.SFC = () => (
 ```
 
 ## `Async` Components
-`<Async>` and `<CallableAsync>` are [`Controllable` components](#controllable-components), meaning they can operate **either with or without** a Redux store backing them. If no `Store` is used, they will manage their own state internally using React's `setState()`.
+[`<Async>`](https://hiebj.github.io/stately/classes/stately_react.async.html) and [`<CallableAsync>`](https://hiebj.github.io/stately/classes/stately_react.callableasync.html) are [`Controllable` components](#controllable-components), meaning they can operate **either with or without** a Redux store backing them. If no `Store` is used, they will manage their own state internally using React's `setState()`.
 
 In either case, the usage of the `<Async>` components is the same; see the [`<Async>`](#using-async-to-make-a-declarative-asynchronous-call) and [`<CallableAsync>`](#using-callableasync-to-make-an-imperative-asynchronous-call) examples below. The only difference in implementation is that integration with a `Store` requires that they are wrapped with an `<AsyncController>`. The process of using a `Controller` is described in the [`Controllable` components](#controllable-components) section.
 

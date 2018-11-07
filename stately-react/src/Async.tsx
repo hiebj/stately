@@ -3,6 +3,7 @@ import * as React from 'react'
 
 import {
   AsyncOperation,
+  AsyncSlice,
   AsyncState,
   asyncLifecycle,
   AsyncLifecycle,
@@ -10,7 +11,7 @@ import {
   statelyAsyncMiddleware,
 } from 'stately-async'
 
-import { createControllableContext } from './Controllable'
+import { createControllableContext, ControllerProps } from './Controllable'
 
 export interface AsyncProps<Data, Params extends any[]> {
   operation: AsyncOperation<Data, Params>
@@ -18,11 +19,13 @@ export interface AsyncProps<Data, Params extends any[]> {
   children: (state: AsyncState<Data, Params>) => React.ReactNode
 }
 
-const { Controller: AsyncController, Controllable: AsyncControllable } = createControllableContext(
+const { Controller, Controllable: AsyncControllable } = createControllableContext(
   statelyAsyncReducer,
   statelyAsyncMiddleware,
 )
 
+export type AsyncController = React.ComponentType<ControllerProps<AsyncSlice>>
+const AsyncController = Controller as AsyncController
 export { AsyncController }
 
 /**

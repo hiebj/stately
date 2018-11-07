@@ -16,9 +16,12 @@ export interface ControllableProps<State> {
   children: ControllableChildren<State>
 }
 
+export type Controller<State> = React.ComponentType<ControllerProps<State>>
+export type Controllable<State> = React.ComponentType<ControllableProps<State>>
+
 export interface ControllableContext<State> {
-  Controller: React.ComponentType<ControllerProps<State>>
-  Controllable: React.ComponentType<ControllableProps<State>>
+  Controller: Controller<State>
+  Controllable: Controllable<State>
 }
 
 export function createControllableContext<State>(
