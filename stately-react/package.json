@@ -1,12 +1,25 @@
 {
   "name": "stately-react",
   "version": "0.2.7",
-  "description": "Components for simplifying the integration of state into React apps",
+  "description": "Type-safe components for simplifying React state management",
   "author": {
     "name": "Jon Hieb",
     "email": "hiebj@live.com",
     "url": "https://github.com/hiebj"
   },
+  "keywords": [
+    "controllable",
+    "subscriber",
+    "subscription",
+    "react",
+    "redux",
+    "typescript",
+    "state",
+    "async",
+    "render",
+    "prop",
+    "render prop"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/hiebj/stately"
