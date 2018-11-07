@@ -1,4 +1,5 @@
 # stately-react
+[![npm](https://img.shields.io/npm/v/stately-react.svg?style=flat-square)](https://www.npmjs.com/package/stately-reducers)
 
 This module contains components for simplifying the integration of state into React apps.
 

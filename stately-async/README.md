@@ -1,4 +1,5 @@
 # stately-async
+[![npm](https://img.shields.io/npm/v/stately-async.svg?style=flat-square)](https://www.npmjs.com/package/stately-reducers)
 
 **[API Reference](https://hiebj.github.io/stately/modules/stately_async.html)**
 
