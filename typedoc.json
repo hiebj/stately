@@ -2,7 +2,7 @@
   "name": "stately",
   "readme": "./README.md",
   "out": "docs",
-  "theme": "default",
+  "theme": "minimal",
   "includeDeclarations": "false",
   "excludeExternals": "true",
   "exclude": [
