@@ -47,7 +47,7 @@ describe('asyncActionMatcher(asyncOperation, phase)', () => {
 describe('AsyncActionCreator', () => {
   it('should create actions with lifecycle metadata and the given payload', () => {
     const nextAction = dataActionCreator(data)
-    expect(nextAction).to.have.property('type', `stately-async/withParamsAsync$/data`)
+    expect(nextAction).to.have.property('type', 'async/withParamsAsync$/data')
     expect(nextAction).to.deep.property('payload', [data])
     expect(nextAction[StatelyAsyncSymbol]).to.have.property('id', 'testuuid')
   })

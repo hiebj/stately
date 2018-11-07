@@ -5,7 +5,7 @@ import { StatelyAsyncSymbol } from './AsyncState'
 import { AsyncOperation } from './AsyncOperation'
 
 /** The type prefix applied to every {@link AsyncAction}. */
-export const ACTION_PREFIX = 'stately-async'
+export const ACTION_PREFIX = 'async'
 
 /** A union type representing all of the possible suffix values for {@link AsyncAction#type}. */
 export type AsyncPhase = 'call' | 'data' | 'error' | 'complete' | 'destroy'

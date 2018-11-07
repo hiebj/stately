@@ -64,7 +64,7 @@ describe('AsyncLifecycle', () => {
   describe('action creators', () => {
     it('should create actions with metadata describing the lifecycle instance', () => {
       const nextAction = withParamsActions.data(data)
-      expect(nextAction).to.have.property('type', `stately-async/withParamsAsync$/data`)
+      expect(nextAction).to.have.property('type', 'async/withParamsAsync$/data')
       expect(nextAction).to.deep.property('payload', [data])
       expect(nextAction[StatelyAsyncSymbol]).to.have.property('id')
     })
