@@ -938,6 +938,22 @@ typedoc.search.data = {
     },
     {
       id: 115,
+      kind: 4194304,
+      name: 'Controller',
+      url: 'modules/stately_react.html#controller',
+      classes: 'tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter',
+      parent: 'stately-react',
+    },
+    {
+      id: 116,
+      kind: 4194304,
+      name: 'Controllable',
+      url: 'modules/stately_react.html#controllable',
+      classes: 'tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter',
+      parent: 'stately-react',
+    },
+    {
+      id: 117,
       kind: 64,
       name: 'createControllableContext',
       url: 'modules/stately_react.html#createcontrollablecontext',
@@ -945,7 +961,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 116,
+      id: 118,
       kind: 256,
       name: 'AsyncProps',
       url: 'interfaces/stately_react.asyncprops.html',
@@ -953,7 +969,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 117,
+      id: 119,
       kind: 1024,
       name: 'operation',
       url: 'interfaces/stately_react.asyncprops.html#operation',
@@ -961,7 +977,7 @@ typedoc.search.data = {
       parent: 'stately-react.AsyncProps',
     },
     {
-      id: 118,
+      id: 120,
       kind: 1024,
       name: 'params',
       url: 'interfaces/stately_react.asyncprops.html#params',
@@ -969,7 +985,7 @@ typedoc.search.data = {
       parent: 'stately-react.AsyncProps',
     },
     {
-      id: 119,
+      id: 121,
       kind: 1024,
       name: 'children',
       url: 'interfaces/stately_react.asyncprops.html#children',
@@ -977,7 +993,7 @@ typedoc.search.data = {
       parent: 'stately-react.AsyncProps',
     },
     {
-      id: 120,
+      id: 122,
       kind: 65536,
       name: '__type',
       url: 'interfaces/stately_react.asyncprops.html#children.__type',
@@ -985,7 +1001,7 @@ typedoc.search.data = {
       parent: 'stately-react.AsyncProps.children',
     },
     {
-      id: 121,
+      id: 123,
       kind: 128,
       name: 'Async',
       url: 'classes/stately_react.async.html',
@@ -993,7 +1009,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 122,
+      id: 124,
       kind: 1024,
       name: 'asyncLifecycle',
       url: 'classes/stately_react.async.html#asynclifecycle',
@@ -1001,7 +1017,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 123,
+      id: 125,
       kind: 512,
       name: 'constructor',
       url: 'classes/stately_react.async.html#constructor',
@@ -1009,7 +1025,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 124,
+      id: 126,
       kind: 2048,
       name: 'render',
       url: 'classes/stately_react.async.html#render',
@@ -1017,7 +1033,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 125,
+      id: 127,
       kind: 2048,
       name: 'componentDidMount',
       url: 'classes/stately_react.async.html#componentdidmount',
@@ -1025,7 +1041,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 126,
+      id: 128,
       kind: 2048,
       name: 'shouldComponentUpdate',
       url: 'classes/stately_react.async.html#shouldcomponentupdate',
@@ -1033,7 +1049,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 127,
+      id: 129,
       kind: 2048,
       name: 'componentWillUnmount',
       url: 'classes/stately_react.async.html#componentwillunmount',
@@ -1041,7 +1057,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 128,
+      id: 130,
       kind: 2048,
       name: 'componentDidCatch',
       url: 'classes/stately_react.async.html#componentdidcatch',
@@ -1049,7 +1065,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 129,
+      id: 131,
       kind: 2048,
       name: 'getSnapshotBeforeUpdate',
       url: 'classes/stately_react.async.html#getsnapshotbeforeupdate',
@@ -1057,7 +1073,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 130,
+      id: 132,
       kind: 2048,
       name: 'componentDidUpdate',
       url: 'classes/stately_react.async.html#componentdidupdate',
@@ -1065,7 +1081,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 131,
+      id: 133,
       kind: 2048,
       name: 'componentWillMount',
       url: 'classes/stately_react.async.html#componentwillmount',
@@ -1073,7 +1089,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 132,
+      id: 134,
       kind: 2048,
       name: 'UNSAFE_componentWillMount',
       url: 'classes/stately_react.async.html#unsafe_componentwillmount',
@@ -1081,7 +1097,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 133,
+      id: 135,
       kind: 2048,
       name: 'componentWillReceiveProps',
       url: 'classes/stately_react.async.html#componentwillreceiveprops',
@@ -1089,7 +1105,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 134,
+      id: 136,
       kind: 2048,
       name: 'UNSAFE_componentWillReceiveProps',
       url: 'classes/stately_react.async.html#unsafe_componentwillreceiveprops',
@@ -1097,7 +1113,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 135,
+      id: 137,
       kind: 2048,
       name: 'componentWillUpdate',
       url: 'classes/stately_react.async.html#componentwillupdate',
@@ -1105,7 +1121,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 136,
+      id: 138,
       kind: 2048,
       name: 'UNSAFE_componentWillUpdate',
       url: 'classes/stately_react.async.html#unsafe_componentwillupdate',
@@ -1113,7 +1129,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 137,
+      id: 139,
       kind: 2048,
       name: 'setState',
       url: 'classes/stately_react.async.html#setstate',
@@ -1121,7 +1137,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 138,
+      id: 140,
       kind: 2048,
       name: 'forceUpdate',
       url: 'classes/stately_react.async.html#forceupdate',
@@ -1129,7 +1145,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 139,
+      id: 141,
       kind: 1024,
       name: 'props',
       url: 'classes/stately_react.async.html#props',
@@ -1137,7 +1153,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 140,
+      id: 142,
       kind: 1024,
       name: 'state',
       url: 'classes/stately_react.async.html#state',
@@ -1145,7 +1161,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 141,
+      id: 143,
       kind: 1024,
       name: 'context',
       url: 'classes/stately_react.async.html#context',
@@ -1153,7 +1169,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 142,
+      id: 144,
       kind: 1024,
       name: 'refs',
       url: 'classes/stately_react.async.html#refs',
@@ -1161,7 +1177,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async',
     },
     {
-      id: 143,
+      id: 145,
       kind: 65536,
       name: '__type',
       url: 'classes/stately_react.async.html#refs.__type',
@@ -1169,7 +1185,7 @@ typedoc.search.data = {
       parent: 'stately-react.Async.refs',
     },
     {
-      id: 144,
+      id: 146,
       kind: 256,
       name: 'LifecycleAsyncProps',
       url: 'interfaces/stately_react.lifecycleasyncprops.html',
@@ -1178,7 +1194,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 145,
+      id: 147,
       kind: 1024,
       name: 'params',
       url: 'interfaces/stately_react.lifecycleasyncprops.html#params',
@@ -1186,7 +1202,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsyncProps',
     },
     {
-      id: 146,
+      id: 148,
       kind: 1024,
       name: 'state',
       url: 'interfaces/stately_react.lifecycleasyncprops.html#state',
@@ -1194,7 +1210,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsyncProps',
     },
     {
-      id: 147,
+      id: 149,
       kind: 1024,
       name: 'call',
       url: 'interfaces/stately_react.lifecycleasyncprops.html#call',
@@ -1202,7 +1218,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsyncProps',
     },
     {
-      id: 148,
+      id: 150,
       kind: 65536,
       name: '__type',
       url: 'interfaces/stately_react.lifecycleasyncprops.html#call.__type',
@@ -1210,7 +1226,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsyncProps.call',
     },
     {
-      id: 149,
+      id: 151,
       kind: 1024,
       name: 'destroy',
       url: 'interfaces/stately_react.lifecycleasyncprops.html#destroy',
@@ -1218,7 +1234,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsyncProps',
     },
     {
-      id: 150,
+      id: 152,
       kind: 65536,
       name: '__type',
       url: 'interfaces/stately_react.lifecycleasyncprops.html#destroy.__type-2',
@@ -1226,7 +1242,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsyncProps.destroy',
     },
     {
-      id: 151,
+      id: 153,
       kind: 1024,
       name: 'children',
       url: 'interfaces/stately_react.lifecycleasyncprops.html#children',
@@ -1234,7 +1250,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsyncProps',
     },
     {
-      id: 152,
+      id: 154,
       kind: 65536,
       name: '__type',
       url: 'interfaces/stately_react.lifecycleasyncprops.html#children.__type-1',
@@ -1242,7 +1258,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsyncProps.children',
     },
     {
-      id: 153,
+      id: 155,
       kind: 128,
       name: 'LifecycleAsync',
       url: 'classes/stately_react.lifecycleasync.html',
@@ -1251,7 +1267,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 154,
+      id: 156,
       kind: 1024,
       name: 'params',
       url: 'classes/stately_react.lifecycleasync.html#params',
@@ -1259,7 +1275,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 155,
+      id: 157,
       kind: 2048,
       name: 'render',
       url: 'classes/stately_react.lifecycleasync.html#render',
@@ -1267,7 +1283,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 156,
+      id: 158,
       kind: 2048,
       name: 'componentDidMount',
       url: 'classes/stately_react.lifecycleasync.html#componentdidmount',
@@ -1275,7 +1291,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 157,
+      id: 159,
       kind: 2048,
       name: 'componentDidUpdate',
       url: 'classes/stately_react.lifecycleasync.html#componentdidupdate',
@@ -1283,7 +1299,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 158,
+      id: 160,
       kind: 2048,
       name: 'maybeCall',
       url: 'classes/stately_react.lifecycleasync.html#maybecall',
@@ -1291,7 +1307,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 159,
+      id: 161,
       kind: 2048,
       name: 'componentWillUnmount',
       url: 'classes/stately_react.lifecycleasync.html#componentwillunmount',
@@ -1299,7 +1315,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 160,
+      id: 162,
       kind: 2048,
       name: 'shouldComponentUpdate',
       url: 'classes/stately_react.lifecycleasync.html#shouldcomponentupdate',
@@ -1307,7 +1323,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 161,
+      id: 163,
       kind: 2048,
       name: 'componentDidCatch',
       url: 'classes/stately_react.lifecycleasync.html#componentdidcatch',
@@ -1315,7 +1331,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 162,
+      id: 164,
       kind: 2048,
       name: 'getSnapshotBeforeUpdate',
       url: 'classes/stately_react.lifecycleasync.html#getsnapshotbeforeupdate',
@@ -1323,7 +1339,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 163,
+      id: 165,
       kind: 2048,
       name: 'componentWillMount',
       url: 'classes/stately_react.lifecycleasync.html#componentwillmount',
@@ -1331,7 +1347,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 164,
+      id: 166,
       kind: 2048,
       name: 'UNSAFE_componentWillMount',
       url: 'classes/stately_react.lifecycleasync.html#unsafe_componentwillmount',
@@ -1339,7 +1355,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 165,
+      id: 167,
       kind: 2048,
       name: 'componentWillReceiveProps',
       url: 'classes/stately_react.lifecycleasync.html#componentwillreceiveprops',
@@ -1347,7 +1363,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 166,
+      id: 168,
       kind: 2048,
       name: 'UNSAFE_componentWillReceiveProps',
       url: 'classes/stately_react.lifecycleasync.html#unsafe_componentwillreceiveprops',
@@ -1355,7 +1371,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 167,
+      id: 169,
       kind: 2048,
       name: 'componentWillUpdate',
       url: 'classes/stately_react.lifecycleasync.html#componentwillupdate',
@@ -1363,7 +1379,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 168,
+      id: 170,
       kind: 2048,
       name: 'UNSAFE_componentWillUpdate',
       url: 'classes/stately_react.lifecycleasync.html#unsafe_componentwillupdate',
@@ -1371,7 +1387,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 169,
+      id: 171,
       kind: 512,
       name: 'constructor',
       url: 'classes/stately_react.lifecycleasync.html#constructor',
@@ -1379,7 +1395,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 170,
+      id: 172,
       kind: 2048,
       name: 'setState',
       url: 'classes/stately_react.lifecycleasync.html#setstate',
@@ -1388,7 +1404,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 171,
+      id: 173,
       kind: 2048,
       name: 'forceUpdate',
       url: 'classes/stately_react.lifecycleasync.html#forceupdate',
@@ -1396,7 +1412,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 172,
+      id: 174,
       kind: 1024,
       name: 'props',
       url: 'classes/stately_react.lifecycleasync.html#props',
@@ -1404,7 +1420,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 173,
+      id: 175,
       kind: 1024,
       name: 'state',
       url: 'classes/stately_react.lifecycleasync.html#state',
@@ -1412,7 +1428,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 174,
+      id: 176,
       kind: 1024,
       name: 'context',
       url: 'classes/stately_react.lifecycleasync.html#context',
@@ -1420,7 +1436,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 175,
+      id: 177,
       kind: 1024,
       name: 'refs',
       url: 'classes/stately_react.lifecycleasync.html#refs',
@@ -1428,7 +1444,7 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync',
     },
     {
-      id: 176,
+      id: 178,
       kind: 65536,
       name: '__type',
       url: 'classes/stately_react.lifecycleasync.html#refs.__type',
@@ -1436,15 +1452,15 @@ typedoc.search.data = {
       parent: 'stately-react.LifecycleAsync.refs',
     },
     {
-      id: 177,
+      id: 179,
       kind: 32,
-      name: 'AsyncController',
-      url: 'modules/stately_react.html#asynccontroller',
+      name: 'Controller',
+      url: 'modules/stately_react.html#controller-1',
       classes: 'tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported',
       parent: 'stately-react',
     },
     {
-      id: 178,
+      id: 180,
       kind: 32,
       name: 'AsyncControllable',
       url: 'modules/stately_react.html#asynccontrollable',
@@ -1452,7 +1468,15 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 179,
+      id: 181,
+      kind: 4194304,
+      name: 'AsyncController',
+      url: 'modules/stately_react.html#asynccontroller',
+      classes: 'tsd-kind-type-alias tsd-parent-kind-external-module',
+      parent: 'stately-react',
+    },
+    {
+      id: 182,
       kind: 64,
       name: 'paramsChanged',
       url: 'modules/stately_react.html#paramschanged',
@@ -1460,7 +1484,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 180,
+      id: 183,
       kind: 256,
       name: 'CallableAsyncProps',
       url: 'interfaces/stately_react.callableasyncprops.html',
@@ -1468,7 +1492,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 181,
+      id: 184,
       kind: 1024,
       name: 'children',
       url: 'interfaces/stately_react.callableasyncprops.html#children',
@@ -1476,7 +1500,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsyncProps',
     },
     {
-      id: 182,
+      id: 185,
       kind: 65536,
       name: '__type',
       url: 'interfaces/stately_react.callableasyncprops.html#children.__type',
@@ -1484,7 +1508,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsyncProps.children',
     },
     {
-      id: 183,
+      id: 186,
       kind: 256,
       name: 'CallableAsyncState',
       url: 'interfaces/stately_react.callableasyncstate.html',
@@ -1493,7 +1517,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 184,
+      id: 187,
       kind: 1024,
       name: 'params',
       url: 'interfaces/stately_react.callableasyncstate.html#params',
@@ -1501,7 +1525,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsyncState',
     },
     {
-      id: 185,
+      id: 188,
       kind: 128,
       name: 'CallableAsync',
       url: 'classes/stately_react.callableasync.html',
@@ -1509,7 +1533,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 186,
+      id: 189,
       kind: 1024,
       name: 'state',
       url: 'classes/stately_react.callableasync.html#state',
@@ -1517,7 +1541,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 187,
+      id: 190,
       kind: 2048,
       name: 'call',
       url: 'classes/stately_react.callableasync.html#call',
@@ -1525,7 +1549,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 188,
+      id: 191,
       kind: 2048,
       name: 'render',
       url: 'classes/stately_react.callableasync.html#render',
@@ -1533,7 +1557,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 189,
+      id: 192,
       kind: 2048,
       name: 'componentDidMount',
       url: 'classes/stately_react.callableasync.html#componentdidmount',
@@ -1541,7 +1565,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 190,
+      id: 193,
       kind: 2048,
       name: 'shouldComponentUpdate',
       url: 'classes/stately_react.callableasync.html#shouldcomponentupdate',
@@ -1549,7 +1573,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 191,
+      id: 194,
       kind: 2048,
       name: 'componentWillUnmount',
       url: 'classes/stately_react.callableasync.html#componentwillunmount',
@@ -1557,7 +1581,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 192,
+      id: 195,
       kind: 2048,
       name: 'componentDidCatch',
       url: 'classes/stately_react.callableasync.html#componentdidcatch',
@@ -1565,7 +1589,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 193,
+      id: 196,
       kind: 2048,
       name: 'getSnapshotBeforeUpdate',
       url: 'classes/stately_react.callableasync.html#getsnapshotbeforeupdate',
@@ -1573,7 +1597,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 194,
+      id: 197,
       kind: 2048,
       name: 'componentDidUpdate',
       url: 'classes/stately_react.callableasync.html#componentdidupdate',
@@ -1581,7 +1605,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 195,
+      id: 198,
       kind: 2048,
       name: 'componentWillMount',
       url: 'classes/stately_react.callableasync.html#componentwillmount',
@@ -1589,7 +1613,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 196,
+      id: 199,
       kind: 2048,
       name: 'UNSAFE_componentWillMount',
       url: 'classes/stately_react.callableasync.html#unsafe_componentwillmount',
@@ -1597,7 +1621,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 197,
+      id: 200,
       kind: 2048,
       name: 'componentWillReceiveProps',
       url: 'classes/stately_react.callableasync.html#componentwillreceiveprops',
@@ -1605,7 +1629,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 198,
+      id: 201,
       kind: 2048,
       name: 'UNSAFE_componentWillReceiveProps',
       url: 'classes/stately_react.callableasync.html#unsafe_componentwillreceiveprops',
@@ -1613,7 +1637,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 199,
+      id: 202,
       kind: 2048,
       name: 'componentWillUpdate',
       url: 'classes/stately_react.callableasync.html#componentwillupdate',
@@ -1621,7 +1645,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 200,
+      id: 203,
       kind: 2048,
       name: 'UNSAFE_componentWillUpdate',
       url: 'classes/stately_react.callableasync.html#unsafe_componentwillupdate',
@@ -1629,7 +1653,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 201,
+      id: 204,
       kind: 512,
       name: 'constructor',
       url: 'classes/stately_react.callableasync.html#constructor',
@@ -1637,7 +1661,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 202,
+      id: 205,
       kind: 2048,
       name: 'setState',
       url: 'classes/stately_react.callableasync.html#setstate',
@@ -1645,7 +1669,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 203,
+      id: 206,
       kind: 2048,
       name: 'forceUpdate',
       url: 'classes/stately_react.callableasync.html#forceupdate',
@@ -1653,7 +1677,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 204,
+      id: 207,
       kind: 1024,
       name: 'props',
       url: 'classes/stately_react.callableasync.html#props',
@@ -1661,7 +1685,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 205,
+      id: 208,
       kind: 1024,
       name: 'context',
       url: 'classes/stately_react.callableasync.html#context',
@@ -1669,7 +1693,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 206,
+      id: 209,
       kind: 1024,
       name: 'refs',
       url: 'classes/stately_react.callableasync.html#refs',
@@ -1677,7 +1701,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync',
     },
     {
-      id: 207,
+      id: 210,
       kind: 65536,
       name: '__type',
       url: 'classes/stately_react.callableasync.html#refs.__type',
@@ -1685,7 +1709,7 @@ typedoc.search.data = {
       parent: 'stately-react.CallableAsync.refs',
     },
     {
-      id: 208,
+      id: 211,
       kind: 256,
       name: 'SubscriberProps',
       url: 'interfaces/stately_react.subscriberprops.html',
@@ -1693,7 +1717,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 209,
+      id: 212,
       kind: 1024,
       name: 'children',
       url: 'interfaces/stately_react.subscriberprops.html#children',
@@ -1701,7 +1725,7 @@ typedoc.search.data = {
       parent: 'stately-react.SubscriberProps',
     },
     {
-      id: 210,
+      id: 213,
       kind: 256,
       name: 'SubscriptionProps',
       url: 'interfaces/stately_react.subscriptionprops.html',
@@ -1709,7 +1733,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 211,
+      id: 214,
       kind: 1024,
       name: 'children',
       url: 'interfaces/stately_react.subscriptionprops.html#children',
@@ -1717,7 +1741,7 @@ typedoc.search.data = {
       parent: 'stately-react.SubscriptionProps',
     },
     {
-      id: 212,
+      id: 215,
       kind: 256,
       name: 'SubscriptionContext',
       url: 'interfaces/stately_react.subscriptioncontext.html',
@@ -1725,7 +1749,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 213,
+      id: 216,
       kind: 1024,
       name: 'Subscription',
       url: 'interfaces/stately_react.subscriptioncontext.html#subscription',
@@ -1733,7 +1757,7 @@ typedoc.search.data = {
       parent: 'stately-react.SubscriptionContext',
     },
     {
-      id: 214,
+      id: 217,
       kind: 1024,
       name: 'Subscriber',
       url: 'interfaces/stately_react.subscriptioncontext.html#subscriber',
@@ -1741,7 +1765,7 @@ typedoc.search.data = {
       parent: 'stately-react.SubscriptionContext',
     },
     {
-      id: 215,
+      id: 218,
       kind: 1024,
       name: 'subscriber',
       url: 'interfaces/stately_react.subscriptioncontext.html#subscriber-1',
@@ -1749,7 +1773,7 @@ typedoc.search.data = {
       parent: 'stately-react.SubscriptionContext',
     },
     {
-      id: 216,
+      id: 219,
       kind: 4194304,
       name: 'SubscriberChildren',
       url: 'modules/stately_react.html#subscriberchildren',
@@ -1758,7 +1782,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 217,
+      id: 220,
       kind: 65536,
       name: '__type',
       url: 'modules/stately_react.html#subscriberchildren.__type-1',
@@ -1766,7 +1790,7 @@ typedoc.search.data = {
       parent: 'stately-react.SubscriberChildren',
     },
     {
-      id: 218,
+      id: 221,
       kind: 4194304,
       name: 'Subscription',
       url: 'modules/stately_react.html#subscription',
@@ -1774,7 +1798,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 219,
+      id: 222,
       kind: 4194304,
       name: 'Subscriber',
       url: 'modules/stately_react.html#subscriber',
@@ -1782,7 +1806,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 220,
+      id: 223,
       kind: 4194304,
       name: 'SubscriberDecorator',
       url: 'modules/stately_react.html#subscriberdecorator',
@@ -1790,7 +1814,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 221,
+      id: 224,
       kind: 65536,
       name: '__type',
       url: 'modules/stately_react.html#subscriberdecorator.__type-2',
@@ -1799,7 +1823,7 @@ typedoc.search.data = {
       parent: 'stately-react.SubscriberDecorator',
     },
     {
-      id: 222,
+      id: 225,
       kind: 64,
       name: 'createStoreContext',
       url: 'modules/stately_react.html#createstorecontext',
@@ -1807,7 +1831,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 223,
+      id: 226,
       kind: 64,
       name: 'createSubjectContext',
       url: 'modules/stately_react.html#createsubjectcontext',
@@ -1815,7 +1839,7 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 224,
+      id: 227,
       kind: 64,
       name: 'warnNoProvider',
       url: 'modules/stately_react.html#warnnoprovider',
@@ -1823,14 +1847,14 @@ typedoc.search.data = {
       parent: 'stately-react',
     },
     {
-      id: 225,
+      id: 228,
       kind: 1,
       name: 'stately-reducers',
       url: 'modules/stately_reducers.html',
       classes: 'tsd-kind-external-module',
     },
     {
-      id: 226,
+      id: 229,
       kind: 64,
       name: 'box',
       url: 'modules/stately_reducers.html#box',
@@ -1838,7 +1862,7 @@ typedoc.search.data = {
       parent: 'stately-reducers',
     },
     {
-      id: 227,
+      id: 230,
       kind: 64,
       name: 'chain',
       url: 'modules/stately_reducers.html#chain',
@@ -1846,7 +1870,7 @@ typedoc.search.data = {
       parent: 'stately-reducers',
     },
     {
-      id: 228,
+      id: 231,
       kind: 64,
       name: 'merge',
       url: 'modules/stately_reducers.html#merge',
@@ -1854,7 +1878,7 @@ typedoc.search.data = {
       parent: 'stately-reducers',
     },
     {
-      id: 229,
+      id: 232,
       kind: 64,
       name: 'checkShapeChanged',
       url: 'modules/stately_reducers.html#checkshapechanged',
@@ -1862,7 +1886,7 @@ typedoc.search.data = {
       parent: 'stately-reducers',
     },
     {
-      id: 230,
+      id: 233,
       kind: 64,
       name: 'collisionChecker',
       url: 'modules/stately_reducers.html#collisionchecker',
@@ -1870,7 +1894,7 @@ typedoc.search.data = {
       parent: 'stately-reducers',
     },
     {
-      id: 231,
+      id: 234,
       kind: 64,
       name: 'getReducerName',
       url: 'modules/stately_reducers.html#getreducername',
@@ -1878,7 +1902,7 @@ typedoc.search.data = {
       parent: 'stately-reducers',
     },
     {
-      id: 232,
+      id: 235,
       kind: 64,
       name: 'consoleError',
       url: 'modules/stately_reducers.html#consoleerror',
