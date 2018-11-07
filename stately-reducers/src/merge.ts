@@ -3,11 +3,12 @@ import { Reducer } from 'redux'
 
 /**
  * The `merge` composer is similar to {@link chain}, but each given reducer
- * is called in isolation - it is not given the returned states of the other reducers, and collision-checked
- * to ensure that shapes returned by one reducer do not overlap with shapes returned by any other.
+ * is called in isolation - it is not given the returned states of the other reducers, and the final
+ * state tree is collision-checked to ensure that shapes returned by one reducer do not overlap
+ * with shapes returned by any other.
  *
  * The intended use case is to compose reducers which each assume complete ownership of their part of
- * a state tree, which are then merged into the same root state to create the final store.
+ * a state tree, together creating a root state shape.
  *
  * For example:
  * ```
