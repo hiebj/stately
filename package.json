@@ -1,7 +1,7 @@
 {
   "name": "stately",
   "version": "0.0.1",
-  "description": "Elegant state management",
+  "description": "Elegant, type-safe state management",
   "private": true,
   "author": {
     "name": "Jon Hieb",
