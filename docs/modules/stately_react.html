@@ -989,7 +989,216 @@ img { max-width: 100%; }
 		<section class="tsd-panel tsd-comment">
 			<div class="tsd-comment tsd-typography">
 				<div class="lead">
-					<p>Components for simplifying the integration of state into React apps.</p>
+					<h1 id="stately-react">stately-react</h1>
+					<p><a href="https://www.npmjs.com/package/stately-reducers"><img src="https://img.shields.io/npm/v/stately-react.svg?style=flat-square" alt="npm"></a></p>
+					<p>This module contains type-safe components for simplifying React state management.</p>
+					<p><strong><a href="https://hiebj.github.io/stately/modules/stately_react.html">API Reference</a></strong></p>
+					<p><strong>Usage Guides</strong></p>
+					<ul>
+						<li><a href="#subscribable-like-react-redux-but-better"><code>Subscribable</code> Components</a>: Components that create type-safe subscriptions (e.g. to a Redux store)<ul>
+								<li><a href="#standalone-subscription">Standalone <code>&lt;Subscription&gt;</code></a></li>
+								<li><a href="#subscription-with-subscribers"><code>&lt;Subscription&gt;</code> with <code>&lt;Subscriber&gt;</code>s</a></li>
+								<li><a href="#the-subscriber-decorator"><code>The subscriber()</code> decorator</a></li>
+							</ul>
+						</li>
+						<li><a href="#async-components"><code>Async</code> Components</a>: Components that perform type-safe asynchronous operations and provide type-safe state updates (active, completed, error)<ul>
+								<li><a href="#declarative-async-operations">Declarative <code>&lt;Async&gt;</code> operations</a></li>
+								<li><a href="#reactive-async-operations">Reactive <code>&lt;Async&gt;</code> operations</a></li>
+								<li><a href="#async-operations-with-redux"><code>&lt;Async&gt;</code> operations with Redux</a></li>
+							</ul>
+						</li>
+						<li><a href="#controllable-components"><code>Controllable</code> Components</a>: Components that use a reducer to manage internal state, or can defer their state to a controlling ancestor (e.g. a <a href="#standalone-subscription"><code>&lt;Subscription&gt;</code></a>)<ul>
+								<li><a href="#controllable-components-with-redux"><code>Controllable</code> Components with Redux</a></li>
+								<li><a href="#implementing-a-controllable-component">Implementing a <code>Controllable</code> component</a></li>
+							</ul>
+						</li>
+					</ul>
+					<h2 id="subscribable-like-react-redux-but-better"><code>Subscribable</code>: like <code>react-redux</code>, but better</h2>
+					<p><code>Subscribable</code> makes it easy to create components with type-checked data and Store subscriptions using the <a href="https://reactjs.org/docs/render-props.html">Render Prop</a> design pattern.</p>
+					<p><code>Subscribable</code> is designed to handle <em>any type of subscription</em>. By far the most common use case is subscription to a Redux store, so that is what I will describe here. To see more advanced use cases, e.g. subscribing directly to an RxJS <code>Subject</code>, check out the tests in <a href="/stately-react/src/Subscribable.spec.tsx">Subscribable.spec.tsx</a>.</p>
+					<p>The best way to show how <code>Subscribable</code> can be used is by example.</p>
+					<h3 id="standalone-subscription">Standalone <code>&lt;Subscription&gt;</code></h3>
+					<p>Using a <code>Subscription</code> component as a direct injection of state from a Redux store:</p>
+					<pre><code>// store definition
+import { createStoreContext } <span class="hljs-keyword">from</span> 'stately-react'
+export const store = createStore(...)
+export const { Subscription } = createStoreContext(store)
+
+// elsewhere...
+<span class="hljs-variable">&lt;Subscription&gt;</span>
+  {(<span class="hljs-keyword">state</span>, dispatch) =&gt;
+    <span class="hljs-variable">&lt;div&gt;</span>
+      {/* render something interesting with <span class="hljs-keyword">state</span> and dispatch */}
+    &lt;/div&gt;}
+&lt;/Subscription&gt;</code></pre><h3 id="subscription-with-subscribers"><code>&lt;Subscription&gt;</code> with <code>&lt;Subscriber&gt;</code>s</h3>
+					<p>Typically, you&#39;ll use the state of a Redux store or other subscription in many places throughout your application. For that, you&#39;ll want to incorporate the use of <code>&lt;Subscriber&gt;</code> descendants of the <code>&lt;Subscription&gt;</code> component:</p>
+					<pre><code><span class="hljs-comment">// store definition</span>
+<span class="hljs-keyword">import</span> { createStoreContext } <span class="hljs-keyword">from</span> <span class="hljs-string">'stately-react'</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> store = createStore(...)
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> { Subscription, Subscriber } = createStoreContext(myStore)
+
+<span class="hljs-comment">// In the root of your component tree:</span>
+<span class="hljs-keyword">const</span> MyApp: React.SFC = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Subscription</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      {/* the rest of your app goes here */}
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">Subscription</span>&gt;</span></span>
+)
+
+<span class="hljs-comment">// Somewhere, a descendant component:</span>
+<span class="hljs-keyword">const</span> MyStateful: React.SFC = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Subscriber</span>&gt;</span>
+    {(state, dispatch) =&gt;
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+        {/* render something interesting with state and dispatch */}
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>}
+  <span class="hljs-tag">&lt;/<span class="hljs-name">Subscriber</span>&gt;</span></span>
+)</code></pre><h3 id="the-subscriber-decorator">The <code>subscriber()</code> decorator</h3>
+					<p>You probably already have components whose props come directly from a subscription to a Redux store. The module <code>react-redux</code> uses the <code>connect()</code> high-order component to inject store state into components via props. The <code>subscriber()</code> decorator is similar to <code>connect()</code>; however, since it was defined in the scope of your <code>Store</code> using <code>createStoreContext(myStore)</code>, it is capable of preserving type information, granting you confidence that you&#39;ve mapped your state to props correctly:</p>
+					<pre><code><span class="hljs-comment">// store definition</span>
+<span class="hljs-keyword">import</span> { createStoreContext } <span class="hljs-keyword">from</span> <span class="hljs-string">'stately-react'</span>
+<span class="hljs-keyword">const</span> store = createStore(...)
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> { Subscription, subscriber } = createStoreContext(store)
+
+<span class="hljs-comment">// Component with props from Redux</span>
+<span class="hljs-keyword">interface</span> MyComponentProps {
+  className: <span class="hljs-built_in">string</span>,
+  changeClassName: <span class="hljs-function">(<span class="hljs-params">newClass: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>
+}
+
+<span class="hljs-keyword">class</span> MyComponent <span class="hljs-keyword">extends</span> React.Component&lt;MyComponentProps&gt; { ... }
+
+<span class="hljs-comment">// Apply the decorator</span>
+<span class="hljs-keyword">const</span> SubscriberMyComponent = subscriber(
+
+  <span class="hljs-comment">// Types are checked.</span>
+  (state, dispatch) =&gt;
+    ({
+      className: state.className,
+      changeClassName: <span class="hljs-function">(<span class="hljs-params">newClass: <span class="hljs-built_in">string</span></span>) =&gt;</span> { dispatch(changeClassNameAction(newClass)) }
+    })
+
+)(MyComponent)
+
+<span class="hljs-comment">// elsewhere...</span>
+<span class="hljs-keyword">const</span> UsingMyComponent: React.SFC = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
+  <span class="hljs-comment">// `className` and `changeClassName` do not need to be provided. They have been provided by `subscriber()`.</span>
+  &lt;SubscriberMyComponent /&gt;
+)</code></pre><h2 id="async-components"><code>Async</code> Components</h2>
+					<p><code>&lt;Async&gt;</code> and <code>&lt;CallableAsync&gt;</code> are <a href="#controllable-components"><code>Controllable</code> components</a>, meaning they can operate <strong>either with or without</strong> a Redux store backing them. If no <code>Store</code> is used, they will manage their own state internally using React&#39;s <code>setState()</code>.</p>
+					<p>In either case, the usage of the <code>&lt;Async&gt;</code> components is the same; see the <a href="#using-async-to-make-a-declarative-asynchronous-call"><code>&lt;Async&gt;</code></a> and <a href="#using-callableasync-to-make-an-imperative-asynchronous-call"><code>&lt;CallableAsync&gt;</code></a> examples below. The only difference in implementation is that integration with a <code>Store</code> requires that they are wrapped with an <code>&lt;AsyncController&gt;</code>. The process of using a <code>Controller</code> is described in the <a href="#controllable-components"><code>Controllable</code> components</a> section.</p>
+					<p>Most use cases do not require that these components be integrated with a <code>Store</code>; they will function just fine on their own. Advanced use cases might require <code>Store</code> integration. Integrating <code>&lt;Async&gt;</code> with the store will also allow you to see the actions and state mutations as they are dispatched in real-time using the Redux DevTools, which can be useful for debugging.</p>
+					<h3 id="declarative-async-operations">Declarative <code>&lt;Async&gt;</code> operations</h3>
+					<p><code>&lt;Async&gt;</code> is &quot;declarative&quot;, meaning that the <code>params</code> are passed in as a prop and the operation is performed automatically. It should be used whenever a component needs asynchronously-loaded data to render, such as search results or an entity from a REST service.</p>
+					<p>This example uses <code>&lt;Async&gt;</code> to wrap a <code>&lt;SearchResults&gt;</code> component, handling the execution and state management of the asynchronous <code>doSearch</code> operation:</p>
+					<pre><code>import { Async } <span class="hljs-keyword">from</span> 'stately-react'
+import { doSearch } <span class="hljs-keyword">from</span> './search'
+
+// type doSearch = (p1: number, p2: string) =&gt; Promise<span class="hljs-variable">&lt;SearchResults&gt;</span>
+
+<span class="hljs-variable">&lt;Async operation={doSearch} params={[123, 'abc']}&gt;</span>{
+  <span class="hljs-keyword">state</span> =&gt;
+    <span class="hljs-variable">&lt;div&gt;</span>{
+      <span class="hljs-keyword">state</span>.error ? <span class="hljs-variable">&lt;ErrorMessage error={state.error} /&gt;</span>
+
+        : <span class="hljs-keyword">state</span>.data ? <span class="hljs-variable">&lt;SearchResults results={state.data} /&gt;</span>
+
+        : <span class="hljs-keyword">state</span>.status === 'active' ? <span class="hljs-variable">&lt;LoadingSpinner /&gt;</span>
+
+        : null
+    }&lt;/div&gt;
+}&lt;/Async&gt;</code></pre><h3 id="reactive-async-operations">Reactive <code>&lt;Async&gt;</code> operations</h3>
+					<p><code>&lt;CallableAsync&gt;</code> is &quot;reactive&quot;, meaning that you can initiate the call programatically, usually in response to a user interaction event.</p>
+					<p>The following abbreviated example uses <code>&lt;CallableAsync&gt;</code> to invoke <code>save</code> when the button is clicked:</p>
+					<pre><code>import { CallableAsync } <span class="hljs-keyword">from</span> 'stately-react'
+import { save } <span class="hljs-keyword">from</span> './saveEntity'
+
+// type save = (entity: Entity) =&gt; Promise
+
+<span class="hljs-variable">&lt;CallableAsync operation={save}&gt;</span>{
+  (<span class="hljs-keyword">state</span>, callSave) =&gt;
+    <span class="hljs-variable">&lt;div&gt;</span>{
+      <span class="hljs-keyword">state</span>.error ? <span class="hljs-variable">&lt;ErrorMessage error={state.error} /&gt;</span>
+
+        : <span class="hljs-keyword">state</span>.status === 'complete' ? <span class="hljs-variable">&lt;SuccessMessage message="Entity saved successfully" /&gt;</span>
+
+        : <span class="hljs-keyword">state</span>.status === 'active' ? <span class="hljs-variable">&lt;LoadingSpinner /&gt;</span>
+
+        : null
+    }<span class="hljs-variable">&lt;EntityForm onSubmit={(entity: Entity) =&gt;</span> callSave(entity)} /&gt;
+    &lt;/div&gt;
+}&lt;/CallableAsync&gt;</code></pre><h3 id="async-operations-with-redux"><code>&lt;Async&gt;</code> operations with Redux</h3>
+					<p><code>&lt;Async&gt;</code> is <a href="#controllable"><code>Controllable</code></a>, so it can be integrated with a Redux store by providing <code>state</code> and <code>dispatch</code> to a parent <code>&lt;AsyncController&gt;</code>:</p>
+					<pre><code>import { AsyncController, Async } <span class="hljs-keyword">from</span> 'stately-react'
+import { Subscription } <span class="hljs-keyword">from</span> './store'
+
+<span class="hljs-variable">&lt;Subscription&gt;</span>{
+  (<span class="hljs-keyword">state</span>, dispatch) =&gt;
+    <span class="hljs-variable">&lt;AsyncController state={state} dispatch={dispatch}&gt;</span>
+
+      // Any component nested under the AsyncController
+      <span class="hljs-variable">&lt;Async operation={doSearch} params={[123, 'abc']}&gt;</span>{
+        (<span class="hljs-keyword">state</span>) =&gt; ...
+      }&lt;/Async&gt;
+
+    &lt;/AsyncController&gt;
+}&lt;/Subscription&gt;</code></pre><h2 id="controllable-components"><code>Controllable</code> components</h2>
+					<p><code>Controllable</code> components manage their internal state with actions and reducers, allowing you to create components that can be used with or without a Store connection or external state management.</p>
+					<p><a href="###async-operations-with-redux"><code>Async</code> components</a> are <code>Controllable</code>.</p>
+					<p>By default, <code>&lt;Controllable&gt;</code> components create their own internal <code>state</code> and <code>dispatch</code> wrapped around React&#39;s <code>setState</code> system. By providing an ancestral <code>&lt;Controller&gt;</code>, the consumer can provide a type-checked overriding <code>state</code> and <code>dispatch</code> that will be used instead. Any actions triggered by the child are passed to the given <code>dispatch</code>, and the component will render using the given <code>state</code>.</p>
+					<h3 id="controllable-components-with-redux"><code>Controllable</code> components with Redux</h3>
+					<p>Integrating a <code>Controllable</code> component with a Redux store is a two-step process.<br>First, the <code>Store</code> must be configured with the component&#39;s <code>reducer</code> (and <code>middleware</code>, if present):</p>
+					<pre><code><span class="hljs-keyword">import</span> { createStore, applyMiddleware } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>
+<span class="hljs-keyword">import</span> { merge } <span class="hljs-keyword">from</span> <span class="hljs-string">'stately-reducers'</span>
+<span class="hljs-keyword">import</span> { createStoreContext } <span class="hljs-keyword">from</span> <span class="hljs-string">'stately-react'</span>
+
+<span class="hljs-keyword">import</span> { controllableReducer, controllableMiddleware } <span class="hljs-keyword">from</span> <span class="hljs-string">'./MyControllable'</span>
+<span class="hljs-keyword">import</span> { myReducer } <span class="hljs-keyword">from</span> <span class="hljs-string">'./myReducer'</span>
+
+export const store = createStore(
+  merge(
+    controllableReducer,
+    myReducer
+  ),
+  // middleware <span class="hljs-keyword">is</span> optional, can <span class="hljs-keyword">perform</span> side effects
+  applyMiddleware(controllableMiddleware)
+)
+
+export const { <span class="hljs-keyword">Subscription</span>, Subscriber, subscriber } = createStoreContext(store)</code></pre><p>Second, a <code>&lt;Controller&gt;</code> corresponding to the <code>&lt;Controllable&gt;</code> component must be placed somewhere in the component tree above a <code>&lt;Controllable&gt;</code> component in question. Every <code>Controllable</code> component must export a compatible <code>Controller</code>. For example, <code>&lt;AsyncController&gt;</code> is exported alongside <code>&lt;Async&gt;</code>.</p>
+					<p>See the <a href="#async-operations-with-redux"><code>&lt;Async&gt;</code> example</a>.</p>
+					<p>To take control of <em>all</em> <code>&lt;Async&gt;</code> components in your entire app, you might put this code at the root of your application:</p>
+					<pre><code><span class="hljs-keyword">import</span> { <span class="hljs-keyword">Subscription</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">'./store'</span>
+
+&lt;<span class="hljs-keyword">Subscription</span>&gt;{
+  (state, dispatch) =&gt;
+    &lt;AsyncController state={state} dispatch={dispatch}&gt;
+
+      {<span class="hljs-comment">/* the rest of your app goes here */</span>}
+
+    &lt;/AsyncController&gt;
+}&lt;/<span class="hljs-keyword">Subscription</span>&gt;</code></pre><p>Once you have integrated the <code>&lt;Controller&gt;</code>, you can manage the <code>&lt;Controllable&gt;</code> component&#39;s state however you wish. In the previous example, <code>Async</code> actions are now being dispatched through the <code>Store</code>, so you could, for example, create your own <code>reducer</code> to handle the <code>async/.../data</code> actions of an asynchronous call.</p>
+					<h3 id="implementing-a-controllable-component">Implementing a <code>Controllable</code> component</h3>
+					<blockquote>
+						<p>&quot;Wow! These <code>Controllable</code> components are great! That pattern would work perfectly for my module!&quot;<br> -you, probably</p>
+					</blockquote>
+					<p>It&#39;s pretty easy. <code>Controllable</code> components use React Context. To start with, you need to define <code>action</code>s and a <code>reducer</code> to manage the state of your component. Using <code>createControllableContext()</code>, you can then create a <code>Controllable</code>/<code>Controller</code> pair with the <code>reducer</code>. <code>&lt;Controllable&gt;</code> components can integrate middleware, as well:</p>
+					<pre><code><span class="hljs-keyword">import</span> { createControllableContext } <span class="hljs-keyword">from</span> <span class="hljs-string">'stately-async'</span>
+
+<span class="hljs-keyword">const</span> myReducer = ...
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> { MyController, MyControllable } = createControllableContext(myReducer, myMiddleware)</code></pre><p><code>&lt;Controllable&gt;</code> will provide an internally-managed <code>state</code> and <code>dispatch</code> utilizing the given <code>reducer</code>. Alternately, any parent consumer can use your <code>&lt;Controller&gt;</code> to pass in the <code>state</code> and <code>dispatch</code>. The children of the <code>&lt;Controllable&gt;</code> can use these to render and update the state:</p>
+					<pre><code>const MyControllable: React.SFC<span class="hljs-variable">&lt;MyControllableProps&gt;</span> = props =&gt; (
+  <span class="hljs-variable">&lt;Controllable&gt;</span>{
+
+    // either coming <span class="hljs-keyword">from</span> Controllable internally, or somewhere else!
+    (<span class="hljs-keyword">state</span>, dispatch) =&gt;
+      <span class="hljs-variable">&lt;div&gt;</span>
+        {/* implement your wonderful and amazing component here */ }
+      &lt;/div&gt;
+
+  }&lt;/Controllable&gt;
+)</code></pre><p>Check out the implementation of <a href="/stately-react/src/Async.tsx">Async.tsx</a> for inspiration.</p>
 				</div>
 			</div>
 		</section>
@@ -1058,7 +1267,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">Controllable<wbr>Children<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-react/src/Controllable.tsx#L10">stately-react/src/Controllable.tsx:10</a></li>
+						<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-react/src/Controllable.tsx#L10">stately-react/src/Controllable.tsx:10</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-type-declaration">
@@ -1116,7 +1325,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">Subscriber<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">React.ComponentType</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/stately_react.subscriberprops.html" class="tsd-signature-type">SubscriberProps</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-react/src/Subscribable.tsx#L20">stately-react/src/Subscribable.tsx:20</a></li>
+						<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-react/src/Subscribable.tsx#L20">stately-react/src/Subscribable.tsx:20</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1126,7 +1335,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">Subscriber<wbr>Children<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-react/src/Subscribable.tsx#L9">stately-react/src/Subscribable.tsx:9</a></li>
+						<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-react/src/Subscribable.tsx#L9">stately-react/src/Subscribable.tsx:9</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-type-declaration">
@@ -1178,7 +1387,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">Subscriber<wbr>Decorator<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-react/src/Subscribable.tsx#L22">stately-react/src/Subscribable.tsx:22</a></li>
+						<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-react/src/Subscribable.tsx#L22">stately-react/src/Subscribable.tsx:22</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-type-declaration">
@@ -1278,7 +1487,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">Subscription<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">React.ComponentType</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/stately_react.subscriptionprops.html" class="tsd-signature-type">SubscriptionProps</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-react/src/Subscribable.tsx#L19">stately-react/src/Subscribable.tsx:19</a></li>
+						<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-react/src/Subscribable.tsx#L19">stately-react/src/Subscribable.tsx:19</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1291,7 +1500,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">Async<wbr>Controllable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ComponentClass</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/stately_react.controllableprops.html" class="tsd-signature-type">ControllableProps</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AsyncSlice</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">StatelessComponent</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/stately_react.controllableprops.html" class="tsd-signature-type">ControllableProps</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AsyncSlice</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-react/src/Async.tsx#L21">stately-react/src/Async.tsx:21</a></li>
+						<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-react/src/Async.tsx#L21">stately-react/src/Async.tsx:21</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1301,7 +1510,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">Async<wbr>Controller<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ComponentClass</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/stately_react.controllerprops.html" class="tsd-signature-type">ControllerProps</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AsyncSlice</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">StatelessComponent</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/stately_react.controllerprops.html" class="tsd-signature-type">ControllerProps</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AsyncSlice</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-react/src/Async.tsx#L21">stately-react/src/Async.tsx:21</a></li>
+						<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-react/src/Async.tsx#L21">stately-react/src/Async.tsx:21</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1318,7 +1527,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-react/src/Controllable.tsx#L24">stately-react/src/Controllable.tsx:24</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-react/src/Controllable.tsx#L24">stately-react/src/Controllable.tsx:24</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1350,7 +1559,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-react/src/Subscribable.tsx#L34">stately-react/src/Subscribable.tsx:34</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-react/src/Subscribable.tsx#L34">stately-react/src/Subscribable.tsx:34</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1382,7 +1591,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-react/src/Subscribable.tsx#L37">stately-react/src/Subscribable.tsx:37</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-react/src/Subscribable.tsx#L37">stately-react/src/Subscribable.tsx:37</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1417,7 +1626,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-react/src/Async.tsx#L101">stately-react/src/Async.tsx:101</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-react/src/Async.tsx#L101">stately-react/src/Async.tsx:101</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1443,7 +1652,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-react/src/Subscribable.tsx#L120">stately-react/src/Subscribable.tsx:120</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-react/src/Subscribable.tsx#L120">stately-react/src/Subscribable.tsx:120</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">null</span></h4>

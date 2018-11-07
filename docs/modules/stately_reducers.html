@@ -935,7 +935,41 @@ img { max-width: 100%; }
 		<section class="tsd-panel tsd-comment">
 			<div class="tsd-comment tsd-typography">
 				<div class="lead">
-					<p>Functional composers allowing complex state trees to be constructed from atomic reducers.</p>
+					<h1 id="stately-reducers">stately-reducers</h1>
+					<p><a href="https://www.npmjs.com/package/stately-reducers"><img src="https://img.shields.io/npm/v/stately-reducers.svg?style=flat-square" alt="npm"></a></p>
+					<p>This module contains functional composers for Redux reducers. Used together, they allow a complex state model to be expressed by composing simple, atomic reducers.</p>
+					<p><strong><a href="https://hiebj.github.io/stately/modules/stately_reducers.html">API Reference</a></strong></p>
+					<h2 id="definitions">Definitions</h2>
+					<ul>
+						<li><strong>Atomic reducer</strong>: The simplest possible reducer. Handles a single action and performs a single state mutation.</li>
+						<li><strong>Model reducer</strong>: A reducer composed from one or more related <strong>Atomic</strong> reducers using <code>chain</code>. The composed reducer comprises all actions and state mutations related to a given state shape, or <strong>Model</strong>.</li>
+						<li><strong>Slice reducer</strong>: A reducer created by <code>box</code>. The reducer&#39;s state is maintained under a single property or &quot;namespace&quot; of a root object, forming a <strong>slice</strong> of the state tree.</li>
+						<li><strong>Root reducer</strong>: A reducer composed from many <strong>Slice</strong> reducers using <code>merge</code>, whose shape is the intersection of the given reducer shapes. This is the final reducer that will be passed to <code>createStore</code>, and thus forms the <strong>root</strong> of the state tree.</li>
+					</ul>
+					<p>Atomic reducers are succinct, readable, testable, and do not require branching logic such as <code>switch</code> statements or nested ternary expressions. By defining all of your state management using atomic reducers, then composing them into more complex state trees, many logic bugs and organizational problems can be prevented. Atomic reducers can also be reused by more than one model, keeping code DRY.</p>
+					<p><code>chain</code> and <code>box</code> are typically used together in a single file to define a Model reducer and its containing Slice reducer. These are then composed using <code>merge</code> in the store definition. The advantage to this strategy over <code>combineReducers</code> is that the shape of a reducer is defined <em>where the reducer is defined</em>, rather than <em>where the store is defined</em>. Instead of having to go to the store definition to understand where the data from a reducer will live in the state tree, it is evident in the definition of the reducer itself.</p>
+					<h2 id="usage">Usage</h2>
+					<p>The composers in this module are <code>chain</code>, <code>box</code>, and <code>merge</code>. They are typically used in that order, following a composition strategy that progresses from the specific (atomic) to the general (composed).</p>
+					<p>TypeScript itself does not have sufficient syntax sugar to express the types succinctly. However, using some pseudo-type syntax, the composers look something like:</p>
+					<pre><code>// many atomic reducers with the same state shape become a model reducer
+<span class="hljs-keyword">type</span> chain = &lt;<span class="hljs-type">S</span>&gt;(...reducers: <span class="hljs-type">Reducer</span>&lt;<span class="hljs-type">S</span>&gt;[]) =&gt; <span class="hljs-type">Reducer</span>&lt;<span class="hljs-type">S</span>&gt;
+
+// <span class="hljs-type">Reducer</span>&lt;<span class="hljs-type">S</span>&gt; becomes <span class="hljs-type">Reducer</span>&lt;{ key: <span class="hljs-type">S</span> }&gt;, forming a slice reducer
+<span class="hljs-keyword">type</span> box = &lt;<span class="hljs-type">K</span>, <span class="hljs-type">S</span>&gt;(key: <span class="hljs-type">K</span>, reducer: <span class="hljs-type">Reducer</span>&lt;<span class="hljs-type">S</span>&gt;) =&gt; <span class="hljs-type">Reducer</span>&lt;{ [<span class="hljs-type">K</span>]: <span class="hljs-type">S</span> }&gt;
+
+// many independent reducers with different shapes become a root reducer
+<span class="hljs-keyword">type</span> merge = &lt;...<span class="hljs-type">S</span>&gt;(...reducers: <span class="hljs-type">Reducer</span>&lt;...<span class="hljs-type">S</span>&gt;[]) =&gt; <span class="hljs-type">Reducer</span>&lt;<span class="hljs-type">Intersection</span>&lt;...<span class="hljs-type">S</span>&gt;&gt;</code></pre><p>The following pseudo-example takes three sets of atomic reducers A, B, and C, composing them into models, slices, and finally a root reducer in a single expression:</p>
+					<pre><code><span class="hljs-keyword">const</span> aReducers: Reducer&lt;A&gt;[]
+<span class="hljs-keyword">const</span> bReducers: Reducer&lt;B&gt;[]
+<span class="hljs-keyword">const</span> cReducers: Reducer&lt;C&gt;[]
+
+<span class="hljs-keyword">const</span> rootReducer = merge(
+  <span class="hljs-built_in">box</span>(<span class="hljs-string">'a'</span>, chain(...aReducers)),
+  <span class="hljs-built_in">box</span>(<span class="hljs-string">'b'</span>, chain(...bReducers)),
+  <span class="hljs-built_in">box</span>(<span class="hljs-string">'c'</span>, chain(...cReducers)),
+)
+
+<span class="hljs-comment">// typeof rootReducer: Reducer&lt;{ a: A, b: B, c: C }&gt;</span></code></pre><p>For a working example of <code>chain</code>, <code>box</code>, and <code>merge</code> used together, see <a href="/stately-reducers/src/merge.spec.ts"><code>merge.spec.ts</code></a>.</p>
 				</div>
 			</div>
 		</section>
@@ -970,7 +1004,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-reducers/src/box.ts#L14">stately-reducers/src/box.ts:14</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-reducers/src/box.ts#L14">stately-reducers/src/box.ts:14</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1015,7 +1049,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-reducers/src/chain.ts#L19">stately-reducers/src/chain.ts:19</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-reducers/src/chain.ts#L19">stately-reducers/src/chain.ts:19</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1060,7 +1094,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-reducers/src/merge.ts#L123">stately-reducers/src/merge.ts:123</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-reducers/src/merge.ts#L123">stately-reducers/src/merge.ts:123</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1086,7 +1120,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-reducers/src/merge.ts#L129">stately-reducers/src/merge.ts:129</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-reducers/src/merge.ts#L129">stately-reducers/src/merge.ts:129</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1109,7 +1143,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-reducers/src/merge.ts#L149">stately-reducers/src/merge.ts:149</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-reducers/src/merge.ts#L149">stately-reducers/src/merge.ts:149</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1138,7 +1172,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-reducers/src/merge.ts#L146">stately-reducers/src/merge.ts:146</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-reducers/src/merge.ts#L146">stately-reducers/src/merge.ts:146</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1171,7 +1205,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-reducers/src/merge.ts#L54">stately-reducers/src/merge.ts:54</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-reducers/src/merge.ts#L54">stately-reducers/src/merge.ts:54</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1232,7 +1266,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-reducers/src/merge.ts#L55">stately-reducers/src/merge.ts:55</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-reducers/src/merge.ts#L55">stately-reducers/src/merge.ts:55</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1258,7 +1292,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-reducers/src/merge.ts#L56">stately-reducers/src/merge.ts:56</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-reducers/src/merge.ts#L56">stately-reducers/src/merge.ts:56</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1290,7 +1324,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-reducers/src/merge.ts#L61">stately-reducers/src/merge.ts:61</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-reducers/src/merge.ts#L61">stately-reducers/src/merge.ts:61</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1328,7 +1362,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-reducers/src/merge.ts#L67">stately-reducers/src/merge.ts:67</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-reducers/src/merge.ts#L67">stately-reducers/src/merge.ts:67</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1372,7 +1406,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-reducers/src/merge.ts#L74">stately-reducers/src/merge.ts:74</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-reducers/src/merge.ts#L74">stately-reducers/src/merge.ts:74</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1422,7 +1456,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-reducers/src/merge.ts#L82">stately-reducers/src/merge.ts:82</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-reducers/src/merge.ts#L82">stately-reducers/src/merge.ts:82</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1478,7 +1512,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/hiebj/stately/blob/4d83d44/stately-reducers/src/merge.ts#L91">stately-reducers/src/merge.ts:91</a></li>
+								<li>Defined in <a href="https://github.com/hiebj/stately/blob/9e14a40/stately-reducers/src/merge.ts#L91">stately-reducers/src/merge.ts:91</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
