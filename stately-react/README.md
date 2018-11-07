@@ -50,7 +50,7 @@ export const store = createStore(...)
 export const { Subscription, Subscriber } = createStoreContext(myStore)
 
 // In the root of your component tree:
-const MyApp: React.SFC = () => (
+const MyApp = () => (
   <Subscription>
     <div>
       {/* the rest of your app goes here */}
@@ -59,7 +59,7 @@ const MyApp: React.SFC = () => (
 )
 
 // Somewhere, a descendant component:
-const MyStateful: React.SFC = () => (
+const MyStateful = () => (
   <Subscriber>
     {(state, dispatch) =>
       <div>
@@ -98,8 +98,9 @@ const SubscriberMyComponent = subscriber(
 )(MyComponent)
 
 // elsewhere...
-const UsingMyComponent: React.SFC = () => (
-  // `className` and `changeClassName` do not need to be provided. They have been provided by `subscriber()`.
+const UsingMyComponent = () => (
+  // `className` and `changeClassName` do not need to be provided.
+  // They have been injected by `subscriber()`.
   <SubscriberMyComponent />
 )
 ```
@@ -107,9 +108,9 @@ const UsingMyComponent: React.SFC = () => (
 ## `Async` Components
 [`<Async>`](https://hiebj.github.io/stately/classes/stately_react.async.html) and [`<CallableAsync>`](https://hiebj.github.io/stately/classes/stately_react.callableasync.html) are [`Controllable` components](#controllable-components), meaning they can operate **either with or without** a Redux store backing them. If no `Store` is used, they will manage their own state internally using React's `setState()`.
 
-In either case, the usage of the `<Async>` components is the same; see the [`<Async>`](#using-async-to-make-a-declarative-asynchronous-call) and [`<CallableAsync>`](#using-callableasync-to-make-an-imperative-asynchronous-call) examples below. The only difference in implementation is that integration with a `Store` requires that they are wrapped with an `<AsyncController>`. The process of using a `Controller` is described in the [`Controllable` components](#controllable-components) section.
+In either case, the usage of the `<Async>` components is the same. To integrate with a `Store` requires only that they are additionally wrapped with an [`<AsyncController>`](http://localhost:8080/modules/stately_react.html#asynccontroller). Many use cases do not require a `Controller`, but some do, such as sharing the asynchronous state with other components, or custom handling of the [AsyncActions](https://hiebj.github.io/stately/interfaces/stately_async.asyncaction.html).
 
-Most use cases do not require that these components be integrated with a `Store`; they will function just fine on their own. Advanced use cases might require `Store` integration. Integrating `<Async>` with the store will also allow you to see the actions and state mutations as they are dispatched in real-time using the Redux DevTools, which can be useful for debugging.
+Integrating `<Async>` with the store will also allow you to see the actions and state mutations as they are dispatched in real-time using the Redux DevTools, which can be useful for debugging.
 
 ### Declarative `<Async>` operations
 `<Async>` is "declarative", meaning that the `params` are passed in as a prop and the operation is performed automatically. It should be used whenever a component needs asynchronously-loaded data to render, such as search results or an entity from a REST service.
@@ -138,7 +139,7 @@ import { doSearch } from './search'
 ### Reactive `<Async>` operations
 `<CallableAsync>` is "reactive", meaning that you can initiate the call programatically, usually in response to a user interaction event.
 
-The following abbreviated example uses `<CallableAsync>` to invoke `save` when the button is clicked:
+This example uses `<CallableAsync>` to invoke `save` when the button is clicked:
 ```
 import { CallableAsync } from 'stately-react'
 import { save } from './saveEntity'
@@ -161,7 +162,7 @@ import { save } from './saveEntity'
 ```
 
 ### `<Async>` operations with Redux
-`<Async>` is [`Controllable`](#controllable), so it can be integrated with a Redux store by providing `state` and `dispatch` to a parent `<AsyncController>`:
+`<Async>` is [`Controllable`](#controllable-components), so it can be integrated with a Redux store by providing the store's `state` and `dispatch` to a parent `<AsyncController>`:
 ```
 import { AsyncController, Async } from 'stately-react'
 import { Subscription } from './store'
@@ -235,18 +236,21 @@ Once you have integrated the `<Controller>`, you can manage the `<Controllable>`
 > "Wow! These `Controllable` components are great! That pattern would work perfectly for my module!"  
  -you, probably
 
-It's pretty easy. `Controllable` components use React Context. To start with, you need to define `action`s and a `reducer` to manage the state of your component. Using `createControllableContext()`, you can then create a `Controllable`/`Controller` pair with the `reducer`. `<Controllable>` components can integrate middleware, as well:
+Implementing a `Controllable` component is easy, especially if you're familiar with [React Context](https://reactjs.org/docs/context.html). To start with, you need to define `action`s and a `reducer` to manage the state of your component. Using `createControllableContext()`, you can then create a `Controllable`/`Controller` pair with the `reducer`. `<Controllable>` components can integrate middleware, as well:
 ```
 import { createControllableContext } from 'stately-async'
 
 const myReducer = ...
 
-export const { MyController, MyControllable } = createControllableContext(myReducer, myMiddleware)
+export const { Controller, Controllable } = createControllableContext(myReducer, myMiddleware)
+
+// ... continued below
 ```
 
 `<Controllable>` will provide an internally-managed `state` and `dispatch` utilizing the given `reducer`. Alternately, any parent consumer can use your `<Controller>` to pass in the `state` and `dispatch`. The children of the `<Controllable>` can use these to render and update the state:
 ```
-const MyControllable: React.SFC<MyControllableProps> = props => (
+
+export const MyControllable = props => (
   <Controllable>{
 
     // either coming from Controllable internally, or somewhere else!
@@ -259,4 +263,4 @@ const MyControllable: React.SFC<MyControllableProps> = props => (
 )
 ```
 
-Check out the implementation of [Async.tsx](/stately-react/src/Async.tsx) for inspiration.
+Check out the implementation of [Async.tsx](https://github.com/hiebj/stately/blob/f4561b1/stately-react/src/Async.tsx#L72) for inspiration.
