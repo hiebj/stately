@@ -33,12 +33,12 @@ export const store = createStore(...)
 export const { Subscription } = createStoreContext(store)
 
 // elsewhere...
-<Subscription>
-  {(state, dispatch) =>
+<Subscription>{
+  (state, dispatch) =>
     <div>
       {/* render something interesting with state and dispatch */}
-    </div>}
-</Subscription>
+    </div>
+}</Subscription>
 ```
 
 ### `<Subscription>` with `<Subscriber>`s
@@ -60,12 +60,12 @@ const MyApp = () => (
 
 // Somewhere, a descendant component:
 const MyStateful = () => (
-  <Subscriber>
-    {(state, dispatch) =>
+  <Subscriber>{
+    (state, dispatch) =>
       <div>
         {/* render something interesting with state and dispatch */}
-      </div>}
-  </Subscriber>
+      </div>
+  }</Subscriber>
 )
 ```
 
@@ -89,11 +89,10 @@ class MyComponent extends React.Component<MyComponentProps> { ... }
 const SubscriberMyComponent = subscriber(
 
   // Types are checked.
-  (state, dispatch) =>
-    ({
-      className: state.className,
-      changeClassName: (newClass: string) => { dispatch(changeClassNameAction(newClass)) }
-    })
+  (state, dispatch) => ({
+    className: state.className,
+    changeClassName: (newClass: string) => { dispatch(changeClassNameAction(newClass)) }
+  })
 
 )(MyComponent)
 
@@ -183,7 +182,7 @@ import { Subscription } from './store'
 ## `Controllable` components
 `Controllable` components manage their internal state with actions and reducers, allowing you to create components that can be used with or without a Store connection or external state management.
 
-[`Async` components](###async-operations-with-redux) are `Controllable`.
+[`Async` components](#async-operations-with-redux) are `Controllable`.
 
 By default, `<Controllable>` components create their own internal `state` and `dispatch` wrapped around React's `setState` system. By providing an ancestral `<Controller>`, the consumer can provide a type-checked overriding `state` and `dispatch` that will be used instead. Any actions triggered by the child are passed to the given `dispatch`, and the component will render using the given `state`.
 
