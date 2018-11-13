@@ -1,4 +1,4 @@
-# stately: Elegant, type-safe state management
+# stately: elegant, type-safe state management
 
 #### stately-react
 [[api]](https://hiebj.github.io/stately/modules/stately_react.html) [[github]](https://github.com/hiebj/stately/tree/master/stately-react)  
