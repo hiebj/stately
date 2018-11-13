@@ -9,7 +9,7 @@ This module contains type-safe components for simplifying React state management
   - [Standalone `<Subscription>`](#standalone-subscription)
   - [`<Subscription>` with `<Subscriber>`s](#subscription-with-subscribers)
   - [`The subscriber()` decorator](#the-subscriber-decorator)
-- [`Async` Components](#async-components): Components that perform type-safe asynchronous operations and provide state updates (active, completed, error)
+- [`Async` Components](#async-components): Components that perform type-safe asynchronous operations, manage their state, and provide status updates (active, completed, error)
   - [Declarative `<Async>` operations](#declarative-async-operations)
   - [Reactive `<Async>` operations](#reactive-async-operations)
   - [`<Async>` operations with Redux](#async-operations-with-redux)
