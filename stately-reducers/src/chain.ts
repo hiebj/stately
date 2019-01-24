@@ -23,7 +23,7 @@ const chain = <S extends {}>(firstReducer: Reducer<S>, ...reducers: Reducer<S>[]
   reducers.reduce(
     (accumulatedState, nextReducer) =>
       accumulatedState ?
-        Object.assign(accumulatedState, nextReducer(accumulatedState, action)) :
+        Object.assign({}, accumulatedState, nextReducer(accumulatedState, action)) :
         nextReducer(accumulatedState, action),
     firstReducer(state, action),
   )

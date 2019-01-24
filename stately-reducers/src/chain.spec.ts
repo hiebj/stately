@@ -53,4 +53,11 @@ describe('chain', () => {
     store.dispatch({ type: 'N' })
     expect(store.getState()).to.have.property('open', null)
   })
+
+  it('should return a distinct reference rather than clobbering the current one', () => {
+    store.dispatch({ type: 'OPEN' })
+    const lastState = store.getState()
+    store.dispatch({ type: 'N' })
+    expect(store.getState()).not.to.equal(lastState)
+  })
 })
