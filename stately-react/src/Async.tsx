@@ -24,8 +24,7 @@ const { Controller, Controllable: AsyncControllable } = createControllableContex
   statelyAsyncMiddleware,
 )
 
-export type AsyncController = React.ComponentType<ControllerProps<AsyncSlice>>
-const AsyncController = Controller as AsyncController
+const AsyncController = Controller as React.ComponentType<ControllerProps<AsyncSlice>>
 export { AsyncController }
 
 /**
