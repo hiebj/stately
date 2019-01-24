@@ -1,6 +1,6 @@
 {
   "name": "stately-react",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Type-safe components for simplifying React state management",
   "author": {
     "name": "Jon Hieb",
@@ -21,7 +21,7 @@
   "dependencies": {
     "react": "^16.4.1",
     "redux": "^4.0.0",
-    "stately-async": "^0.2.11"
+    "stately-async": "^0.2.12"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",
