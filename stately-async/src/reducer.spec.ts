@@ -137,6 +137,25 @@ describe('statelyAsyncReducer', () => {
     })
   })
 
+  describe('#reset action', () => {
+    beforeEach(() => {
+      state = statelyAsyncReducer(createAsyncSlice(openState, noParamsActions.id), noParamsActions.reset())[StatelyAsyncSymbol][
+        noParamsActions.id
+      ]})
+    it('should set `state` to "null"', () => {
+      expect(state).to.have.property('status', null)
+    })
+    it('should set `error` to the passed in null', () => {
+      expect(state).to.have.property('error', null)
+    })
+    it('should set `params` to the passed in null', () => {
+      expect(state).to.have.property('params', null)
+    })
+    it('should set `data` to the passed in null', () => {
+      expect(state).to.have.property('data', null)
+    })
+  })
+
   describe('#destroy action', () => {
     let slice: AsyncSlice[typeof StatelyAsyncSymbol]
     beforeEach(() => {

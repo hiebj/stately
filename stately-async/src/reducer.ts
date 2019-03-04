@@ -37,19 +37,24 @@ const errorReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyn
     : state
 
 const completeReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyncState, action) =>
-  isAsyncAction(action) && action[StatelyAsyncSymbol].phase === 'complete'
-    ? {
-        ...state,
-        status: 'completed',
-        error: null,
-      }
+  isAsyncAction(action) && action[StatelyAsyncSymbol].phase === 'reset'
+    ? initialAsyncState
     : state
+
+const resetReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyncState, action) =>
+    isAsyncAction(action) && action[StatelyAsyncSymbol].phase === 'complete'
+      ? {
+          ...state,
+          status: 'completed',
+          error: null,
+        }
+      : state
 
 /**
  * A reducer that handles {@link AsyncAction}s and updates the corresponding {@link AsyncState}.
  * It is called by {@link statelyAsyncReducer}. Generally, you should not have to use this reducer directly.
  */
-export const asyncStateReducer = chain(callReducer, dataReducer, errorReducer, completeReducer)
+export const asyncStateReducer = chain(callReducer, dataReducer, errorReducer, completeReducer, resetReducer)
 
 /**
  * A reducer that manages the {@link AsyncSlice} in the root of a state tree.
