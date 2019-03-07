@@ -37,18 +37,16 @@ const errorReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyn
     : state
 
 const completeReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyncState, action) =>
-  isAsyncAction(action) && action[StatelyAsyncSymbol].phase === 'reset'
-    ? initialAsyncState
+  isAsyncAction(action) && action[StatelyAsyncSymbol].phase === 'complete'
+    ? {
+        ...state,
+        status: 'completed',
+        error: null,
+      }
     : state
 
 const resetReducer: Reducer<AsyncState<any, any>, Action> = (state = initialAsyncState, action) =>
-    isAsyncAction(action) && action[StatelyAsyncSymbol].phase === 'complete'
-      ? {
-          ...state,
-          status: 'completed',
-          error: null,
-        }
-      : state
+  isAsyncAction(action) && action[StatelyAsyncSymbol].phase === 'reset' ? initialAsyncState : state
 
 /**
  * A reducer that handles {@link AsyncAction}s and updates the corresponding {@link AsyncState}.
