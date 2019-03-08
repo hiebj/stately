@@ -21,7 +21,7 @@
   "dependencies": {
     "react": "^16.4.1",
     "redux": "^4.0.0",
-    "stately-async": "^0.2.12"
+    "stately-async": "^0.3.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",
