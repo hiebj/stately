@@ -1,11 +1,10 @@
 /** @module stately-async */
 import { v4 as uuid } from 'uuid'
 
-import { AsyncOperation } from "./AsyncOperation";
-import { AsyncSlice, AsyncState, initialAsyncState, StatelyAsyncSymbol } from "./AsyncState";
-import { AsyncActionCreator, asyncActionCreatorFactory } from "./actions";
-import { set } from "./cache";
-
+import { AsyncOperation } from './AsyncOperation'
+import { AsyncSlice, AsyncState, initialAsyncState, StatelyAsyncSymbol } from './AsyncState'
+import { AsyncActionCreator, asyncActionCreatorFactory } from './actions'
+import { set } from './cache'
 
 /**
  * An object that provides a consistent, automated means to track loading, error, success, and data states for any {@link AsyncOperation}.
@@ -33,7 +32,7 @@ export interface AsyncLifecycle<Data, Params extends any[]> {
   /** Returns the `AsyncState` instance owned by this manager. */
   readonly selector: (
     /** A state tree containing an {@link AsyncSessionSlice}. */
-    state: AsyncSlice
+    state: AsyncSlice,
   ) => AsyncState<Data, Params>
   /** Action creator that triggers the associated `AsyncOperation` when dispatched, passing any parameters directly through. */
   readonly call: AsyncActionCreator<Params>
@@ -49,11 +48,13 @@ export interface AsyncLifecycle<Data, Params extends any[]> {
   readonly error: AsyncActionCreator<[any]>
   /** Action dispatched internally when the associated `AsyncOperation` completes (resolves, or emits all data in the case of an `Observable` or `AsyncIterable`). */
   readonly complete: AsyncActionCreator<[]>
+  /** Action dispatched internally when the associated `AsyncOperation` is reset to it's initialState */
+  readonly reset: AsyncActionCreator<[]>
 }
 
 /** A factory function that creates an {@link AsyncLifecycle} for a given {@link AsyncOperation}. */
 export const asyncLifecycle = <Data, Params extends any[]>(
-  operation: AsyncOperation<Data, Params>
+  operation: AsyncOperation<Data, Params>,
 ): AsyncLifecycle<Data, Params> => {
   const id = uuid()
   const factory = asyncActionCreatorFactory(operation, id)
@@ -66,6 +67,7 @@ export const asyncLifecycle = <Data, Params extends any[]>(
     data: factory<[Data]>('data'),
     error: factory<any>('error'),
     complete: factory<[]>('complete'),
+    reset: factory<[]>('reset'),
   })
   set(id, actions)
   return actions

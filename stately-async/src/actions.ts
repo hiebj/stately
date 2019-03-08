@@ -8,7 +8,7 @@ import { AsyncOperation } from './AsyncOperation'
 export const ACTION_PREFIX = 'async'
 
 /** A union type representing all of the possible suffix values for {@link AsyncAction#type}. */
-export type AsyncPhase = 'call' | 'data' | 'error' | 'complete' | 'destroy'
+export type AsyncPhase = 'call' | 'data' | 'error' | 'complete' | 'destroy' | 'reset'
 
 /** Metadata appended to an {@link AsyncAction}, used by the reducer and middleware to handle the action. */
 export interface AsyncLifecycleMeta {
@@ -56,6 +56,10 @@ export function asyncActionMatcher<Data, Params extends any[]>(
 export function asyncActionMatcher<Data, Params extends any[]>(
   operation: AsyncOperation<Data, Params> | undefined,
   phase: 'error',
+): (action: Action) => action is AsyncAction<[any]>
+export function asyncActionMatcher<Data, Params extends any[]>(
+  operation: AsyncOperation<Data, Params> | undefined,
+  phase: 'reset',
 ): (action: Action) => action is AsyncAction<[any]>
 export function asyncActionMatcher<Data, Params extends any[]>(
   operation?: AsyncOperation<Data, Params>,

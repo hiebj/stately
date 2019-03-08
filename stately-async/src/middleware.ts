@@ -52,7 +52,7 @@ export const statelyAsyncEpic = (action$: Observable<Action>): Observable<Action
         return $empty()
       }
     }),
-  )
+  ) as Observable<Action<any>>
 
 /**
  * Lightweight integration middleware, intended for projects that are not using `redux-observable`.
