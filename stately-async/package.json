@@ -21,7 +21,7 @@
   "dependencies": {
     "redux": "^4.0.0",
     "rxjs": "^6.2.1",
-    "stately-reducers": "^0.0.7",
+    "stately-reducers": "^0.1.0",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
