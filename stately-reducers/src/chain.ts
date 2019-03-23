@@ -21,10 +21,7 @@ const chain = <S>(firstReducer: Reducer<S>, ...reducers: Reducer<S>[]): Reducer<
   action,
 ) =>
   reducers.reduce(
-    (accumulatedState, nextReducer) =>
-      accumulatedState
-        ? Object.assign({}, accumulatedState, nextReducer(accumulatedState, action))
-        : nextReducer(accumulatedState, action),
+    (accumulatedState, nextReducer) => nextReducer(accumulatedState, action),
     firstReducer(state, action),
   )
 

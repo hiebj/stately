@@ -1,21 +1,20 @@
 import 'mocha'
 import { expect } from 'chai'
 
-import { Reducer, Store, createStore } from 'redux';
+import { Reducer, Store, createStore } from 'redux'
 
 import chain from './chain'
 
-interface IsOpen {
-  open: boolean | null
-}
+type IsOpen = {
+  open: boolean
+} | null
 
 const openReducer: Reducer<IsOpen> = (state = { open: false }, action) =>
   action.type === 'CLOSE' ? { open: false } : state
 const closeReducer: Reducer<IsOpen> = (state = { open: true }, action) =>
   action.type === 'OPEN' ? { open: true } : state
 const identity = (x: any) => x
-const nthReducer: Reducer<IsOpen> = (state = { open: null }, action) =>
-  action.type === 'N' ? { open: null } : state
+const nthReducer: Reducer<IsOpen> = (state = null, action) => (action.type === 'N' ? null : state)
 
 const composedReducer: Reducer<IsOpen> = chain(
   identity, // does not initialize state (which, technically, means it is not a valid Redux reducer)
@@ -25,7 +24,7 @@ const composedReducer: Reducer<IsOpen> = chain(
   identity,
   identity,
   identity,
-  nthReducer
+  nthReducer,
 )
 
 describe('chain', () => {
@@ -51,7 +50,7 @@ describe('chain', () => {
 
   it('should call the nth reducer', () => {
     store.dispatch({ type: 'N' })
-    expect(store.getState()).to.have.property('open', null)
+    expect(store.getState()).to.be.null
   })
 
   it('should return a distinct reference rather than clobbering the current one', () => {
