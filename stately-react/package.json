@@ -1,6 +1,6 @@
 {
   "name": "stately-react",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "description": "Type-safe components for simplifying React state management",
   "author": {
     "name": "Jon Hieb",
