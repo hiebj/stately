@@ -9,15 +9,14 @@ import box from './box'
 import merge from './merge'
 
 // ---- File: IsOpen.ts ----
-interface IsOpen {
+type IsOpen = {
   open: boolean
-}
-const initialIsOpenState: IsOpen = { open: false }
+} | null
 
 // each reducer is "atomic" - it only handles one action and performs a single state mutation
-const openReducer: Reducer<IsOpen> = (state = initialIsOpenState, action) =>
+const openReducer: Reducer<IsOpen> = (state = null, action) =>
   action.type === 'CLOSE' ? { open: false } : state
-const closeReducer: Reducer<IsOpen> = (state = initialIsOpenState, action) =>
+const closeReducer: Reducer<IsOpen> = (state = null, action) =>
   action.type === 'OPEN' ? { open: true } : state
 
 const isOpenModelReducer: Reducer<IsOpen> = chain(openReducer, closeReducer)
@@ -57,7 +56,7 @@ describe('merge', () => {
   })
 
   it('should allow each of the given reducers to initialize their state independently', () => {
-    expect(store.getState().isOpen).to.have.property('open', false)
+    expect(store.getState().isOpen).to.be.null
     expect(store.getState().user).to.have.property('id', 0)
     expect(store.getState().user).to.have.property('name', '')
   })

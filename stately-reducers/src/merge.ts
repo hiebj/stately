@@ -103,12 +103,15 @@ export default function merge(...reducers: Array<Reducer<{}>>): Reducer<{}> {
     reducers.map(reducer => [reducer, undefined] as [Reducer, undefined]),
   )
   const checkCollisions = collisionChecker(prevStates)
-  return (_state, action) => {
+  return (state, action) => {
     let shouldCheckCollisions: boolean = false
     const nextRootState = reducers.reduce((nextRootState, nextReducer) => {
       // call each reducer with the previous state it returned and merge the states
       const prevSliceState = prevStates.get(nextReducer)
-      const nextSliceState = nextReducer(prevSliceState, action)
+      const nextSliceState = nextReducer(
+        typeof prevSliceState !== 'undefined' ? prevSliceState : state,
+        action,
+      )
       shouldCheckCollisions = !prevSliceState || checkShapeChanged(prevSliceState, nextSliceState)
       prevStates.set(nextReducer, nextSliceState)
       return Object.assign(nextRootState, nextSliceState)

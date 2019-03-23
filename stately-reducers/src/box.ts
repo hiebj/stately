@@ -11,7 +11,7 @@ import { Reducer, Action } from 'redux'
  *
  * For a working example, see `box.spec.ts`.
  */
-const box = <K extends string | number, S extends {}, A extends Action>(
+const box = <K extends string | number, S, A extends Action>(
   key: K,
   reducer: Reducer<S>,
 ): Reducer<{ [k in K]: S }, A> => (state, action) =>

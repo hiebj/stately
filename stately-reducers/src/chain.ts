@@ -16,15 +16,15 @@ import { Reducer } from 'redux'
  *
  * For a working example, see `chain.spec.ts`.
  */
-const chain = <S extends {}>(firstReducer: Reducer<S>, ...reducers: Reducer<S>[]): Reducer<S> => (
+const chain = <S>(firstReducer: Reducer<S>, ...reducers: Reducer<S>[]): Reducer<S> => (
   state,
   action,
 ) =>
   reducers.reduce(
     (accumulatedState, nextReducer) =>
-      accumulatedState ?
-        Object.assign({}, accumulatedState, nextReducer(accumulatedState, action)) :
-        nextReducer(accumulatedState, action),
+      accumulatedState
+        ? Object.assign({}, accumulatedState, nextReducer(accumulatedState, action))
+        : nextReducer(accumulatedState, action),
     firstReducer(state, action),
   )
 
